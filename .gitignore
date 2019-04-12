@@ -1,0 +1,6 @@
+# svn
+.svn
+Bin/
+IntDir/
+GeneratedFiles/
+.vs
