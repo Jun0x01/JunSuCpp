@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/JunSuQt">
+        <file>Resources/open.png</file>
+        <file>Resources/Line.png</file>
+    </qresource>
+</RCC>
