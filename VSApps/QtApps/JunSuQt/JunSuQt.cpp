@@ -56,7 +56,7 @@ void JunSuQt::initMenuBar() {
 		// File -> Close
 		{
 			QAction* menuAction = new QAction("Close");
-			menuAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_O));
+			menuAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_C));
 
 			menu->addAction(menuAction);
 			menu->addSeparator();
