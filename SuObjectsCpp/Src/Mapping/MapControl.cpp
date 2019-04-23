@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Mapping/MapControl.h"
 
 
@@ -20,7 +19,7 @@ MapControl::MapControl(INVALIDATEPROC pInvalidateCallBack, void* pView)
 	m_pGraphicsImageOld = NULL;
 	m_pInvalidateCallback = NULL;
 
-	m_IsMinSize = false;
+	m_IsMinSized = false;
 
 	m_pWnd = pView;
 	m_pInvalidateCallback = pInvalidateCallBack;
@@ -159,14 +158,15 @@ void MapControl::OnDraw(int rectLeft, int rectTop, int rectRight, int rectBottom
 	if(mNeedRedraw)
 	{
 		mNeedRedraw = false;
-		if (m_IsMinSize)
+
+		if (m_IsMinSized)
 		{
 			// if recovering from min size , no need to redraw, display last cache faster.
 			m_pUGMapWnd->m_mapWnd.m_Map.SetRefreshFlag(false);
-			m_IsMinSize = false;
+			m_IsMinSized = false;
 		}
-		else
-		{
+		//else
+		//{
 			// Create UGGraphics
 			if (pHDC == NULL && m_pGraphicsImage == NULL)
 			{
@@ -187,7 +187,7 @@ void MapControl::OnDraw(int rectLeft, int rectTop, int rectRight, int rectBottom
 			m_pUGMapWnd->OnDraw(pGraphics, clientRect, clientRect);
 
 			DisposeUGGrapics(pGraphics);
-		}
+		//}
 	}
 }
 
@@ -195,9 +195,9 @@ void MapControl::OnDraw(int rectLeft, int rectTop, int rectRight, int rectBottom
 void MapControl::OnSizeChanged(int x, int y, void* pHDC)
 {
 	UGRect rect(0, 0, x, y);
-	m_IsMinSize = rect.IsEmpty();
+	bool isEmpty = rect.IsEmpty();
 	
-	if(!m_IsMinSize)
+	if(!isEmpty)
 	{
 		UGGraphics* pGraphics = NULL;
 		if (pHDC != NULL)
@@ -211,7 +211,12 @@ void MapControl::OnSizeChanged(int x, int y, void* pHDC)
 			m_pGraphicsImage->CreateCompatibleImage(NULL, x, y);
 		}
 		m_pUGMapWnd->OnSize(pGraphics, rect);   // Will call InvalidateCallback
-    }
+		
+	}
+	else 
+	{
+		m_IsMinSized = isEmpty;
+	}
 }
 void MapControl::OnLMouseDown(unsigned int nFlags, int x, int y, void* pHDC)
 {
@@ -324,28 +329,6 @@ void MapControl::OnMidMouseUp(unsigned int nFlags, int x, int y, void* pHDC)
 	if (m_pUGMapWnd->GetUserAction() == UGDrawParamaters::UGMapUserAction::uaPan)
 	{
 		OnLMouseUp(nFlags, x, y, pHDC);
-	}
-}
-
-void MapControl::OpenMap()
-{
-	UGString wkPath = _U("F:\\JunSuperMap\\2 SuperMapData\\iDesktop\\SampleData\\World\\World.smwu");
-	// Open workspace file
-	UGWorkspaceConnection wkCon;
-
-
-
-	wkCon.m_strServer = wkPath;
-	wkCon.m_nWorkspaceType = UGWorkspace::WS_Version_SMWU;
-
-	UGWorkspace* pWorkspace = m_pUGMapWnd->m_mapWnd.m_Map.GetWorkspace();
-	if(pWorkspace->Open(wkCon))
-	{
-		//m_pUGMapWnd->SetUserAction(UGDrawParamaters::UGMapUserAction::uaPan);
-		UGbool isOpen = m_pUGMapWnd->m_mapWnd.m_Map.Open(_U("World_Common"));
-		//m_pUGMapWnd->m_mapWnd.m_Map.SetRefreshFlag(true);
-		//m_pUGMapWnd->m_mapWnd.Refresh();
-		m_pUGMapWnd->SetUserAction(UGDrawParamaters::UGMapUserAction::uaPan);
 	}
 }
 

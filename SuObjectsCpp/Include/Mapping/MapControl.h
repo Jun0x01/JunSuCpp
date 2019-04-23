@@ -29,7 +29,8 @@ namespace SuperMap
 		   // Map window
 		   UGMapEditorWnd* m_pUGMapWnd;
 		   // minimize the window
-		   UGbool m_IsMinSize;
+		   UGbool m_IsMinSized;
+
 
 		// Image Graphics used in Qt, no pHDC handle
 	   private:
@@ -61,9 +62,6 @@ namespace SuperMap
 	   public:
 		   // Normally used by MapControl self to notice the window update.
 		   void Invalidate(bool reDraw = true);
-
-		   // debug using
-		   void OpenMap();
 
 		   //Used in Qt, get the image bytes which will be draw in the window.
 		   UGbyte* GetImageBytes();
