@@ -15,8 +15,6 @@ INCLUDEPATH +=$${SUOBJECTSDIR}/include\
     $${SUOBJECTSDIR}/include/private\
     ../../../SuObjectsCpp/Include
 
-# wchar_t
-QMAKE_CXXFLAGS += -Zc:wchar_t
 # x64 /bigobj
 QMAKE_CXXFLAGS += /bigobj
 
@@ -36,7 +34,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 CONFIG += debug
 
 # Preprocessor Definitions
-DEFINES += _UNICODE WIN64 _UGUNICODE#QT_WIDGETS_LIB
+DEFINES += _UNICODE _UGUNICODE
 
 # Include Path of this project
 INCLUDEPATH += ./GeneratedFiles \
@@ -52,12 +50,13 @@ OBJECTS_DIR += debug
 UI_DIR += ./GeneratedFiles
 RCC_DIR += ./GeneratedFiles
 
-# Libs of SuObjectsCpp
-LIBS += $${DESTDIR}/Mapping.lib
 
 #Dependencies
 
 win32{
+    # wchar_t
+    QMAKE_CXXFLAGS += -Zc:wchar_t
+
     # x64
     CONFIG(debug, debug|release){
 
@@ -96,11 +95,20 @@ win32{
        -lSuGeometry \
        -lSuFileParser \
     }
+
+   # Libs of SuObjectsCpp
+   LIBS += -L$${DESTDIR}\
+           -lMapping
+
 }
 
 unix:{
+    # 16bit wchar
+    QMAKE_CXXFLAGS =-fshort-wchar
+    # linking search path
+    QMAKE_RPATHDIR += $${SUOBJECTSDIR}/bin/bin
 
-    LIBS +=-L$${SUOBJECTSDIR} \
+    LIBS +=-L$${SUOBJECTSDIR}/bin/bin \
        -lSuToolkit \
        -lSuElement \
        -lSuOGDC \
@@ -116,6 +124,10 @@ unix:{
        -lSuBase3D \
        -lSuGeometry \
        -lSuFileParser \
+
+    # Libs of SuObjectsCpp
+    LIBS += -L$${DESTDIR}/bin/bin \
+            -lMapping
 }
 
 # Module source files
