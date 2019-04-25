@@ -15,8 +15,6 @@ INCLUDEPATH +=$${SUOBJECTSDIR}/include\
     $${SUOBJECTSDIR}/include/private\
     ../../../Include
 
-# wchar_t
-QMAKE_CXXFLAGS += -Zc:wchar_t
 # x64 /bigobj
 QMAKE_CXXFLAGS += /bigobj
 
@@ -51,6 +49,9 @@ RCC_DIR += ./GeneratedFiles
 #Dependencies
 
 win32{
+    # wchar_t
+    QMAKE_CXXFLAGS += -Zc:wchar_t
+
     # x64
     CONFIG(debug, debug|release){
 
@@ -92,8 +93,10 @@ win32{
 }
 
 unix:{
+    # 16bit wchar
+    QMAKE_CXXFLAGS =-fshort-wchar
 
-    LIBS +=-L$${SUOBJECTSDIR} \
+    LIBS +=-L$${SUOBJECTSDIR}/bin/bin \
        -lSuToolkit \
        -lSuElement \
        -lSuOGDC \
