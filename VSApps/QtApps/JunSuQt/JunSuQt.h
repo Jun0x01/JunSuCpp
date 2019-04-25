@@ -2,12 +2,14 @@
 
 #include <QtWidgets/QMainWindow>
 #include "ui_JunSuQt.h"
+#include <qurl.h>
+#include <qdir.h>
 
 #include "Mapping/MapControl.h"
 #include <QPainter>
 #include <QWheelEvent>
 
-#include "QFileDialog.h"
+#include <QFileDialog>
 
 using namespace SuperMap::Mapping;
 class JunSuQt : public QMainWindow

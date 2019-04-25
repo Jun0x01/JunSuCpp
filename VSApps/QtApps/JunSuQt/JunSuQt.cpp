@@ -72,7 +72,7 @@ void JunSuQt::initMenuBar() {
 			menu->addAction(menuAction);
 			menu->addSeparator();
 
-			connect(menuAction, SIGNAL(triggered()), this, SLOT(Menu_Edit_Pan()));
+            connect(menuAction, SIGNAL(triggered()), this, SLOT(Menu_Edit_PanMap()));
 		}
 		menuBar->addMenu(menu);
 	}
