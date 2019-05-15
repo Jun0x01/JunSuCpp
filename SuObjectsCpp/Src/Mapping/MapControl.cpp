@@ -1,7 +1,7 @@
 #include "Mapping/MapControl.h"
 
 
-using namespace SuperMap::Mapping;
+using namespace SuperMap;
 
 /**************** Invalidate CallBack *********************/
 void SuCALLBACK InvalidateCallback(void * p)

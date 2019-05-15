@@ -11,7 +11,7 @@
 
 #include <QFileDialog>
 
-using namespace SuperMap::Mapping;
+using namespace SuperMap;
 class JunSuQt : public QMainWindow
 {
 	Q_OBJECT

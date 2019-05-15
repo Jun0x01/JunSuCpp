@@ -11,8 +11,8 @@ using namespace UGC;
 
 namespace SuperMap
 {
-	namespace Mapping
-	{
+	//namespace Mapping
+	//{
 	   class SU_MAPPING_API MapControl
 	   {
 		   //Constructor
@@ -127,7 +127,7 @@ namespace SuperMap
 		   void OnMidMouseUp(unsigned int nFlags, int x, int y, void* pHDC = NULL);
 		   
 	   };
-	}
+	//}
 }
 
 #endif // !SU_MAPCONTROL_INCLUDED

@@ -6,7 +6,7 @@
 #include "Mapping/MapControl.h"
 #include "StrConvertor.h"
 
-using namespace SuperMap::Mapping;
+using namespace SuperMap;
 
 
 // JunSuMFCDialogDlg dialog
