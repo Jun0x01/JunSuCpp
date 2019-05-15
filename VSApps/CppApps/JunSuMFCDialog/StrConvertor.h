@@ -1,3 +1,7 @@
+/*
+ *  Author: Jun0x01@github.com
+ *  Date:   2019.05.15
+ */
 #pragma once
 #include <string>
 #include <afx.h>

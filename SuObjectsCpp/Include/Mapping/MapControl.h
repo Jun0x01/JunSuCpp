@@ -1,3 +1,7 @@
+/*
+ *  Author: Jun0x01@github.com
+ *  Date:   2019.05.15
+ */
 #if !defined(SU_MAPCONTROL_INCLUDED)
 #define SU_MAPCONTROL_INCLUDED
 
