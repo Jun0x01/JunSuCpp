@@ -156,9 +156,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Include\Data\exportsDefine.h" />
+    <ClInclude Include="..\..\..\Include\Mapping\Map.h" />
     <ClInclude Include="..\..\..\Include\Mapping\MapControl.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\Src\Mapping\Map.cpp" />
     <ClCompile Include="..\..\..\Src\Mapping\MapControl.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

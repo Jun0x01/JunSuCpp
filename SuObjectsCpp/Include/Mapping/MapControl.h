@@ -1,6 +1,6 @@
 /*
  *  Author: Jun0x01@github.com
- *  Date:   2019.05.15
+ *  Date:   2019.04.08
  */
 #if !defined(SU_MAPCONTROL_INCLUDED)
 #define SU_MAPCONTROL_INCLUDED
@@ -10,8 +10,11 @@
 #include "MapEditor/UGMapEditorWnd.h"
 #include "Graphics/UGGraphicsManager.h"
 #include "Drawing/UGDrawParamaters.h"
+#include "Data/Workspace.h"
+
 
 using namespace UGC;
+using namespace SuperMap;
 
 namespace SuperMap
 {
@@ -86,7 +89,7 @@ namespace SuperMap
 		   void Refresh();
 
 		   // Return the handle of UGMapEditorWnd if need to use it, but don't delete it which is belong to MapControl
-		   UGMapEditorWnd* GetMapEditWnd();
+		   UGMapEditorWnd* GetMapEditWnd();  
 
 
 	   // Called in window event. The pHDC is neccessary in MFC or .Net framework.
@@ -129,6 +132,34 @@ namespace SuperMap
 
 		   // Called when middle buttun up if you need pan the map with middle buttom
 		   void OnMidMouseUp(unsigned int nFlags, int x, int y, void* pHDC = NULL);
+
+		   // User interface
+		public:
+			/*
+			 * @!en
+			 * @!brief Set a Workspace handler, so that MapControl can access map data in the workspace. 
+			 * @pWorkspace   pointer of Workspace which contains map data will be shown on map window by MapControl
+			 */
+			void SetWorkspace(Workspace* pWorkspace);
+
+			/*
+			 * @!en
+			 * @!brief Get UGLayers handler of current map, which manager layers in the map.
+			 * @return pointer of UGLayers
+			 */
+			UGLayers* GetUGLayers();
+
+			/*
+			 * @!en
+			 * @!brief Set a layer editable or not in current map.
+			 * @pLayer       pointer of UGLayer
+			 * @isEditable   true or false
+			 */
+			void SetEditableLayer(UGLayer* pLayer, bool isEditable);
+
+			
+			
+			
 		   
 	   };
 	//}

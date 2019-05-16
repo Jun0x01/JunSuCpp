@@ -1,9 +1,10 @@
 /*
  *  Author: Jun0x01@github.com
- *  Date:   2019.05.15
+ *  Date:   2019.04.08
  */
 #ifndef SU_EXPORTS_INCLUDED
 #define SU_EXPORTS_INCLUDED
+#include "Stream/ugdefs.h"
 
 // define system's export and import
 #ifdef WIN32

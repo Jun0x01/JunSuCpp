@@ -1,6 +1,6 @@
 /*
  *  Author: Jun0x01@github.com
- *  Date:   2019.05.15
+ *  Date:   2019.04.08
  */
 #include "Mapping/MapControl.h"
 
@@ -60,8 +60,11 @@ MapControl::~MapControl()
 void MapControl::Initialize(INVALIDATEPROC pCallBack, void* pView)
 {
 	// set graphics engine type
+#ifdef WIN32
 	UGGraphicsManager::SetCurGraphicsType(UGC::UGGraphics::GT_Windows);
-
+#else
+    UGGraphicsManager::SetCurGraphicsType(UGGraphics::GT_QT);
+#endif
 	m_pUGMapWnd = new UGMapEditorWnd();
 	m_pUGMapWnd->Initialize();
 
@@ -430,3 +433,15 @@ UGMapEditorWnd* MapControl::GetMapEditWnd()
 {
 	return m_pUGMapWnd;
 }
+
+UGLayers* MapControl::GetUGLayers()
+{
+	return &(m_pUGMapWnd->m_mapWnd.m_Map.m_Layers);
+}
+
+void MapControl::SetEditableLayer(UGLayer* pLayer, bool isEditable)
+{
+	m_pUGMapWnd->m_mapWnd.m_Map.m_Layers.SetEditableLayer(pLayer, isEditable);
+}
+
+
