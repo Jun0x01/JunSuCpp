@@ -1,6 +1,6 @@
 /*
  *  Author: Jun0x01@github.com
- *  Date:   2019.05.15
+ *  Date:   2019.04.11
  */
 #include "stdafx.h"
 #include "StrConvertor.h"

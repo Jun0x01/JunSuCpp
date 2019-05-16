@@ -1,6 +1,6 @@
 /*
  *  Author: Jun0x01@github.com
- *  Date:   2019.05.15
+ *  Date:   2019.04.11
  */
 // JunSuMFCDialogDlg.h : header file
 //
@@ -25,7 +25,8 @@ public:
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
 
-
+public:
+	void GetSelectedGeo();
 // Implementation
 protected:
 	HICON m_hIcon;
@@ -58,6 +59,9 @@ private:
 //Resource
 private:
 	CMenu mMenu;
+	int plotJYid;
+	int plotTYid;
+	CPoint pt;
 public:
 	afx_msg void OnFileOpen();
 	afx_msg void OnDrawPoint();
@@ -67,4 +71,7 @@ public:
 	afx_msg void OnMeasureAea();
 	afx_msg void OnFileClose();
 	afx_msg void OnPanMap();
+	afx_msg void OnEditSelect();
+	afx_msg void OnDrawDrawplot();
+	afx_msg void OnDrawPlotArraws();
 };

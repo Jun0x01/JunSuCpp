@@ -1,6 +1,6 @@
 /*
  *  Author: Jun0x01@github.com
- *  Date:   2019.05.15
+ *  Date:   2019.04.11
  */
 // JunSuMFCDialogDlg.cpp : implementation file
 //
@@ -9,7 +9,22 @@
 #include "JunSuMFCDialog.h"
 #include "JunSuMFCDialogDlg.h"
 #include "afxdialogex.h"
-
+#include "Map/UGLayerCollection.h"
+#include "GeometricNetwork/UGConnectAnalyst.h"
+#include "GeometricNetwork/UGUtilityAnalyst.h"
+#include "GeometryPlot/UGGOLibraryManager.h"
+#include "Map/UGDynamicLayers.h"
+#include "Map/UGDynamicLayer.h"
+#include "Geometry/UGGeoPoint.h"
+#include "Geometry/UGGeoText.h"
+#include "Workspace/UGWorkspace.h"
+#include "Engine/UGDatasources.h"
+#include "Engine/UGDatasource.h"
+#include "Engine/UGDataset.h"
+#include "Geometry/UGGeometry.h"
+#include "Engine/UGEngDefs.h"
+#include "Geometry/UGGeoLine.h"
+#include "GeometryPlot//UGGraphicObject.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -21,6 +36,32 @@ void SuCALLBACK InvalidateCallBack(void* pWnd)
 
 	JunSuMFCDialogDlg *pView = (JunSuMFCDialogDlg *)pWnd;
 	pView->Invalidate(false); // not redraw background
+}
+
+void UGSTDCALL OnSingleGeometrySelected(UGlong pWnd, UGLayer* pLayer, UGint nGeoID)
+{
+	int id = nGeoID;
+	if (pLayer != NULL)
+	{
+
+	}
+}
+
+void UGSTDCALL GeometrySelectedCallBack(UGlong pWnd, UGint nSelectedGeometryCount)
+{
+	if (pWnd != NULL)
+	{
+		JunSuMFCDialogDlg* pThis = (JunSuMFCDialogDlg *)pWnd;
+		pThis->GetSelectedGeo();
+	}
+
+}
+void UGSTDCALL GeometrySelectChangedCallBack(UGlong pWnd, UGint nSelectedGeometryCount)
+{
+	if (pWnd != NULL)
+	{
+
+	}
 }
 
 // CAboutDlg dialog used for App About
@@ -64,14 +105,37 @@ JunSuMFCDialogDlg::JunSuMFCDialogDlg(CWnd* pParent /*=NULL*/)
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 
 	m_pMapControl = new MapControl(InvalidateCallBack, this);
+	m_pMapControl->GetMapEditWnd()->SetSingleGeometrySelectedFunc(OnSingleGeometrySelected, (UGlong )this);
+	//m_pMapControl->GetMapEditWnd()->SetGeometrySelectChangedFunc(GeometrySelectChangedCallBack, (UGlong)this);
+	m_pMapControl->GetMapEditWnd()->SetGeometrySelectedFunc(GeometrySelectedCallBack, (UGlong)this);
 
 	m_pLastEditLayer = NULL;
+	
+	UGString strJYLibPath = _U("..\\..\\..\\TestData\\Plot\\JY.plot");
+	UGString strTYLibPath = _U("..\\..\\..\\TestData\\Plot\\TY.plot");
+	plotJYid = -1;
+	plotTYid = -1;
+	UGGOLibraryManager* pLibManager = UGGOLibraryManager::GetInstance();
+	if (NULL == pLibManager)
+	{
+		return;
+	}
+	//添加标号库
+	UGint nJYLibId = pLibManager->AddGOLibrary(strJYLibPath);
+	UGint nTYLibId = pLibManager->AddGOLibrary(strTYLibPath);
+
+	plotJYid = nJYLibId;
+	plotTYid = nTYLibId;
+	string strPath = "..\\..\\..\\TestData\\World.smwu";
+	OpenWorkspace(strPath);
+	
 }
 
 void JunSuMFCDialogDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 }
+
 
 BEGIN_MESSAGE_MAP(JunSuMFCDialogDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
@@ -94,6 +158,9 @@ BEGIN_MESSAGE_MAP(JunSuMFCDialogDlg, CDialogEx)
 	ON_COMMAND(ID_MEASURE_MEASUREAREA, &JunSuMFCDialogDlg::OnMeasureAea)
 	ON_COMMAND(ID_FILE_CLOSE32772, &JunSuMFCDialogDlg::OnFileClose)
 	ON_COMMAND(ID_EDIT_PANMAP, &JunSuMFCDialogDlg::OnPanMap)
+	ON_COMMAND(ID_EDIT_SELECT, &JunSuMFCDialogDlg::OnEditSelect)
+	ON_COMMAND(ID_DRAW_DRAWPLOT, &JunSuMFCDialogDlg::OnDrawDrawplot)
+	ON_COMMAND(ID_DRAW_DRAWPLOTARRAWS, &JunSuMFCDialogDlg::OnDrawPlotArraws)
 END_MESSAGE_MAP()
 
 
@@ -202,6 +269,8 @@ void JunSuMFCDialogDlg::OnLButtonDown(UINT nFlags, CPoint point)
 	//m_pMapControl->OnMouseLDown(dc.m_hDC, nFlags, point.x, point.y);
 	m_pMapControl->OnLMouseDown(nFlags, point.x, point.y, ::GetDC(this->m_hWnd));
 	CDialogEx::OnLButtonDown(nFlags, point);
+
+	pt = point;
 }
 
 
@@ -213,6 +282,7 @@ void JunSuMFCDialogDlg::OnLButtonUp(UINT nFlags, CPoint point)
 	m_pMapControl->OnLMouseUp(nFlags, point.x, point.y, ::GetDC(this->m_hWnd));
 	CDialogEx::OnLButtonUp(nFlags, point);
 	//this->Invalidate(FALSE);
+
 }
 
 
@@ -287,7 +357,7 @@ void JunSuMFCDialogDlg::OnDrawPoint()
 {
 	UGMapEditorWnd* pMapEditorWnd = m_pMapControl->GetMapEditWnd();
 	UGMap* pUGMap = &(pMapEditorWnd->m_mapWnd.m_Map);
-	UGString layerName = _U("DrawPoint@World");
+	UGString layerName = _U("DrawCAD@World");
 	UGLayer* pLayer = m_pMapControl->GetMapEditWnd()->m_mapWnd.m_Map.m_Layers.GetLayer(layerName);
 	if (pLayer != NULL)
 	{
@@ -313,7 +383,7 @@ void JunSuMFCDialogDlg::OnDrawLine()
 {
 	UGMapEditorWnd* pMapEditorWnd = m_pMapControl->GetMapEditWnd();
 	UGMap* pUGMap = &(pMapEditorWnd->m_mapWnd.m_Map);
-	UGString layerName = _U("DrawLine@World");
+	UGString layerName = _U("DrawCAD@World");
 	UGLayer* pLayer = pUGMap->m_Layers.GetLayer(layerName);
 	if (pLayer != NULL)
 	{
@@ -337,7 +407,7 @@ void JunSuMFCDialogDlg::OnDrawRegion()
 	UGMapEditorWnd* pMapEditorWnd = m_pMapControl->GetMapEditWnd();
 	UGMap* pUGMap = &(pMapEditorWnd->m_mapWnd.m_Map);
 
-	UGString layerName = _U("DrawRegion@World");
+	UGString layerName = _U("DrawCAD@World");
 	UGLayer* pLayer = pUGMap->m_Layers.GetLayer(layerName);
 	if (pLayer != NULL)
 	{
@@ -379,7 +449,7 @@ void JunSuMFCDialogDlg::OpenWorkspace(string strPath)
 	wkPath.FromStd(strPath);       // Convert String
 
 	UGWorkspaceConnection wkCon;
-
+	
 	wkCon.m_strServer = wkPath;
 	wkCon.m_nWorkspaceType = UGWorkspace::WS_Version_SMWU;
 
@@ -432,6 +502,277 @@ void JunSuMFCDialogDlg::ResetLastEditLayer(UGLayer* pLayer)
 	{
 		UGLayers* pLayers = &(m_pMapControl->GetMapEditWnd()->m_mapWnd.m_Map.m_Layers);
 		pLayers->SetEditableLayer(m_pLastEditLayer, false);
+		
 	}
 	m_pLastEditLayer = pLayer;
+}
+
+void JunSuMFCDialogDlg::OnEditSelect()
+{
+	m_pMapControl->GetMapEditWnd()->SetSelectionMode(UGMapWnd::smContainCentroid);
+	m_pMapControl->GetMapEditWnd()->SetUserAction(UGDrawParamaters::UGMapUserAction::uaPointModeSelect);
+}
+
+
+void JunSuMFCDialogDlg::GetSelectedGeo()
+{
+
+	/*
+	UGLayer* pCurLayer = m_pMapControl->GetMapEditWnd()->m_mapWnd.m_Map.m_Layers.GetCurrentLayer();
+	UGList<EditGeometry*> geoList = m_pMapControl->GetMapEditWnd()->GetEditToolPack()->GetEditGeometry();
+	int size = geoList.GetCount();
+	if (size > 0) {
+
+
+	}
+	UGEditToolPack* pEditTool =  m_pMapControl->GetMapEditWnd()->GetEditToolPack();
+
+	UGLayer* pLayer = m_pMapControl->GetMapEditWnd()->m_mapWnd.m_Map.m_Layers.GetHeadLayer();
+	UGSelection* pSelection =  pLayer->GetSelection();
+	int geoCount = pSelection->GetSize();
+	if (geoCount > 0)
+	{
+		
+	}
+	*/
+	UGLayer* pLayer;
+	UGSelection* pSelection;
+	int geoCount;
+	UGLayers* pLayers = &(m_pMapControl->GetMapEditWnd()->m_mapWnd.m_Map.m_Layers);
+
+	
+	int id = -1;
+	int count =  pLayers->GetTotalCount();
+	for(int i=0; i<count; i++)
+	{
+		pLayer = pLayers->GetLayerAt(i);
+		pSelection = pLayer->GetSelection();
+		geoCount = pSelection->GetSize();
+		
+		if (geoCount > 0) 
+		{
+			
+			for (int j = 0; j < geoCount; j++)
+			{
+				id = pSelection->GetAt(j);
+				break;
+			}
+		}
+		if (id != -1) {
+
+			/*bool isCustomStyle = pSelection->HasCustomStyle();
+			pSelection->SetCustomStyle(true);
+			UGStyle style = pSelection->GetStyle();
+			style.SetLineWidth(5);
+			UGColor lcolor = style.GetLineColor();
+		
+			style.SetLineColor(0xFFFF0000);
+			int size = style.GetMarkerSize();
+			
+			style.SetMarkerSize(3);
+
+			pSelection->SetStyle(style);
+			m_pMapControl->Refresh();
+			pSelection->Add(id);*/
+            break;
+		}
+			
+	}
+
+	m_pMapControl->GetMapEditWnd()->m_mapWnd.m_Map.m_DynamicLayers.Remove(_U("testDynamic"));
+	UGDynamicLayer *pDyLayer = new UGDynamicLayer();
+	pDyLayer->SetLayerName(_U("testDynamic"));
+
+
+	UGStyle* pStyle = new UGStyle();
+	//pStyle->SetMarkerSize(10);
+	pStyle->SetMarkerStyle(4);
+
+	UGPoint2Ds *pts = new UGPoint2Ds();
+	pts->Add(UGPoint2D(104.161717071243, 36.0077016345897));
+	pts->Add(UGPoint2D(123.884893492701, 33.9110407940234));
+
+	UGGeoLine *pLine = new UGGeoLine();
+
+	pLine->AddSub(pts->GetData(), 2);
+	pStyle->SetLineWidth(3);
+	pStyle->SetLineColor(UGColor(16711680));
+
+	pLine->SetStyle(pStyle);
+
+	pDyLayer->Add(UGString(_U("L")), pLine);
+
+	m_pMapControl->GetMapEditWnd()->m_mapWnd.m_Map.m_DynamicLayers.Add(pDyLayer);
+
+	// GrahpicObject
+	UGWorkspace* pWorkSpace = m_pMapControl->GetMapEditWnd()->m_mapWnd.m_Map.GetWorkspace();
+	UGDataSource* datasource = pWorkSpace->GetDataSource(_U("World"));
+	UGDatasetVector *pToDataset = (UGDatasetVector*)datasource->GetDataset(_U("DrawCAD"));
+	pToDataset->GetType();
+
+
+	UGQueryDef queryDef;
+
+	pToDataset->Open(); // pToRecordset == 0;
+
+	queryDef.m_nType = UGQueryDef::General;
+	if (pToDataset->GetType() == UGDataset::Tabular)
+	{
+		queryDef.m_nOptions = UGQueryDef::Attribute;
+	}
+	else
+	{
+		queryDef.m_nOptions = UGQueryDef::Both;
+	}
+	queryDef.m_nMode = UGQueryDef::GeneralQuery;
+	queryDef.m_nCursorType = UGQueryDef::OpenDynamic;
+
+
+	UGRecordset *pToRecordset = pToDataset->Query(queryDef);
+	pToRecordset->MoveFirst();
+	UGGeoPoint *piont = new UGGeoPoint();
+
+	UGGraphicObject* plotGeo = new UGGraphicObject();
+	UGPoint3D pt3D;
+	UGPoint3Ds pt3Ds;
+
+	int action = 0;
+	int libId = plotJYid;
+	int symbolCode = 30200;
+
+	UGPoint2D clickPoint = m_pMapControl->PixelToMap(pt.x, pt.y);
+
+	pt3D.x = clickPoint.x;
+	pt3D.y = clickPoint.y;
+	pt3Ds.Add(pt3D);
+
+	//plotGeo->SetAction()
+	plotGeo->SetGeometryShape(libId, symbolCode, pt3Ds);
+
+	bool isTrue = pToRecordset->AddNew(plotGeo);
+	bool isUp = pToRecordset->Update();
+
+	m_pMapControl->Refresh();
+
+	// Trace down or trace up
+	//UGDatasetVector* pDatasetNetwork = (UGDatasetVector*)m_pMapControl->GetMapEditWnd()->m_mapWnd.m_Map.GetWorkspace()->GetDataSource(0)->GetDataset(6);
+	//UGUtilityAnalyseParams params;
+	//UGUtilityAnalyst* pAnalyst = new UGUtilityAnalyst();
+
+	//params.nTraceID = id; // id = 6
+	//params.bFindWithoutLoops = false;
+	//params.nSearchMode = 0;// 0: up, 1: down
+	//params.strCostName = _U("Length");
+
+	//pAnalyst->SetDatasetNetwork(pDatasetNetwork);
+	//pAnalyst->SetNodeIDField(_U("SmNodeID"));
+	//pAnalyst->SetArcIDField(_U("SmEdgeID"));
+	//pAnalyst->SetFNodeIDField(_U("SmFNode"));
+	//pAnalyst->SetTNodeIDField(_U("SmTNode"));
+	//pAnalyst->SetDirection(_U("SmUserID"));
+
+	//UGArray<UGCostFields> arrCostFields;
+	//
+	//UGCostFields costFields;
+	//costFields.strCostName = _U("Length");
+	//costFields.strFTField = _U("SmLength");
+	//costFields.strTFField = _U("SmLength");
+	//arrCostFields.Add(costFields);
+
+	//pAnalyst->SetCostFields(arrCostFields);
+	//pAnalyst->SetNodeInterval(0);
+
+	//bool isCreated = pAnalyst->CreateTraceAdjMatrix();
+	//
+	//UGArray<UGuint> edgesArray; // 弧段ID数组，在网络数据集的主数据集(线)中获取对应对象
+	//UGArray<UGuint> nodesArray; // 节点ID数组，在网络数据集的子数据集(点)中获取对应对象
+
+	//
+	//if (pAnalyst->Trace(params, edgesArray, nodesArray))
+	//{
+	//	int count = edgesArray.GetSize();
+	//	int count1 = nodesArray.GetSize();
+	//}
+	//else
+	//{
+	//	int count = edgesArray.GetSize();
+	//	int count1 = nodesArray.GetSize();
+	//}
+	//UGArray<UGuint> edgesArray1;
+	/*UGArray<UGuint> nodesArray1;
+	if (pAnalyst->TraceFromArc(params, edgesArray1, nodesArray1))
+	{
+		int count = edgesArray1.GetSize();
+		int count1 = nodesArray1.GetSize();
+	}
+	else
+	{
+		int count = edgesArray1.GetSize();
+		int count1 = nodesArray1.GetSize();
+	}*/
+	//edgesArray.RemoveAll();
+	//edgesArray1.RemoveAll();
+	//nodesArray.RemoveAll();
+	//nodesArray1.RemoveAll();
+	//delete pAnalyst;
+	
+	
+}
+
+
+void JunSuMFCDialogDlg::OnDrawDrawplot()
+{
+	UGMapEditorWnd* pMapEditorWnd = m_pMapControl->GetMapEditWnd();
+	UGMap* pUGMap = &(pMapEditorWnd->m_mapWnd.m_Map);
+
+	UGString layerName = _U("DrawCAD@World");
+	UGLayer* pLayer = pUGMap->m_Layers.GetLayer(layerName);
+	if (pLayer != NULL)
+	{
+		ResetLastEditLayer(pLayer);
+
+		pLayer->SetSelectable(true);
+
+		UGLayers* pLayers = &(pUGMap->m_Layers);
+		pLayers->SetEditableLayer(pLayer, true);
+
+	    ActionGraphicObject plotAction;
+		plotAction.param1 = plotJYid;
+		plotAction.param2 = 30200;
+		pMapEditorWnd->SetActionGraphicObject(UGDrawParamaters::uaEdit, plotAction);
+	}
+	else
+	{
+
+	}
+}
+
+
+void JunSuMFCDialogDlg::OnDrawPlotArraws()
+{
+	// TODO: Add your command handler code here
+
+	UGMapEditorWnd* pMapEditorWnd = m_pMapControl->GetMapEditWnd();
+	UGMap* pUGMap = &(pMapEditorWnd->m_mapWnd.m_Map);
+
+	UGString layerName = _U("DrawCAD@World");
+	UGLayer* pLayer = pUGMap->m_Layers.GetLayer(layerName);
+	if (pLayer != NULL)
+	{
+		ResetLastEditLayer(pLayer);
+
+		pLayer->SetSelectable(true);
+
+		UGLayers* pLayers = &(pUGMap->m_Layers);
+		pLayers->SetEditableLayer(pLayer, true);
+
+		ActionGraphicObject plotAction;
+		plotAction.param1 = plotTYid;
+		plotAction.param2 = 1011;
+		pMapEditorWnd->SetActionGraphicObject(UGDrawParamaters::uaEdit, plotAction);
+	}
+	else
+	{
+
+	}
 }
