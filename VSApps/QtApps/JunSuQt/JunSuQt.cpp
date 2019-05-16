@@ -41,7 +41,7 @@ void JunSuQt::initMenuBar() {
 		QMenu* menu = new QMenu("File", menuBar);
 		// File -> New
 		{
-			QAction* menuAction = new QAction("New");
+			QAction* menuAction = new QAction("New", this);
 			menuAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_N));
 
 			//menu->addAction(menuAction);
@@ -49,7 +49,7 @@ void JunSuQt::initMenuBar() {
 		}
 		// File -> Open
 		{
-			QAction* menuAction = new QAction("Open");
+			QAction* menuAction = new QAction("Open", this);
 			menuAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_O));
 			
 			menu->addAction(menuAction);
@@ -59,7 +59,7 @@ void JunSuQt::initMenuBar() {
 		}
 		// File -> Close
 		{
-			QAction* menuAction = new QAction("Close");
+			QAction* menuAction = new QAction("Close", this);
 			menuAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_C));
 
 			menu->addAction(menuAction);
@@ -72,7 +72,7 @@ void JunSuQt::initMenuBar() {
 		QMenu* menu = new QMenu("Edit", menuBar);
 		// Eidt -> Pan Map
 		{
-			QAction* menuAction = new QAction("Pan Map");
+			QAction* menuAction = new QAction("Pan Map", this);
 			menu->addAction(menuAction);
 			menu->addSeparator();
 
@@ -85,7 +85,7 @@ void JunSuQt::initMenuBar() {
 		QMenu* menu = new QMenu("Draw", menuBar);
 		// Draw -> Point
 		{
-			QAction* menuAction = new QAction("Draw Point");
+			QAction* menuAction = new QAction("Draw Point", this);
 			menu->addAction(menuAction);
 			menu->addSeparator();
 
@@ -93,7 +93,7 @@ void JunSuQt::initMenuBar() {
 		}
 		// Draw -> Line
 		{
-			QAction* menuAction = new QAction("Draw Line");
+			QAction* menuAction = new QAction("Draw Line", this);
 			menu->addAction(menuAction);
 			menu->addSeparator();
 
@@ -101,7 +101,7 @@ void JunSuQt::initMenuBar() {
 		}
 		// Draw -> Polygon
 		{
-			QAction* menuAction = new QAction("Draw Polygon");
+			QAction* menuAction = new QAction("Draw Polygon", this);
 			menu->addAction(menuAction);
 			menu->addSeparator();
 
@@ -115,7 +115,7 @@ void JunSuQt::initToolBar() {
 	QToolBar* toolBar = addToolBar("ToolBar");
 	{
 		{
-			QAction* action = new QAction();
+			QAction* action = new QAction(this);
 			action->setToolTip("Open");
 			action->setIcon(QIcon(":/JunSuQt/Resources/open.png"));
 
@@ -125,7 +125,7 @@ void JunSuQt::initToolBar() {
 		}
 		// Draw Line
 		{
-			QAction* action = new QAction();
+			QAction* action = new QAction(this);
 			action->setToolTip("Draw Line");
 			action->setIcon(QIcon(":/JunSuQt/Resources/Line.png"));
 
