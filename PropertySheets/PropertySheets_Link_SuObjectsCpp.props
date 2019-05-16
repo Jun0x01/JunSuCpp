@@ -8,7 +8,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)..\SuObjectsCpp\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>Mapping.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Mapping.lib;Data.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>

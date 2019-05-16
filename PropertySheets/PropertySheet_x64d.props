@@ -14,7 +14,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SuObjectsDir)\lib\libd_x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SuToolkitd.lib;SuElementd.lib;SuOGDCd.lib;SuBased.lib;SuWorkspaced.lib;SuDrawingd.lib;SuMapEditord.lib;SuSpatialIndexd.lib;SuEngined.lib;SuGraphicsd.lib;SuMapd.lib;SuChartBased.lib;SuBase3Dd.lib;SuGeometryd.lib;SuFileParserd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SuToolkitd.lib;SuElementd.lib;SuOGDCd.lib;SuBased.lib;SuWorkspaced.lib;SuDrawingd.lib;SuMapEditord.lib;SuSpatialIndexd.lib;SuEngined.lib;SuGraphicsd.lib;SuMapd.lib;SuChartBased.lib;SuBase3Dd.lib;SuGeometryd.lib;SuFileParserd.lib;SuNetworkEnvironmentd.lib;SuGeometricNetworkd.lib;SuGeometryPlotd.lib;SuGeometry3Dd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup />
