@@ -589,8 +589,10 @@ void JunSuMFCDialogDlg::GetSelectedGeo()
 	pStyle->SetMarkerStyle(4);
 
 	UGPoint2Ds *pts = new UGPoint2Ds();
-	pts->Add(UGPoint2D(104.161717071243, 36.0077016345897));
-	pts->Add(UGPoint2D(123.884893492701, 33.9110407940234));
+	UGPoint2D p1 = m_pMapControl->PixelToMap(pt.x, pt.y); // clicked position
+	UGPoint2D p2 = m_pMapControl->PixelToMap(pt.x + 50, pt.y + 50); // offset 50 pixels
+	pts->Add(p1);
+	pts->Add(p2);
 
 	UGGeoLine *pLine = new UGGeoLine();
 
