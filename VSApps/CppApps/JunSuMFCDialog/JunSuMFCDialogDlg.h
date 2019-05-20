@@ -56,6 +56,11 @@ private:
 
 	UGLayer* m_pLastEditLayer;
 	void ResetLastEditLayer(UGLayer* pLayer);
+
+	void addLineOnDynamicLayer();
+	void addPlotObjectIntoCADDataset();
+	void createAnimationWithSelectedPlotSymbol(UGSelection* pSelection);
+	void traceAnalyst(UGSelection* pSelection);
 //Resource
 private:
 	CMenu mMenu;

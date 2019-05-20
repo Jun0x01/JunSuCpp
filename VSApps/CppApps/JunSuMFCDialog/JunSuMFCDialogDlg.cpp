@@ -25,6 +25,11 @@
 #include "Engine/UGEngDefs.h"
 #include "Geometry/UGGeoLine.h"
 #include "GeometryPlot//UGGraphicObject.h"
+#include "Animation/UGAnimationDefine.h"
+#include "Animation/UGAnimationManager.h"
+#include "Animation/UGAnimationGO.h"
+#include "Animation/UGScaleAnimation.h"
+#include "Animation/UGAnimationGroup.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -62,6 +67,12 @@ void UGSTDCALL GeometrySelectChangedCallBack(UGlong pWnd, UGint nSelectedGeometr
 	{
 
 	}
+}
+
+// animation timer callback
+void CALLBACK TimerProc(HWND hWnd, UINT nMsg, UINT_PTR nTimerid, DWORD dwTime)
+{
+	UGAnimationManager::Instance()->Excute();
 }
 
 // CAboutDlg dialog used for App About
@@ -129,6 +140,11 @@ JunSuMFCDialogDlg::JunSuMFCDialogDlg(CWnd* pParent /*=NULL*/)
 	string strPath = "..\\..\\..\\TestData\\World.smwu";
 	OpenWorkspace(strPath);
 	
+	// Plot animation timer
+	SetTimer(1, 1000, TimerProc);
+
+	//UGAnimationManager* pManager = UGAnimationManager::Instance();
+
 }
 
 void JunSuMFCDialogDlg::DoDataExchange(CDataExchange* pDX)
@@ -535,12 +551,12 @@ void JunSuMFCDialogDlg::GetSelectedGeo()
 		
 	}
 	*/
-	UGLayer* pLayer;
-	UGSelection* pSelection;
+	
+	UGLayer* pLayer = NULL;
+	UGSelection* pSelection = NULL;
 	int geoCount;
 	UGLayers* pLayers = &(m_pMapControl->GetMapEditWnd()->m_mapWnd.m_Map.m_Layers);
 
-	
 	int id = -1;
 	int count =  pLayers->GetTotalCount();
 	for(int i=0; i<count; i++)
@@ -560,6 +576,7 @@ void JunSuMFCDialogDlg::GetSelectedGeo()
 		}
 		if (id != -1) {
 
+			// change selection style
 			/*bool isCustomStyle = pSelection->HasCustomStyle();
 			pSelection->SetCustomStyle(true);
 			UGStyle style = pSelection->GetStyle();
@@ -579,146 +596,11 @@ void JunSuMFCDialogDlg::GetSelectedGeo()
 			
 	}
 
-	m_pMapControl->GetMapEditWnd()->m_mapWnd.m_Map.m_DynamicLayers.Remove(_U("testDynamic"));
-	UGDynamicLayer *pDyLayer = new UGDynamicLayer();
-	pDyLayer->SetLayerName(_U("testDynamic"));
+	//addLineIntoDynamicLayer();
+	//addPlotObjectIntoCADDataset;
+	createAnimationWithSelectedPlotSymbol(pSelection);
+	//traceAnalyst(pSelection);
 
-
-	UGStyle* pStyle = new UGStyle();
-	//pStyle->SetMarkerSize(10);
-	pStyle->SetMarkerStyle(4);
-
-	UGPoint2Ds *pts = new UGPoint2Ds();
-	UGPoint2D p1 = m_pMapControl->PixelToMap(pt.x, pt.y); // clicked position
-	UGPoint2D p2 = m_pMapControl->PixelToMap(pt.x + 50, pt.y + 50); // offset 50 pixels
-	pts->Add(p1);
-	pts->Add(p2);
-
-	UGGeoLine *pLine = new UGGeoLine();
-
-	pLine->AddSub(pts->GetData(), 2);
-	pStyle->SetLineWidth(3);
-	pStyle->SetLineColor(UGColor(16711680));
-
-	pLine->SetStyle(pStyle);
-
-	pDyLayer->Add(UGString(_U("L")), pLine);
-
-	m_pMapControl->GetMapEditWnd()->m_mapWnd.m_Map.m_DynamicLayers.Add(pDyLayer);
-
-	// GrahpicObject
-	UGWorkspace* pWorkSpace = m_pMapControl->GetMapEditWnd()->m_mapWnd.m_Map.GetWorkspace();
-	UGDataSource* datasource = pWorkSpace->GetDataSource(_U("World"));
-	UGDatasetVector *pToDataset = (UGDatasetVector*)datasource->GetDataset(_U("DrawCAD"));
-	pToDataset->GetType();
-
-
-	UGQueryDef queryDef;
-
-	pToDataset->Open(); // pToRecordset == 0;
-
-	queryDef.m_nType = UGQueryDef::General;
-	if (pToDataset->GetType() == UGDataset::Tabular)
-	{
-		queryDef.m_nOptions = UGQueryDef::Attribute;
-	}
-	else
-	{
-		queryDef.m_nOptions = UGQueryDef::Both;
-	}
-	queryDef.m_nMode = UGQueryDef::GeneralQuery;
-	queryDef.m_nCursorType = UGQueryDef::OpenDynamic;
-
-
-	UGRecordset *pToRecordset = pToDataset->Query(queryDef);
-	pToRecordset->MoveFirst();
-	UGGeoPoint *piont = new UGGeoPoint();
-
-	UGGraphicObject* plotGeo = new UGGraphicObject();
-	UGPoint3D pt3D;
-	UGPoint3Ds pt3Ds;
-
-	int action = 0;
-	int libId = plotJYid;
-	int symbolCode = 30200;
-
-	UGPoint2D clickPoint = m_pMapControl->PixelToMap(pt.x, pt.y);
-
-	pt3D.x = clickPoint.x;
-	pt3D.y = clickPoint.y;
-	pt3Ds.Add(pt3D);
-
-	//plotGeo->SetAction()
-	plotGeo->SetGeometryShape(libId, symbolCode, pt3Ds);
-
-	bool isTrue = pToRecordset->AddNew(plotGeo);
-	bool isUp = pToRecordset->Update();
-
-	m_pMapControl->Refresh();
-
-	// Trace down or trace up
-	//UGDatasetVector* pDatasetNetwork = (UGDatasetVector*)m_pMapControl->GetMapEditWnd()->m_mapWnd.m_Map.GetWorkspace()->GetDataSource(0)->GetDataset(6);
-	//UGUtilityAnalyseParams params;
-	//UGUtilityAnalyst* pAnalyst = new UGUtilityAnalyst();
-
-	//params.nTraceID = id; // id = 6
-	//params.bFindWithoutLoops = false;
-	//params.nSearchMode = 0;// 0: up, 1: down
-	//params.strCostName = _U("Length");
-
-	//pAnalyst->SetDatasetNetwork(pDatasetNetwork);
-	//pAnalyst->SetNodeIDField(_U("SmNodeID"));
-	//pAnalyst->SetArcIDField(_U("SmEdgeID"));
-	//pAnalyst->SetFNodeIDField(_U("SmFNode"));
-	//pAnalyst->SetTNodeIDField(_U("SmTNode"));
-	//pAnalyst->SetDirection(_U("SmUserID"));
-
-	//UGArray<UGCostFields> arrCostFields;
-	//
-	//UGCostFields costFields;
-	//costFields.strCostName = _U("Length");
-	//costFields.strFTField = _U("SmLength");
-	//costFields.strTFField = _U("SmLength");
-	//arrCostFields.Add(costFields);
-
-	//pAnalyst->SetCostFields(arrCostFields);
-	//pAnalyst->SetNodeInterval(0);
-
-	//bool isCreated = pAnalyst->CreateTraceAdjMatrix();
-	//
-	//UGArray<UGuint> edgesArray; // 弧段ID数组，在网络数据集的主数据集(线)中获取对应对象
-	//UGArray<UGuint> nodesArray; // 节点ID数组，在网络数据集的子数据集(点)中获取对应对象
-
-	//
-	//if (pAnalyst->Trace(params, edgesArray, nodesArray))
-	//{
-	//	int count = edgesArray.GetSize();
-	//	int count1 = nodesArray.GetSize();
-	//}
-	//else
-	//{
-	//	int count = edgesArray.GetSize();
-	//	int count1 = nodesArray.GetSize();
-	//}
-	//UGArray<UGuint> edgesArray1;
-	/*UGArray<UGuint> nodesArray1;
-	if (pAnalyst->TraceFromArc(params, edgesArray1, nodesArray1))
-	{
-		int count = edgesArray1.GetSize();
-		int count1 = nodesArray1.GetSize();
-	}
-	else
-	{
-		int count = edgesArray1.GetSize();
-		int count1 = nodesArray1.GetSize();
-	}*/
-	//edgesArray.RemoveAll();
-	//edgesArray1.RemoveAll();
-	//nodesArray.RemoveAll();
-	//nodesArray1.RemoveAll();
-	//delete pAnalyst;
-	
-	
 }
 
 
@@ -777,4 +659,243 @@ void JunSuMFCDialogDlg::OnDrawPlotArraws()
 	{
 
 	}
+}
+
+//According to clicked position
+void JunSuMFCDialogDlg::addLineOnDynamicLayer()
+{
+	m_pMapControl->GetMapEditWnd()->m_mapWnd.m_Map.m_DynamicLayers.Remove(_U("testDynamic"));
+	UGDynamicLayer *pDyLayer = new UGDynamicLayer();
+	pDyLayer->SetLayerName(_U("testDynamic"));
+
+
+	UGStyle* pStyle = new UGStyle();
+	//pStyle->SetMarkerSize(10);
+	pStyle->SetMarkerStyle(4);
+
+	UGPoint2Ds *pts = new UGPoint2Ds();
+	UGPoint2D p1 = m_pMapControl->PixelToMap(pt.x, pt.y); // clicked position
+	UGPoint2D p2 = m_pMapControl->PixelToMap(pt.x + 50, pt.y + 50); // offset 50 pixels
+	pts->Add(p1);
+	pts->Add(p2);
+
+	UGGeoLine *pLine = new UGGeoLine();
+
+	pLine->AddSub(pts->GetData(), 2);
+	pStyle->SetLineWidth(3);
+	pStyle->SetLineColor(UGColor(16711680));
+
+	pLine->SetStyle(pStyle);
+
+	pDyLayer->Add(UGString(_U("L")), pLine);
+
+	m_pMapControl->GetMapEditWnd()->m_mapWnd.m_Map.m_DynamicLayers.Add(pDyLayer);
+
+}
+
+//According to clicked position
+void JunSuMFCDialogDlg::addPlotObjectIntoCADDataset()
+{
+	// GrahpicObject/Plot
+	UGWorkspace* pWorkSpace = m_pMapControl->GetMapEditWnd()->m_mapWnd.m_Map.GetWorkspace();
+	UGDataSource* datasource = pWorkSpace->GetDataSource(_U("World"));
+	UGDatasetVector *pToDataset = (UGDatasetVector*)datasource->GetDataset(_U("DrawCAD"));
+	pToDataset->GetType();
+
+
+	UGQueryDef queryDef;
+
+	pToDataset->Open(); // pToRecordset == 0;
+
+	queryDef.m_nType = UGQueryDef::General;
+	if (pToDataset->GetType() == UGDataset::Tabular)
+	{
+		queryDef.m_nOptions = UGQueryDef::Attribute;
+	}
+	else
+	{
+		queryDef.m_nOptions = UGQueryDef::Both;
+	}
+	queryDef.m_nMode = UGQueryDef::GeneralQuery;
+	queryDef.m_nCursorType = UGQueryDef::OpenDynamic;
+
+
+	UGRecordset *pToRecordset = pToDataset->Query(queryDef);
+	pToRecordset->MoveFirst();
+	UGGeoPoint *piont = new UGGeoPoint();
+
+	UGGraphicObject* plotGeo = new UGGraphicObject();
+	UGPoint3D pt3D;
+	UGPoint3Ds pt3Ds;
+
+	int action = 0;
+	int libId = plotJYid;
+	int symbolCode = 30200;
+
+	UGPoint2D clickPoint = m_pMapControl->PixelToMap(pt.x, pt.y);
+
+	pt3D.x = clickPoint.x;
+	pt3D.y = clickPoint.y;
+	pt3Ds.Add(pt3D);
+
+	plotGeo->SetGeometryShape(libId, symbolCode, pt3Ds);
+
+	bool isTrue = pToRecordset->AddNew(plotGeo);
+	bool isUp = pToRecordset->Update();
+
+	m_pMapControl->Refresh();
+
+	pToRecordset->Close();
+	delete pToRecordset;
+	pToDataset->Close();
+}
+
+// 需要一个Timer去执行UGAnimationManager::Instance()->Execute(); 参加TimerProc, SetTimer
+void JunSuMFCDialogDlg::createAnimationWithSelectedPlotSymbol(UGSelection* pSelection)
+{
+	// Selected Geometry
+	int id = pSelection->GetAt(0);
+	pSelection->RemoveAll();
+	UGLayer* pLayer = pSelection->Getlayer();
+	UGDatasetVector* pSelectedDataset = (UGDatasetVector*)pLayer->GetDataset();
+	UGQueryDef queryDef;
+
+	pSelectedDataset->Open();
+
+	queryDef.m_nType = UGQueryDef::General;
+	if (pSelectedDataset->GetType() == UGDataset::Tabular)
+	{
+		queryDef.m_nOptions = UGQueryDef::Attribute;
+	}
+	else
+	{
+		queryDef.m_nOptions = UGQueryDef::Both;
+	}
+	queryDef.m_nMode = UGQueryDef::GeneralQuery;
+	queryDef.m_nCursorType = UGQueryDef::OpenStatic;
+
+	UGString filter;
+	filter.Format(_U("SmID=%d"), id);
+	queryDef.m_strFilter = filter;
+
+	UGRecordset *pRecordset = pSelectedDataset->Query(queryDef);
+	if (pRecordset == NULL)
+	{
+		return;
+	}
+
+	UGGeometry* pGeo = NULL;
+	pRecordset->GetGeometry(pGeo);
+	string geoType = typeid(*pGeo).name();
+	string typeName = "class UGC::UGGraphicObject";
+
+	if (typeName.compare(geoType) == 0) {
+		UGAnimationManager* pAnimationManager = UGAnimationManager::Instance();
+		pAnimationManager->Stop();
+
+		UGString animationGroup = _U("group");
+
+		UGAnimationGroup* pGroup = pAnimationManager->GetGroupByName(animationGroup);
+		if (pGroup == NULL) {
+			pGroup = pAnimationManager->AddAnimationGroup(animationGroup);
+		}
+
+		UGString scaleAnimation = _U("ScaleAnimation");
+		UGAnimationGO* pAnimation = pGroup->GetAnimationByName(scaleAnimation);
+		if (pAnimation == NULL)
+		{
+			pAnimation = pAnimationManager->CreateAnimation(UGAnimationType::ScaleAnimation);
+			pAnimation->SetName(scaleAnimation);
+		}
+		else
+		{
+			//delete pAnimation->GetGeometry();
+		}
+
+		UGString layerName = pLayer->GetName();
+
+		pAnimation->SetGeometry((UGGeometry3D*)pGeo, m_pMapControl->GetMapEditWnd(), layerName);
+
+		pAnimation->SetStartTime(0);
+		pAnimation->SetDuration(10);
+
+		// 
+		((UGScaleAnimation*)pAnimation)->SetStartScaleFactor(0);
+		((UGScaleAnimation*)pAnimation)->SetEndScaleFactor(1);
+
+		pGroup->AddAnimation(pAnimation);
+
+		pGroup->SetStartTime(0);
+		bool isTrue = pAnimationManager->SetPlayRange(0, 1);
+
+		pAnimationManager->Play();
+
+	}
+}
+
+// According to selected Geometry
+void JunSuMFCDialogDlg::traceAnalyst(UGSelection* pSelection)
+{
+	int id = pSelection->GetAt(0);
+	// Trace down or trace up
+	UGDatasetVector* pDatasetNetwork = (UGDatasetVector*)m_pMapControl->GetMapEditWnd()->m_mapWnd.m_Map.GetWorkspace()->GetDataSource(0)->GetDataset(6);
+	UGUtilityAnalyseParams params;
+	UGUtilityAnalyst* pAnalyst = new UGUtilityAnalyst();
+
+	params.nTraceID = id; // id = 6
+	params.bFindWithoutLoops = false;
+	params.nSearchMode = 0;// 0: up, 1: down
+	params.strCostName = _U("Length");
+
+	pAnalyst->SetDatasetNetwork(pDatasetNetwork);
+	pAnalyst->SetNodeIDField(_U("SmNodeID"));
+	pAnalyst->SetArcIDField(_U("SmEdgeID"));
+	pAnalyst->SetFNodeIDField(_U("SmFNode"));
+	pAnalyst->SetTNodeIDField(_U("SmTNode"));
+	pAnalyst->SetDirection(_U("SmUserID"));
+
+	UGArray<UGCostFields> arrCostFields;
+	//
+	UGCostFields costFields;
+	costFields.strCostName = _U("Length");
+	costFields.strFTField = _U("SmLength");
+	costFields.strTFField = _U("SmLength");
+	arrCostFields.Add(costFields);
+
+	pAnalyst->SetCostFields(arrCostFields);
+	pAnalyst->SetNodeInterval(0);
+
+	bool isCreated = pAnalyst->CreateTraceAdjMatrix();
+	//
+	UGArray<UGuint> edgesArray; // 弧段ID数组，在网络数据集的主数据集(线)中获取对应对象
+	UGArray<UGuint> nodesArray; // 节点ID数组，在网络数据集的子数据集(点)中获取对应对象
+
+	//
+	if (pAnalyst->Trace(params, edgesArray, nodesArray))
+	{
+		int count = edgesArray.GetSize();
+		int count1 = nodesArray.GetSize();
+	}
+	else
+	{
+		int count = edgesArray.GetSize();
+		int count1 = nodesArray.GetSize();
+	}
+	UGArray<UGuint> edgesArray1;
+	UGArray<UGuint> nodesArray1;
+	if (pAnalyst->TraceFromArc(params, edgesArray1, nodesArray1))
+	{
+		int count = edgesArray1.GetSize();
+		int count1 = nodesArray1.GetSize();
+	}
+	else
+	{
+		int count = edgesArray1.GetSize();
+		int count1 = nodesArray1.GetSize();
+	}
+	edgesArray.RemoveAll();
+	edgesArray1.RemoveAll();
+	nodesArray.RemoveAll();
+	nodesArray1.RemoveAll();
+	delete pAnalyst;
 }
