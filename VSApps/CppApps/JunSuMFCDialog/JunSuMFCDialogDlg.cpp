@@ -837,8 +837,16 @@ void JunSuMFCDialogDlg::createAnimationWithSelectedPlotSymbol(UGSelection* pSele
 void JunSuMFCDialogDlg::traceAnalyst(UGSelection* pSelection)
 {
 	int id = pSelection->GetAt(0);
+	UGLayer* pLayer = pSelection->Getlayer();
+	UGDataset* pDataset = pLayer->GetDataset();
+	UGString name = pDataset->GetName();
+	int index = name.Find(_U("_Network"));
+	if (index == -1)
+		return;
+	UGString datasetName = name.Left(index + 8);
+	UGDatasetVector* pDatasetNetwork = (UGDatasetVector*) pDataset->GetDataSource()->GetDataset(datasetName);
 	// Trace down or trace up
-	UGDatasetVector* pDatasetNetwork = (UGDatasetVector*)m_pMapControl->GetMapEditWnd()->m_mapWnd.m_Map.GetWorkspace()->GetDataSource(0)->GetDataset(6);
+	//UGDatasetVector* pDatasetNetwork = (UGDatasetVector*)m_pMapControl->GetMapEditWnd()->m_mapWnd.m_Map.GetWorkspace()->GetDataSource(0)->GetDataset(6);
 	UGUtilityAnalyseParams params;
 	UGUtilityAnalyst* pAnalyst = new UGUtilityAnalyst();
 
@@ -869,29 +877,30 @@ void JunSuMFCDialogDlg::traceAnalyst(UGSelection* pSelection)
 	//
 	UGArray<UGuint> edgesArray; // 弧段ID数组，在网络数据集的主数据集(线)中获取对应对象
 	UGArray<UGuint> nodesArray; // 节点ID数组，在网络数据集的子数据集(点)中获取对应对象
-
+	int count = 0;
+	int count1 = 0;
 	//
 	if (pAnalyst->Trace(params, edgesArray, nodesArray))
 	{
-		int count = edgesArray.GetSize();
-		int count1 = nodesArray.GetSize();
+		count = edgesArray.GetSize();
+		count1 = nodesArray.GetSize();
 	}
 	else
 	{
-		int count = edgesArray.GetSize();
-		int count1 = nodesArray.GetSize();
+		count = edgesArray.GetSize();
+		count1 = nodesArray.GetSize();
 	}
 	UGArray<UGuint> edgesArray1;
 	UGArray<UGuint> nodesArray1;
 	if (pAnalyst->TraceFromArc(params, edgesArray1, nodesArray1))
 	{
-		int count = edgesArray1.GetSize();
-		int count1 = nodesArray1.GetSize();
+		count = edgesArray1.GetSize();
+		count1 = nodesArray1.GetSize();
 	}
 	else
 	{
-		int count = edgesArray1.GetSize();
-		int count1 = nodesArray1.GetSize();
+		count = edgesArray1.GetSize();
+		count1 = nodesArray1.GetSize();
 	}
 	edgesArray.RemoveAll();
 	edgesArray1.RemoveAll();
