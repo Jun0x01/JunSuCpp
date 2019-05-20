@@ -14,7 +14,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SuObjectsDir)\lib\lib_x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SuToolkit.lib;SuElement.lib;SuOGDC.lib;SuBase.lib;SuWorkspace.lib;SuDrawing.lib;SuMapEditor.lib;SuSpatialIndex.lib;SuEngine.lib;SuGraphics.lib;SuMap.lib;SuChartBase.lib;SuBase3D.lib;SuGeometry.lib;SuFileParser.lib;SuNetworkEnvironment.lib;SuGeometricNetwork.lib;SuGeometryPlot.lib;SuGeometry3D.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SuToolkit.lib;SuElement.lib;SuOGDC.lib;SuBase.lib;SuWorkspace.lib;SuDrawing.lib;SuMapEditor.lib;SuSpatialIndex.lib;SuEngine.lib;SuGraphics.lib;SuMap.lib;SuChartBase.lib;SuBase3D.lib;SuGeometry.lib;SuFileParser.lib;SuNetworkEnvironment.lib;SuGeometricNetwork.lib;SuGeometryPlot.lib;SuGeometry3D.lib;SuAnimation.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup />
