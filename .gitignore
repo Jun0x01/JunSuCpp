@@ -4,3 +4,8 @@ Bin/
 IntDir/
 GeneratedFiles/
 .vs
+NetApps/
+JunSuperMapDialog/
+JunSuperMapApp/
+DatasetMerge/
+.gitignore
