@@ -29,7 +29,7 @@ JunSuCpp
 - VS2012 + Qt5.2(Qt addin 1.2.5)
 - VS2017 + Qt5.2 及以上（Qt addin 2.3.2, 使用过的Qt有Qt5.2、Qt5.6.3、Qt5.9.3、Qt5.12
 - Windows, Qt Creator 5.2及以上
-- Unbuntu, Qt Creator 5.2, 由于Qt库兼容问题，不支持过高版本
+- Unbuntu, Qt Creator 4.8.6, 5.2, 由于Qt库兼容问题，不支持过高版本, 最好使用4.8.6版本的Qt库
 
 1. PropertySheets中添加顺序，以Debug_x64为例
 ``` lua
