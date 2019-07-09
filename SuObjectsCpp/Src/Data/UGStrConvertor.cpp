@@ -6,7 +6,7 @@
 #include "Data/UGStrConvertor.h"
 
 using namespace SuperMap;
-string UGStrConvertor::Tostring(UGString &ugstr)
+string UGStrConvertor::Tostring(const UGString &ugstr)
 {
 	UGMBString mbStr;
 	ugstr.ToMBString(mbStr);

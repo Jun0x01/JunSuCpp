@@ -22,7 +22,7 @@ UGWorkspace* Workspace::GetUGWorkspace()
 	return m_pUGWorkspace;
 }
 
-bool Workspace::OpenWorkspaceFile(string filePath, string password /* = "" */)
+bool Workspace::OpenWorkspaceFile(const string &filePath, const string &password /* = "" */)
 {
 	// Close last opened workspace
 	m_pUGWorkspace->Close();
@@ -61,6 +61,8 @@ bool Workspace::OpenWorkspaceFile(string filePath, string password /* = "" */)
 	// Open the workspace file
 	if (m_pUGWorkspace->Open(wkCon))
 	{
+		//Fixed that failed save workpace file.
+		m_pUGWorkspace->m_WorkspaceConnection.m_bFailIfExists = false;
 		int count = m_pUGWorkspace->m_DataSources.GetCount();
 		if (0 == count)
 		{
@@ -77,7 +79,7 @@ bool Workspace::OpenWorkspaceFile(string filePath, string password /* = "" */)
 	}
 }
 
-bool Workspace::OpenWorkspaceDB(UGWorkspace::UGWorkspaceType type, string serverUrl, string dbName, string userName, string password, string workspaceName)
+bool Workspace::OpenWorkspaceDB(UGWorkspace::UGWorkspaceType type, const string &serverUrl, const string &dbName, const string &userName, const string &password, const string &workspaceName)
 {
 	// Close last opened workspace
 	m_pUGWorkspace->Close();
@@ -103,6 +105,11 @@ bool Workspace::OpenWorkspaceDB(UGWorkspace::UGWorkspaceType type, string server
 	wkCon.m_strUser = ug_userName;
 	wkCon.m_strPassword = ug_password;
 	wkCon.m_strWorkspaceName = ug_workspaceName;
+	if (UGWorkspace::UGWorkspaceType::WS_Version_Sql == type)
+	{
+		wkCon.m_strDriver = _U("SQL Server");
+	}
+
 	// Open the workspace file
 	if (m_pUGWorkspace->Open(wkCon))
 	{
@@ -120,7 +127,7 @@ bool Workspace::OpenWorkspaceDB(UGWorkspace::UGWorkspaceType type, string server
 	}
 }
 
-UGDataSource* Workspace::OpenDatasourceFile(UGEngineType type, string name, string filePath, string password /*= NULL*/, bool readOnly /*= false*/)
+UGDataSource* Workspace::OpenDatasourceFile(UGEngineType type, const string &name, const string &filePath, const string &password /*= ""*/, bool readOnly /*= false*/)
 {
 	// Convert string to UGString
 	UGString ug_name;
@@ -141,7 +148,7 @@ UGDataSource* Workspace::OpenDatasourceFile(UGEngineType type, string name, stri
 	return m_pUGWorkspace->OpenDataSource(dcon);
 }
 
-UGDataSource* Workspace::OpenDatasourceDB(UGEngineType type, string name, string serverUrl, string dbName, string userName, string password, bool readOnly /*= false*/)
+UGDataSource* Workspace::OpenDatasourceDB(UGEngineType type, const string &name, const string &serverUrl, const string &dbName, const string &userName, const string &password, bool readOnly /*= false*/)
 {
 	// Convert string to UGString
 	UGString ug_name;
@@ -166,11 +173,16 @@ UGDataSource* Workspace::OpenDatasourceDB(UGEngineType type, string name, string
 	dcon.m_strPassword = ug_password;
 	dcon.m_bReadOnly = readOnly;
 
+	if (UGEngineType::SQLPlus == type)
+	{
+		dcon.m_strDriver = _U("SQL Server");
+	}
+
 	return m_pUGWorkspace->OpenDataSource(dcon);
 
 }
 
-UGDataSource* Workspace::OpenDatasourceWeb(UGEngineType type, string name, string serverUrl, string OGCType /*= NULL*/, string serverKey /*= NULL*/)
+UGDataSource* Workspace::OpenDatasourceWeb(UGEngineType type, const string &name, const string &serverUrl, const string &OGCType /*= "" */, const string &serverKey /*= "" */)
 {
 	// Convert string to UGString
 	UGString ug_name;
@@ -199,10 +211,29 @@ void Workspace::CloseDatasource(int index)
 	m_pUGWorkspace->m_DataSources.ReleaseAt(index);
 }
 
-void Workspace::CloseDatasource(string name)
+void Workspace::CloseDatasource(const string &name)
 {
 	// Convert string to UGString
 	UGString ug_name;
 	ug_name.FromStd(name);
 	m_pUGWorkspace->m_DataSources.ReleaseAt(ug_name);
+}
+
+bool Workspace::RemoveMap(const string &mapName)
+{
+	UGString ugMapName;
+	ugMapName.FromStd(mapName);
+	return m_pUGWorkspace->m_MapStorages.Remove(ugMapName);
+}
+
+bool Workspace::RemoveScene(const string &sceneName)
+{
+	UGString ugSceneName;
+	ugSceneName.FromStd(sceneName);
+	return m_pUGWorkspace->m_SceneStorages.Remove(ugSceneName);
+}
+
+bool Workspace::Save()
+{
+	return m_pUGWorkspace->Save();
 }

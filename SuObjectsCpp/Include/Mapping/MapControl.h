@@ -24,13 +24,23 @@ namespace SuperMap
 	   {
 		   //Constructor
 	   public:
-		   MapControl(INVALIDATEPROC pInvalidateCallBack, void* pView);
+		   /*
+		    *@en
+			*@pInvalidateCallBack  A callback function pointer through which to invalidate the Window if map content is updated
+			*@pWnd  the Window which owns the invalidate callback function
+		   */
+		   MapControl(INVALIDATEPROC pInvalidateCallBack, void* pWnd);
 		   virtual ~MapControl();
 
 		   // members
 	   private:
-		   // the handle of view which providing a window for map
+		   //@en the handle of view which providing a window for map
 		   void* m_pWnd;
+
+		   Workspace* m_pInnerWorkspace;
+
+		   //@en the handle of Workspace, passed in through function SetWorkspace()  
+		   Workspace* m_pWorkspace;
 
 	   private:
 		   // Map window
@@ -47,6 +57,8 @@ namespace SuperMap
 		   // old image
 		   UGImage* m_pGraphicsImageOld;
 		   bool mNeedRedraw;
+
+		   bool mIsInWorkspace;
 
 		   // methods
 	   private:
@@ -136,31 +148,59 @@ namespace SuperMap
 		   // User interface
 		public:
 			/*
-			 * @!en
-			 * @!brief Set a Workspace handler, so that MapControl can access map data in the workspace. 
+			 * @en
+			 * @brief Set a Workspace handler, so that MapControl can access map data in the workspace. 
 			 * @pWorkspace   pointer of Workspace which contains map data will be shown on map window by MapControl
 			 */
 			void SetWorkspace(Workspace* pWorkspace);
 
 			/*
-			 * @!en
-			 * @!brief Get UGLayers handler of current map, which manager layers in the map.
+			 * @en
+			 * @brief Get UGLayers handler of current map, which manager layers in the map.
 			 * @return pointer of UGLayers
 			 */
 			UGLayers* GetUGLayers();
 
 			/*
-			 * @!en
-			 * @!brief Set a layer editable or not in current map.
+			 * @en
+			 * @brief Set a layer editable or not in current map.
 			 * @pLayer       pointer of UGLayer
 			 * @isEditable   true or false
 			 */
 			void SetEditableLayer(UGLayer* pLayer, bool isEditable);
 
+			/*
+			 * @en
+			 * @brief    Open a map according its name
+			 * @mapName  The map's name
+			 * @return   Return true if open, or false
+			 */
+			bool OpenMap(string mapName);
 			
-			
-			
-		   
+			/*
+			 * @en
+			 * @brief Add a dataset on map according to its name and the datasource it belongs to.
+			 * @datasourceName Name of datasource which contains the dataset.
+			 * @datasetName    Dataset name
+			 * @bAddToHead     If true, the dataset will be add to the top of map; otherwise it will add to the end.
+			 * @return         Return a pointer of UGLayer if the dataset was added on map, or return NULL.
+			 */
+			UGLayer* AddDataset(string datasourceSName, string datasetName, bool bAddToHead = true);
+
+			/*
+			 * @en
+			 * @brief   Save current map.
+			 * @return  Return true if saved or return false.
+			 */
+			bool Save();
+
+			/*
+			 * @en
+			 * @brief    Save current map with a new name.
+			 * @mapName  Map's new name.
+			 * @return   Return true if saved or return false.
+			 */
+			bool SaveAs(string mapName);
 	   };
 	//}
 }

@@ -30,21 +30,34 @@ MapControl::MapControl(INVALIDATEPROC pInvalidateCallBack, void* pView)
 	//Initialize(pInvalidateCallBack, pView);
 	Initialize(InvalidateCallback, this);
 
-	UGWorkspace* pWorkspace = m_pUGMapWnd->m_mapWnd.m_Map.GetWorkspace();
+	/*UGWorkspace* pWorkspace = m_pUGMapWnd->m_mapWnd.m_Map.GetWorkspace();
 	if(pWorkspace == NULL){
 		pWorkspace = new UGWorkspace();
 		m_pUGMapWnd->m_mapWnd.m_Map.SetWorkspace(pWorkspace);
-	}
+	}*/
+
+	m_pInnerWorkspace = new Workspace();
+	m_pWorkspace = NULL;
+	SetWorkspace(m_pInnerWorkspace);
 
 	mNeedRedraw = false;
 
+	mIsInWorkspace = false;
 }
 MapControl::~MapControl()
 {
 	if (m_pUGMapWnd != NULL) 
 	{
-		// close map and datasource
+		// close map
+		m_pUGMapWnd->m_mapWnd.m_Map.Reset();
+		m_pUGMapWnd->m_mapWnd.Reset();
+		m_pUGMapWnd->Reset();
+
+		m_pUGMapWnd->m_mapWnd.m_Map.SetWorkspace(NULL);
+		
+		m_pUGMapWnd->m_mapWnd.SetInvalidateFunc(NULL, NULL);
 	}
+
 	delete m_pGraphicsImage;
 	m_pGraphicsImage = NULL;
 
@@ -55,6 +68,9 @@ MapControl::~MapControl()
 	m_pUGMapWnd = NULL;
 
 	m_pInvalidateCallback = NULL;
+
+	m_pWorkspace = NULL;
+	m_pWnd = NULL;
 }
 
 void MapControl::Initialize(INVALIDATEPROC pCallBack, void* pView)
@@ -164,7 +180,7 @@ void MapControl::OnDraw(int rectLeft, int rectTop, int rectRight, int rectBottom
 {
 	if(mNeedRedraw)
 	{
-		mNeedRedraw = false;
+		//mNeedRedraw = false;  //delete, it resulted in that map didn't refresh in MDI when window become active from inactive
 
 		if (m_IsMinSized)
 		{
@@ -442,6 +458,110 @@ UGLayers* MapControl::GetUGLayers()
 void MapControl::SetEditableLayer(UGLayer* pLayer, bool isEditable)
 {
 	m_pUGMapWnd->m_mapWnd.m_Map.m_Layers.SetEditableLayer(pLayer, isEditable);
+}
+
+void MapControl::SetWorkspace(Workspace* workspace)
+{
+	if (workspace == m_pWorkspace)
+	{
+		return;
+	}
+	
+	// close current map
+	m_pUGMapWnd->m_mapWnd.m_Map.Reset();
+	m_pUGMapWnd->Refresh();
+	
+	m_pWorkspace = workspace;
+	if (m_pWorkspace != NULL)
+	{
+		m_pUGMapWnd->m_mapWnd.m_Map.SetWorkspace(m_pWorkspace->GetUGWorkspace());
+	}
+	else
+	{
+		m_pUGMapWnd->m_mapWnd.m_Map.SetWorkspace(NULL);
+	}
+}
+
+bool MapControl::OpenMap(string mapName)
+{
+	UGString ugMapName;
+	ugMapName.FromStd(mapName);
+	bool isOpen = m_pUGMapWnd->m_mapWnd.m_Map.Open(ugMapName);
+	m_pUGMapWnd->Refresh();
+
+	mIsInWorkspace = isOpen;
+	return isOpen;
+}
+
+UGLayer* MapControl::AddDataset(string datasourceName, string datasetName, bool bAddToHead)
+{
+	UGString ugDatasetName, ugDatasourceName;
+	ugDatasourceName.FromStd(datasourceName);
+	ugDatasetName.FromStd(datasetName);
+	UGDataSource* pDatasource = m_pWorkspace->GetUGWorkspace()->GetDataSource(ugDatasourceName);
+	UGLayer* pLayer = NULL;
+	if (pDatasource != NULL) {
+		UGDataset* pDataset = pDatasource->GetDataset(ugDatasetName);
+		pLayer = GetUGLayers()->AddDataset(pDataset);
+		if (pLayer != NULL) {
+			if (GetUGLayers()->GetTotalCount() == 1) {
+				m_pUGMapWnd->m_mapWnd.m_Map.SetName(ugDatasetName);
+			}
+			Refresh();
+		}
+	}
+	else 
+	{
+		//TODO: ouput log
+	}
+	return pLayer;
+	
+}
+
+bool MapControl::Save()
+{
+	if(mIsInWorkspace){
+		/*UGWorkspace* pUGWorkspace = m_pWorkspace->GetUGWorkspace();
+		UGString xmlMap = m_pUGMapWnd->m_mapWnd.m_Map.ToXML();
+		UGString mapName = m_pUGMapWnd->m_mapWnd.m_Map.GetName();
+		UGMapStorage* pMapStore = pUGWorkspace->m_MapStorages.Find(mapName);
+		pMapStore->SetXML(xmlMap, pMapStore->GetVersion());*/
+		bool isSaved = m_pUGMapWnd->m_mapWnd.m_Map.Save();
+		bool isModified = m_pUGMapWnd->m_mapWnd.m_Map.GetWorkspace()->IsModified();
+		isSaved = m_pUGMapWnd->m_mapWnd.m_Map.GetWorkspace()->Save();
+		return isSaved;
+	}
+	else {
+		UGWorkspace* pUGWorkspace = m_pWorkspace->GetUGWorkspace();
+		UGString xmlMap = m_pUGMapWnd->m_mapWnd.m_Map.ToXML();
+		UGString mapName = m_pUGMapWnd->m_mapWnd.m_Map.GetName();
+		UGString validName = m_pWorkspace->GetUGWorkspace()->m_MapStorages.GetUnoccupiedMapName(mapName);
+
+		bool isSaved = false;
+		bool isAdded = pUGWorkspace->m_MapStorages.Add(validName);
+		if (isAdded) {
+			UGMapStorage* pMapStore = pUGWorkspace->m_MapStorages.Find(mapName);
+			pMapStore->SetXML(xmlMap, pMapStore->GetVersion());
+
+			isSaved = m_pUGMapWnd->m_mapWnd.m_Map.Save();
+			
+			mIsInWorkspace = isSaved;
+			
+		}
+		else
+		{
+			//TODO: output log
+		}
+		
+		return isSaved;
+	}
+}
+
+bool MapControl::SaveAs(string mapName)
+{
+	UGString ugMapName;
+	ugMapName.FromStd(mapName);
+	return m_pUGMapWnd->m_mapWnd.m_Map.SaveAs(ugMapName);
 }
 
 

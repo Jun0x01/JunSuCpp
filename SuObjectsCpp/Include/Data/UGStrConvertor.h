@@ -18,7 +18,7 @@ namespace SuperMap
 
 	public:
 
-		static string Tostring(UGString &str);
+		static string Tostring(const UGString &str);
 	};
 }
 #endif
