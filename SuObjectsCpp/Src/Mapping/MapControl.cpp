@@ -69,6 +69,9 @@ MapControl::~MapControl()
 
 	m_pInvalidateCallback = NULL;
 
+	delete m_pInnerWorkspace;
+	m_pInnerWorkspace = NULL;
+
 	m_pWorkspace = NULL;
 	m_pWnd = NULL;
 }
@@ -520,48 +523,49 @@ UGLayer* MapControl::AddDataset(string datasourceName, string datasetName, bool 
 
 bool MapControl::Save()
 {
-	if(mIsInWorkspace){
-		/*UGWorkspace* pUGWorkspace = m_pWorkspace->GetUGWorkspace();
-		UGString xmlMap = m_pUGMapWnd->m_mapWnd.m_Map.ToXML();
-		UGString mapName = m_pUGMapWnd->m_mapWnd.m_Map.GetName();
-		UGMapStorage* pMapStore = pUGWorkspace->m_MapStorages.Find(mapName);
-		pMapStore->SetXML(xmlMap, pMapStore->GetVersion());*/
-		bool isSaved = m_pUGMapWnd->m_mapWnd.m_Map.Save();
-		bool isModified = m_pUGMapWnd->m_mapWnd.m_Map.GetWorkspace()->IsModified();
-		isSaved = m_pUGMapWnd->m_mapWnd.m_Map.GetWorkspace()->Save();
-		return isSaved;
-	}
-	else {
-		UGWorkspace* pUGWorkspace = m_pWorkspace->GetUGWorkspace();
-		UGString xmlMap = m_pUGMapWnd->m_mapWnd.m_Map.ToXML();
-		UGString mapName = m_pUGMapWnd->m_mapWnd.m_Map.GetName();
-		UGString validName = m_pWorkspace->GetUGWorkspace()->m_MapStorages.GetUnoccupiedMapName(mapName);
 
-		bool isSaved = false;
-		bool isAdded = pUGWorkspace->m_MapStorages.Add(validName);
-		if (isAdded) {
-			UGMapStorage* pMapStore = pUGWorkspace->m_MapStorages.Find(mapName);
-			pMapStore->SetXML(xmlMap, pMapStore->GetVersion());
+	//if(mIsInWorkspace){
+	//	
+	//	bool isSaved = m_pUGMapWnd->m_mapWnd.m_Map.Save();
+	//	//bool isModified = m_pUGMapWnd->m_mapWnd.m_Map.GetWorkspace()->IsModified();
+	//	//isSaved = m_pUGMapWnd->m_mapWnd.m_Map.GetWorkspace()->Save();
+	//	return isSaved;
+	//}
+	//else {
+	//	UGWorkspace* pUGWorkspace = m_pWorkspace->GetUGWorkspace();
+	//	UGString xmlMap = m_pUGMapWnd->m_mapWnd.m_Map.ToXML();
+	//	UGString mapName = m_pUGMapWnd->m_mapWnd.m_Map.GetName();
+	//	UGString validName = m_pWorkspace->GetUGWorkspace()->m_MapStorages.GetUnoccupiedMapName(mapName);
 
-			isSaved = m_pUGMapWnd->m_mapWnd.m_Map.Save();
-			
-			mIsInWorkspace = isSaved;
-			
-		}
-		else
-		{
-			//TODO: output log
-		}
+	//	bool isSaved = false;
+	//	bool isAdded = pUGWorkspace->m_MapStorages.Add(validName);
+	//	if (isAdded) {
+	//		UGMapStorage* pMapStore = pUGWorkspace->m_MapStorages.Find(mapName);
+	//		pMapStore->SetXML(xmlMap, pMapStore->GetVersion());
+
+	//		isSaved = m_pUGMapWnd->m_mapWnd.m_Map.Save();
+	//		mIsInWorkspace = isSaved;
+	//		
+	//	}
+	//	else
+	//	{
+	//		//TODO: output log
+	//	}
 		
-		return isSaved;
-	}
+	//	return isSaved;
+	
+	//}
+	UGString mapName = m_pUGMapWnd->m_mapWnd.m_Map.GetName();
+	return m_pUGMapWnd->m_mapWnd.m_Map.SaveAs(mapName, true);
 }
 
 bool MapControl::SaveAs(string mapName)
 {
 	UGString ugMapName;
 	ugMapName.FromStd(mapName);
-	return m_pUGMapWnd->m_mapWnd.m_Map.SaveAs(ugMapName);
+	bool isSaved = false;
+	isSaved = m_pUGMapWnd->m_mapWnd.m_Map.SaveAs(ugMapName);
+	return isSaved;
 }
 
 

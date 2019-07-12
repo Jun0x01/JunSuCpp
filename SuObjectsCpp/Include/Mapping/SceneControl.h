@@ -38,7 +38,7 @@ namespace SuperMap
 	   public:
 		   /*
 		    *@en
-			*@pInvalidateCallBack  A callback function pointer through which to invalidate the Window if map content is updated
+			*@pInvalidateCallBack  A callback function pointer through which to invalidate the Window if scene content is updated
 			*@pWnd  the Window which owns the invalidate callback function
 		   */
 		   SceneControl(void* pWndHandle, int dpiX, int dpiY);
@@ -46,11 +46,13 @@ namespace SuperMap
 
 		   // members
 	   private:
-		   //@en the handle of view which providing a window for map
+		   //@en the handle of view which providing a window for scene
 		   void* m_pWnd;
 		   
 		   //@en the handle of Workspace, passed in through function SetWorkspace()  
 		   Workspace* m_pWorkspace;
+
+		   Workspace* m_pInnerWorkspace;
 
 	   private:
 		   // Map window
@@ -72,19 +74,21 @@ namespace SuperMap
 	   // public functions
 	   public:
 
-		   // Coordinate system conversion from pixel to map on the window which contain the map
-		   UGPoint2D PixelToMap(int x, int y);
+	   private: // TODO: 
+		   // Coordinate system conversion from pixel to scene on the window which contain the scene
+		   UGPoint3D PixelToSceneGlobal(int x, int y);
 
-		   // Coordinate system conversion from pixel to map on the window which contain the map.
-		   UGPoint2D PixelToMap(UGPoint pt);
+		   // Coordinate system conversion from pixel to scene on the window which contain the scene.
+		   UGPoint3D PixelToSceneGlobal(UGPoint pt);
 
-		   // Coordinate system conversion from map to pixel on the window which contain the map.
-		   UGPoint MapToPixel(double x, double y);
+		   // Coordinate system conversion from scene to pixel on the window which contain the scene.
+		   UGPoint SceneGlobalToPixel(double x, double y, double z);
 
-		   // Coordinate system conversion from map to pixel on the window which contain the map.
-		   UGPoint MapToPixel(UGPoint2D pnt);
+		   // Coordinate system conversion from scene to pixel on the window which contain the scene.
+		   UGPoint SceneGlobalToPixel(UGPoint3D pnt);
 
-		   // Refresh the map.
+	   public:
+		   // Refresh the scene.
 		   void Refresh();
 
 		   // Call it in a timer to render the scene.
@@ -96,7 +100,7 @@ namespace SuperMap
 
 	   // Called in window event. The pHDC is neccessary in MFC or .Net framework.
 	   public:
-		   // Called in OnPaint() or OnDraw() of client window to piant the map on the window
+		   // Called in OnPaint() or OnDraw() of client window to piant the scene on the window
 		   void OnDraw(int rectLeft, int rectTop, int rectRight, int rectBottom, void* pHDC = NULL);
 
 		   // Called when the window's size was changed.
@@ -109,16 +113,16 @@ namespace SuperMap
 		   void OnLMouseUp(unsigned int nFlags, int x, int y, void* pHDC = NULL);
 
 		   // Called when Left button double clicked.
-		   // Zoom in the map if the map is in pan mode.
+		   // Zoom in the scene if the scene is in pan mode.
 		   void OnLMouseDbClick(unsigned int nFlags, int x, int y, void* pHDC = NULL);
 
 		   // Called when mouse move.
-		   // Pan the map with left mouse button in pan mode.
-		   // Pan the map with middle mouse button in anyone mode if OnMidMouseDown() and OnMidMouseUp() is called when middle event accurs.
+		   // Pan the scene with left mouse button in pan mode.
+		   // Pan the scene with middle mouse button in anyone mode if OnMidMouseDown() and OnMidMouseUp() is called when middle event accurs.
 		   void OnMouseMove(unsigned int nFlags, int x, int y, void* pHDC = NULL);
 
 		   // Called when middle button scrolled.
-		   // Zoom in or Zoom out the map
+		   // Zoom in or Zoom out the scene
 		   void OnMouseWheel(unsigned int nFlags, short zDelta, int x, int y);
 
 		   // Called when right button down.
@@ -129,73 +133,82 @@ namespace SuperMap
 		   // Rigth button is used to finish current operation in edit or draw mode, so call this function when right button up
 		   void OnRMouseUp(unsigned int nFlags, int x, int y, void* pHDC = NULL);
 
-		   // Called when middle buttun down if you need pan the map with middle buttom
+		   // Called when middle buttun down if you need pan the scene with middle buttom
 		   void OnMidMouseDown(unsigned int nFlags, int x, int y, void* pHDC = NULL);
 
-		   // Called when middle buttun up if you need pan the map with middle buttom
+		   // Called when middle buttun up if you need pan the scene with middle buttom
 		   void OnMidMouseUp(unsigned int nFlags, int x, int y, void* pHDC = NULL);
 
 		   // User interface
 		public:
 			/*
 			 * @en
-			 * @brief Set a Workspace handler, so that SceneControl can access map data in the workspace. 
-			 * @pWorkspace   pointer of Workspace which contains map data will be shown on map window by SceneControl
+			 * @brief Set a Workspace handler, so that SceneControl can access scene data in the workspace. 
+			 * @pWorkspace   pointer of Workspace which contains scene data will be shown on scene window by SceneControl
 			 */
 			void SetWorkspace(Workspace* pWorkspace);
 
 			/*
 			 * @en
-			 * @brief Get UGLayers handler of current map, which manager layers in the map.
-			 * @return pointer of UGLayers
+			 * @brief Get UGLayers handler of current scense, which manager layers in the scense.
+			 * @return pointer of UGLayers3Ds
 			 */
 			UGLayer3Ds* GetUGLayers();
 
+		private: // TODO:
 			/*
 			 * @en
-			 * @brief Set a layer editable or not in current map.
+			 * @brief Set a layer editable or not in current scense.
 			 * @pLayer       pointer of UGLayer
 			 * @isEditable   true or false
 			 */
 			void SetEditableLayer(UGLayer* pLayer, bool isEditable);
 
+       public:
 			/*
 			 * @en
-			 * @brief    Open a map according its name
-			 * @mapName  The map's name
-			 * @return   Return true if open, or false
+			 * @brief       Open a scene according its name
+			 * @scenseName  The scene's name
+			 * @return      Return true if open, or false
 			 */
-			bool OpenScene(string mapName);
+			bool OpenScene(string scenseName);
 			
 			/*
 			 * @en
-			 * @brief Add a dataset on map according to its name and the datasource it belongs to.
-			 * @datasourceName Name of datasource which contains the dataset.
-			 * @datasetName    Dataset name
-			 * @bAddToHead     If true, the dataset will be add to the top of map; otherwise it will add to the end.
-			 * @return         Return a pointer of UGLayer if the dataset was added on map, or return NULL.
-			 */
-			UGLayer* AddDataset(string datasourceSName, string datasetName, bool bAddToHead = true);
-
-			/*
-			 * @en
-			 * @brief   Save current map.
+			 * @brief   Save current scene.
 			 * @return  Return true if saved or return false.
 			 */
 			bool Save();
 
 			/*
 			 * @en
-			 * @brief    Save current map with a new name.
-			 * @mapName  Map's new name.
-			 * @return   Return true if saved or return false.
+			 * @brief       Save current scene with a new name.
+			 * @scenseName  Scene's new name.
+			 * @return      Return true if saved or return false.
 			 */
-			bool SaveAs(string mapName);
+			bool SaveAs(string scenseName);
 
 			/*
-			 *
+			 * @en
+			 * @brief Activate current scene for rendering, call it when you switch from one SceneControl to  another.
 			 */
-			void ActiveScene();
+			void ActivateScene();
+
+			/*
+			 * @en
+			 * @brief Add a dataset on scene according to its name and the datasource it belongs to.
+			 * @datasourceName Name of datasource which contains the dataset.
+			 * @datasetName    Dataset name
+			 * @return         Return a pointer of UGLayer3D if the dataset was added, or return NULL.
+			 */
+			UGLayer3D* AddLayerFromDataset(string datasourceSName, string datasetName);
+
+			UGLayer3D* AddLayerFromFile(string filePath);
+
+			UGTerrainAccessor* AddTerrainLayerFromFile(string filePath);
+
+			//UGLayer3D* AddLayerFromWeb();
+
 	   };
 	//}
 }

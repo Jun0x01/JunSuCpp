@@ -3,6 +3,7 @@
  *  Date:   2019.06.06
  */
 #include "Mapping/SceneControl.h"
+#include "Data/Log.h"
 
 using namespace SuperMap;
 
@@ -16,8 +17,9 @@ SceneControl::SceneControl(void* pWndHandle, int dpiX, int dpiY)
 	
 	Initialize(pWndHandle, dpiX, dpiY);
 
-
+	m_pInnerWorkspace = new Workspace();
 	m_pWorkspace = NULL;
+	SetWorkspace(m_pInnerWorkspace);
 
 	mIsInWorkspace = false;
 }
@@ -33,6 +35,8 @@ SceneControl::~SceneControl()
 	delete m_pUGSceneWnd;
 	m_pUGSceneWnd = NULL;
 
+	delete m_pInnerWorkspace;
+	m_pInnerWorkspace = NULL;
 	m_pWorkspace = NULL;
 	m_pWnd = NULL;
 }
@@ -189,32 +193,32 @@ void SceneControl::OnMidMouseUp(unsigned int nFlags, int x, int y, void* pHDC)
 	m_pUGSceneWnd->OnMButtonDown(flag, pt);
 }
 
-UGPoint2D SceneControl::PixelToMap(int x, int y)
+UGPoint3D SceneControl::PixelToSceneGlobal(int x, int y)
 {
 	UGPoint pt(x, y);
-	return PixelToMap(pt);
+	return PixelToSceneGlobal(pt);
 }
 
-UGPoint2D SceneControl::PixelToMap(UGPoint pt)
+UGPoint3D SceneControl::PixelToSceneGlobal(UGPoint pt)
 {
 	UGPoint2D pntlp;
-	UGPoint2D pnt2D(0.0, 0.0);
+	UGPoint3D pnt2D(0.0, 0.0, 0.0);
 
-	
+	// TODO:
 	return pnt2D;
 }
 
-UGPoint SceneControl::MapToPixel(double x, double y)
+UGPoint SceneControl::SceneGlobalToPixel(double x, double y, double z)
 {
-	UGPoint2D pnt(x, y);
-	return MapToPixel(pnt);
+	UGPoint3D pnt(x, y, z);
+	return SceneGlobalToPixel(pnt);
 
 }
-UGPoint SceneControl::MapToPixel(UGPoint2D pnt)
+UGPoint SceneControl::SceneGlobalToPixel(UGPoint3D pnt)
 {
 	UGPoint2D pntlp;
 	UGPoint pt(0, 0);
-
+	// TODO:
 	return pt;
 
 }
@@ -246,7 +250,7 @@ UGLayer3Ds* SceneControl::GetUGLayers()
 
 void SceneControl::SetEditableLayer(UGLayer* pLayer, bool isEditable)
 {
-	
+	// TODO:
 }
 
 void SceneControl::SetWorkspace(Workspace* workspace)
@@ -265,6 +269,8 @@ void SceneControl::SetWorkspace(Workspace* workspace)
 		m_pUGSceneWnd->GetScene3D()->m_Layers.SetWorkspaceName(pUGWorkspace->m_WorkspaceConnection.m_strWorkspaceName);
 
 		m_pUGSceneWnd->GetScene3D()->m_TerrainLayer3Ds.SetDataSources(&(pUGWorkspace->m_DataSources));
+
+		m_pWorkspace->GetUGWorkspace()->m_SceneStorages.AttachWorkspace(m_pWorkspace->GetUGWorkspace());
 	}
 }
 
@@ -282,44 +288,188 @@ bool SceneControl::OpenScene(string sceneName)
 	return isOpen;
 }
 
-UGLayer* SceneControl::AddDataset(string datasourceName, string datasetName, bool bAddToHead)
+UGLayer3D* SceneControl::AddLayerFromDataset(string datasourceName, string datasetName)
 {
 	UGString ugDatasetName, ugDatasourceName;
 	ugDatasourceName.FromStd(datasourceName);
 	ugDatasetName.FromStd(datasetName);
 	UGDataSource* pDatasource = m_pWorkspace->GetUGWorkspace()->GetDataSource(ugDatasourceName);
-	UGLayer* pLayer = NULL;
-	if (pDatasource != NULL) {
+	UGLayer3D* pLayer = NULL;
+	if (pDatasource != NULL) 
+	{
 		UGDataset* pDataset = pDatasource->GetDataset(ugDatasetName);
+		if (pDataset != NULL)
+		{
+			UGLayer3DType layerType = UGLayer3DType::l3dNone;
+			UGDataset::DatasetType datasetType = pDataset->GetType();
+
+			if (datasetType == UGDataset::DatasetType::Image || datasetType == UGDataset::DatasetType::ImageCollection ||
+				datasetType == UGDataset::DatasetType::Grid  || datasetType == UGDataset::DatasetType::GridCollection)
+			{
+				layerType = UGLayer3DType::l3dDatasetImage;
+			}
+			else if(datasetType == UGDataset::DatasetType::Model)
+			{
+				layerType = UGLayer3DType::l3dDatasetModelPro;
+			}
+			else if (datasetType == UGDataset::DatasetType::MBGrid) // Volume 
+			{
+				layerType = UGLayer3DType::l3dDatasetVolume;
+			}
+			else if (datasetType == UGDataset::DatasetType::Point || datasetType == UGDataset::DatasetType::PointZ) // PointZ -> Point3D
+			{
+				if (((UGDatasetVector*)pDataset)->GetParentDataset() == NULL)
+				{
+					layerType = UGLayer3DType::l3dDatasetVectorPoint;
+				}
+				else
+				{
+					layerType = UGLayer3DType::l3dDatasetVector;
+				}
+				
+			}
+			else if (datasetType == UGDataset::DatasetType::Line || datasetType == UGDataset::DatasetType::LineZ ||
+				     datasetType == UGDataset::DatasetType::Region || datasetType == UGDataset::DatasetType::RegionZ ||
+				     datasetType == UGDataset::DatasetType::Network3D)
+			{
+				layerType = UGLayer3DType::l3dDatasetVectorLR;
+			}
+			else if (datasetType == UGDataset::DatasetType::Text || datasetType == UGDataset::DatasetType::Network ||
+				     datasetType == UGDataset::DatasetType::LineM || datasetType == UGDataset::DatasetType::CAD )
+			{
+				layerType = UGLayer3DType::l3dDatasetVector;
+			}
+
+			pLayer = m_pUGSceneWnd->GetScene3D()->m_Layers.AddLayer(layerType, ugDatasetName, ugDatasetName);
+		}
+		else
+		{
+			Log::Error("Failed to add a dataset on scene. Not found dataset " + datasetName + " in the datasource named " + datasourceName);
+		}
 		
 	}
 	else 
 	{
-		//TODO: ouput log
+		Log::Error("Failed to add a dataset on scene. Not found datasource " + datasourceName);
 	}
 	return pLayer;
 	
 }
 
 bool SceneControl::Save()
-{
-	
+{	
+	UGString sceneName = m_pUGSceneWnd->GetScene3D()->GetName();
+	bool isSaved = false;
+	if (mIsInWorkspace) {
 		
-	return false;
+		UGSceneStorage* pSceneStorage = m_pWorkspace->GetUGWorkspace()->m_SceneStorages.Find(sceneName);
+		if(pSceneStorage != NULL)
+		{
+			pSceneStorage->SetXML(m_pUGSceneWnd->GetScene3D()->ToXML(), pSceneStorage->GetVersion());
+
+			isSaved = true;
+		}
+		else 
+		{
+			string strSceneName;
+			sceneName.ToStd(strSceneName);
+			isSaved = SaveAs(strSceneName);
+			mIsInWorkspace = isSaved;
+		}
+	}
+	else
+	{
+		string strSceneName;
+		sceneName.ToStd(strSceneName);
+		isSaved = SaveAs(strSceneName);
+		mIsInWorkspace = isSaved;
+	}
+	
+	return isSaved;
 	
 }
 
-bool SceneControl::SaveAs(string mapName)
+bool SceneControl::SaveAs(string sceneName)
 {
+	UGString ugSceneName;
+	ugSceneName.FromStd(sceneName);
+
+	UGSceneStorages* pSStore = &(m_pWorkspace->GetUGWorkspace()->m_SceneStorages);
 	
-	return false;
+	UGString validSceneName = pSStore->GetUnoccupiedSceneName(ugSceneName);
+	bool isAdd = pSStore->Add(validSceneName);
+	int count = pSStore->GetCount();
+	boolean isSaved = false;
+	if (isAdd)
+	{
+		UGSceneStorage* pSceneStorage = pSStore->GetSceneAt(count - 1);
+		pSceneStorage->SetXML(m_pUGSceneWnd->GetScene3D()->ToXML(), pSceneStorage->GetVersion());
+		
+		isSaved = true;
+		mIsInWorkspace = true;
+	}
+	return isSaved;
 }
 
-void SceneControl::ActiveScene() {
+void SceneControl::ActivateScene() {
 	if (m_pRoot3D != NULL && m_pUGSceneWnd != NULL)
 	{
 		m_pRoot3D->SetActiveScene(m_pUGSceneWnd->GetScene3D());
 
 	}
+}
+UGLayer3D* SceneControl::AddLayerFromFile(string filePath)
+{
+	UGString ugFilePath;
+	ugFilePath.FromStd(filePath);
+	UGString suffix = UGFile::GetExt(ugFilePath);
+	UGString fileName = UGFile::GetName(ugFilePath);
+
+	UGString layerName = fileName.Left(fileName.GetLength() - suffix.GetLength());
+
+	while (m_pUGSceneWnd->GetScene3D()->m_Layers.FindNameInner(layerName) >= 0)
+	{
+		layerName = layerName + _U("_1");
+	}
+
+	UGLayer3D* pLayer = NULL;
+
+	// Normal Layer
+	if (0 == suffix.CompareNoCase(_U(".sci")) || 0 == suffix.CompareNoCase(_U(".sci3d")) ||
+		0 == suffix.CompareNoCase(_U(".sit")) || 0 == suffix.CompareNoCase(_U(".tiff"))  || 
+	    0 == suffix.CompareNoCase(_U(".tif")) || 0 == suffix.CompareNoCase(_U(".scv"))   ||
+		0 == suffix.CompareNoCase(_U(".scp")) || 0 == suffix.CompareNoCase(_U(".scvo")))
+	{
+		pLayer = m_pUGSceneWnd->GetScene3D()->m_Layers.AddLayer(ugFilePath, layerName, layerName);
+	}
+	else
+	{
+		 Log::Error("Unsupported file ! " + filePath);
+	}
+
+	 return pLayer;
+}
+
+UGTerrainAccessor* SceneControl::AddTerrainLayerFromFile(string filePath)
+{
+	UGString ugFilePath;
+	ugFilePath.FromStd(filePath);
+	UGString suffix = UGFile::GetExt(ugFilePath);
+	UGString fileName = UGFile::GetName(ugFilePath);
+
+	UGTerrainAccessor* pTerrain = NULL;
+	UGString layerName = fileName.Left(fileName.GetLength() - suffix.GetLength());
+
+	// Terraint Layer
+	if (suffix.CompareNoCase(_U(".sct")) == 0)
+	{
+		pTerrain = m_pUGSceneWnd->GetScene3D()->m_TerrainLayer3Ds.AddTerrainLayer(ugFilePath, layerName);
+	}
+	else 
+	{
+		Log::Error("Unsupported file ! " + filePath);
+	}
+
+	return pTerrain;
 }
 
