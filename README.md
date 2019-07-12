@@ -1,9 +1,23 @@
 # JunSuCpp
 
 ### Description
- 这个项目展示了如何使用SuperMap iObjects for C++ 进行二次开发
+ 该项目展示了如何使用SuperMap iObjects for C++ 进行二次开发，并对一些不易使用的功能进行封装，如用于地图窗口MapControl，用于场景窗口的SceneControl等。封装的工程在SuObjectCpp目录，这些类都支持在VS和Qt项目中使用，以及Linux系统下Qt开发使用。
  
+### 应用截图
+1. JunSuMFCDialog二维地图添加标绘符号
+   ![如图](Images/App_Plot.png)
+2. JunSuCpp二维地图绘制面对象
+   ![如图](Images/App_Map_Draw.png)
+3. JunSuCpp打开CBD场景展示模型数据
+   ![如图](Images/App_Scene_CBD.png)
+4. JunSuCpp打开MaSai场景展示OSGB数据
+   ![如图](Images/App_Scene_OSGB.png)
+
+注：TestData目录中仅有二维地图数据，因三维数据较大，没有上传GitHub。应用中采用选择文件方式打开，因此可以使用自己制作的工作空空间数据，或是超图软件其他产品提供的示范数据。
+
 ## 主要功能
+
+### Project: JunSuMFCDialog
 1. 实现地图窗口，实现地图交互操作
 2. 打开工作空间，显示地图
 3. 绘制点、线、面、态势标绘对象
@@ -11,6 +25,23 @@
 5. 动态层示例：选中对象时，在点击位置添加一条线到动态层显示
 6. 态势标绘代码示例：选中对象时，在点击位置添加一个态势标绘对象到CAD数据集
 7. 态势推演示例：选中点类型的标绘对象，创建比例动画
+
+### Project: JunSuCpp
+1. 同时支持二维地图和三维场景
+2. 选择文件打开工作空间(*.smwu, *.sxwu)
+3. 选择文件打开数据源(*.udb)
+4. 选择文件打开场景缓存文件(*.scp)
+5. 从数据库打开工作空间或数据源(数据库包括：MySQL, SQLPlus, PostgreSQL, PostGIS，达梦等)
+6. 多窗口模式，支持打开多幅地图或多个场景
+7. 支持选中数据集右键添加到二维地图
+8. 支持选中二维地图图层设置是否可选，是否可见，是否可编辑
+9. 支持二维地图上绘制点、线、面
+10. 支持二维地图上编辑选择对象的节点
+
+### SuObjectCpp
+包含Data和Mapping两个工程，用于封装SuperMap iObjects C++中较复杂的功能接口。Data中的Workspace实现对工作空间和数据源的管理。Mapping中的MapControl和SceneControl分别实现对二维地图和三维场景的窗口连接，已经图层管理等功能。JunSuMFCDialog和JunSuCpp就是基于这些封装实现。 
+
+
 
 ## 目录组织结构
 ``` lua
