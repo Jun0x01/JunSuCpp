@@ -457,6 +457,13 @@ void JunSuCpp::OnEdit_DrawPoint()
 		{
 			UGMapEditorWnd* pMapWnd = ((MapView*)((MapFrame*)pWnd)->GetActiveView())->GetMapControl()->GetMapEditWnd();
 			UGLayer* pLayer = pMapWnd->m_mapWnd.m_Map.GetCurrentLayer();
+			if (pLayer == NULL) {
+				int count = pMapWnd->m_mapWnd.m_Map.m_Layers.GetEditableLayer().GetCount();
+				if (count > 0)
+				{
+					pLayer = pMapWnd->m_mapWnd.m_Map.m_Layers.GetEditableLayer().GetHead();
+				}
+			}
 			if (pLayer != NULL)
 			{
 				UGDataset::DatasetType type = pLayer->GetDataset()->GetType();
@@ -493,6 +500,13 @@ void JunSuCpp::OnEdit_DrawLine()
 		{
 			UGMapEditorWnd* pMapWnd = ((MapView*)((MapFrame*)pWnd)->GetActiveView())->GetMapControl()->GetMapEditWnd();
 			UGLayer* pLayer = pMapWnd->m_mapWnd.m_Map.GetCurrentLayer();
+			if (pLayer == NULL) {
+				int count = pMapWnd->m_mapWnd.m_Map.m_Layers.GetEditableLayer().GetCount();
+				if (count > 0)
+				{
+					pLayer = pMapWnd->m_mapWnd.m_Map.m_Layers.GetEditableLayer().GetHead();
+				}
+			}
 			if (pLayer != NULL)
 			{
 				UGDataset::DatasetType type = pLayer->GetDataset()->GetType();
@@ -532,6 +546,13 @@ void JunSuCpp::OnEdit_DrawRegion()
 		{
 			UGMapEditorWnd* pMapWnd = ((MapView*)((MapFrame*)pWnd)->GetActiveView())->GetMapControl()->GetMapEditWnd();
 			UGLayer* pLayer = pMapWnd->m_mapWnd.m_Map.GetCurrentLayer();
+			if (pLayer == NULL) {
+				int count = pMapWnd->m_mapWnd.m_Map.m_Layers.GetEditableLayer().GetCount();
+				if (count > 0) 
+				{
+					pLayer = pMapWnd->m_mapWnd.m_Map.m_Layers.GetEditableLayer().GetHead();
+				}
+			}
 			if (pLayer != NULL)
 			{
 				UGDataset::DatasetType type = pLayer->GetDataset()->GetType();
