@@ -100,8 +100,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Include\Data\exportsDefine.h" />
+    <ClInclude Include="..\..\..\Include\Data\LicenseManager.h" />
+    <ClInclude Include="..\..\..\Include\Data\Log.h" />
+    <ClInclude Include="..\..\..\Include\Data\UGStrConvertor.h" />
+    <ClInclude Include="..\..\..\Include\Data\Workspace.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\Src\Data\LicenseManager.cpp" />
+    <ClCompile Include="..\..\..\Src\Data\Log.cpp" />
+    <ClCompile Include="..\..\..\Src\Data\UGStrConvertor.cpp" />
+    <ClCompile Include="..\..\..\Src\Data\Workspace.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

@@ -29,9 +29,15 @@
     <ClCompile Include="..\..\..\Src\Mapping\MapControl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Src\Mapping\SceneControl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Include\Mapping\MapControl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Include\Mapping\SceneControl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

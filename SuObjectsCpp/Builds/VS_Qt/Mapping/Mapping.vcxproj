@@ -102,9 +102,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Src\Mapping\MapControl.cpp" />
+    <ClCompile Include="..\..\..\Src\Mapping\SceneControl.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Include\Mapping\MapControl.h" />
+    <ClInclude Include="..\..\..\Include\Mapping\SceneControl.h" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>
