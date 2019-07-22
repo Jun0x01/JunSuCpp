@@ -42,7 +42,7 @@
 10. 支持二维地图上编辑选择对象的节点
 
 ### SuObjectCpp
-包含Data和Mapping两个工程，用于封装SuperMap iObjects C++中较复杂的功能接口。Data中的Workspace实现对工作空间和数据源的管理。Mapping中的MapControl和SceneControl分别实现对二维地图和三维场景的窗口连接，已经图层管理等功能。JunSuMFCDialog和JunSuCpp就是基于这些封装实现。 
+包含Data和Mapping两个工程，用于封装SuperMap iObjects C++中较复杂的功能接口。Data中的Workspace实现对工作空间和数据源的管理。Mapping中的MapControl和SceneControl分别实现对二维地图和三维场景的窗口连接，以及图层管理等功能。JunSuMFCDialog和JunSuCpp就是基于这些封装实现的。 
 
 
 
@@ -63,7 +63,7 @@ JunSuCpp
 - VS2012 + Qt5.2(Qt addin 1.2.5)
 - VS2017 + Qt5.2 及以上（Qt addin 2.3.2, 使用过的Qt有Qt5.2、Qt5.6.3、Qt5.9.3、Qt5.12
 - Windows, Qt Creator 5.2及以上
-- Unbuntu, Qt Creator 4.8.6, 5.2, 由于Qt库兼容问题，不支持过高版本, 最好使用4.8.6版本的Qt库
+- Unbuntu, Qt Creator 4.8.6, 5.2; 由于SuperMap iObjects C++是基于Qt4.8.6编译, 且Qt5不兼容Qt4, 因此Linux系统上需使用4.8.6版本的Qt库编译。
 
 1. PropertySheets中添加顺序，以Debug_x64为例
 ``` lua
