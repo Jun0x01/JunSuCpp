@@ -7,5 +7,8 @@
 #message("You are running qmake on a generated .pro file. This may not work!")
 
 
-HEADERS += ../../../Include/Mapping/MapControl.h
-SOURCES += ../../../Src/Mapping/MapControl.cpp
+HEADERS += ../../../Include/Mapping/MapControl.h \
+           ../../../Include/Mapping/SceneControl.h
+
+SOURCES += ../../../Src/Mapping/MapControl.cpp  \
+           ../../../Src/Mapping/SceneControl.cpp

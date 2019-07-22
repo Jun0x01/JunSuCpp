@@ -7,4 +7,13 @@
 #message("You are running qmake on a generated .pro file. This may not work!")
 
 
-HEADERS += ../../../Include/Data/exportsDefine.h
+HEADERS += ../../../Include/Data/exportsDefine.h \
+         ../../../Include/Data/LicenseManager.h \
+         ../../../Include/Data/Log.h \
+         ../../../Include/Data/UGStrConvertor.h \
+         ../../../Include/Data/Workspace.h \
+
+SOURCES += ../../../Src/Data/LicenseManager.cpp \
+         ../../../Src/Data/Log.cpp \
+         ../../../Src/Data/UGStrConvertor.cpp \
+         ../../../Src/Data/Workspace.cpp \
