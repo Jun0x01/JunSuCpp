@@ -1,8 +1,11 @@
 # JunSuCpp
 
-### Description
+### 项目描述
  该项目展示了如何使用SuperMap iObjects for C++ 进行二次开发，并对一些不易使用的功能进行封装，如用于地图窗口MapControl，用于场景窗口的SceneControl等。封装的工程在SuObjectCpp目录，这些类都支持在VS和Qt项目中使用，以及Linux系统下Qt开发使用。
  
+#### 项目地址
+1. [Github: JunSuCpp](https://github.com/Jun0x01/JunSuCpp), 原始项目。
+2. [Gitee码云: JunSuCpp](https://gitee.com/Jun0x01/JunSuCpp), 同步自Github的项目，下载速度较好。
 ### 应用截图
 1. JunSuMFCDialog二维地图添加标绘符号
    ![如图](Images/App_Plot.png)
@@ -13,7 +16,7 @@
 4. JunSuCpp打开MaSai场景展示OSGB数据
    ![如图](Images/App_Scene_OSGB.png)
 
-注：TestData目录中仅有二维地图数据，因三维数据较大，没有上传GitHub。应用中采用选择文件方式打开，因此可以使用自己制作的工作空空间数据，或是超图软件其他产品提供的示范数据。
+注：TestData目录中仅有二维地图数据，因三维数据较大，没有上传GitHub。应用中采用选择文件方式打开，因此可以使用自己制作的工作空间数据，或是超图软件其他产品提供的示范数据。
 
 ## 主要功能
 
