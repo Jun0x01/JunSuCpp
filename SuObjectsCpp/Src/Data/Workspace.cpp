@@ -177,7 +177,6 @@ UGDataSource* Workspace::OpenDatasourceDB(UGEngineType type, const string &name,
 	{
 		dcon.m_strDriver = _U("SQL Server");
 	}
-
 	return m_pUGWorkspace->OpenDataSource(dcon);
 
 }
@@ -236,4 +235,75 @@ bool Workspace::RemoveScene(const string &sceneName)
 bool Workspace::Save()
 {
 	return m_pUGWorkspace->Save();
+}
+
+bool Workspace::SaveAsFile(const string &wkPath)
+{
+	UGString ugWkPath;
+	ugWkPath.FromStd(wkPath);
+	if (ugWkPath.Compare(m_pUGWorkspace->m_WorkspaceConnection.m_strServer) == 0) 
+	{
+		// same workspace file path
+		return Save();
+	}
+	else
+	{
+		UGWorkspaceConnection wkCon;
+		wkCon = m_pUGWorkspace->m_WorkspaceConnection;
+
+		wkCon.m_strServer = ugWkPath;
+
+		// 1.Check workspace's type according to the file's suffix
+		int index = wkPath.rfind('.');
+		string wkType = wkPath.substr(index + 1, wkPath.length() - index);
+
+		if (wkType.compare("smwu") == 0 || wkType.compare("SMWU") == 0)
+		{
+			wkCon.m_nWorkspaceType = UGWorkspace::WS_Version_SMWU;
+		}
+		else if (wkType.compare("smw") == 0 || wkType.compare("SMW") == 0)
+		{
+			wkCon.m_nWorkspaceType = UGWorkspace::WS_Version_SMW;
+		}
+		else if (wkType.compare("sxwu") == 0 || wkType.compare("SXWU") == 0)
+		{
+			wkCon.m_nWorkspaceType = UGWorkspace::WS_Version_SXWU;
+		}
+		else if (wkType.compare("sxw") == 0 || wkType.compare("SXW") == 0)
+		{
+			wkCon.m_nWorkspaceType = UGWorkspace::WS_Version_SXW;
+		}
+		// 2.Set workspace version
+		if (wkCon.m_nVersion == 0) {
+			wkCon.m_nVersion = UG_WORKSPACE_VERSION_20120328;
+		}
+		return m_pUGWorkspace->SaveAs(m_pUGWorkspace->m_WorkspaceConnection);
+
+	}
+}
+
+bool Workspace::CreateDatasourceUDB(const string &udbPath, const string &name)
+{
+	UGString ugUDBpath;
+	ugUDBpath.FromStd(udbPath);
+	UGString ugName;
+	ugName.FromStd(name);
+
+	UGDataSource* datasource = UGDataSourceManager::CreateDataSource(UGEngineType::UDB);;
+	UGDsConnection& cn = datasource->GetConnectionInfo();
+	cn.m_strServer = ugUDBpath;
+	cn.m_nType = UGEngineType::UDB;
+	cn.m_strAlias = ugName;
+	cn.m_bReadOnly = false;
+	cn.m_bExclusive = true;
+	cn.m_bAutoConnect = false;
+
+	bool isCreated = datasource->Create();
+	if (isCreated)
+	{
+		m_pUGWorkspace->m_DataSources.Insert(ugName, datasource);
+	}
+	else {
+		Log::Error("Failed to created udb£¬the path is \"" + udbPath + "\"");
+	}
 }

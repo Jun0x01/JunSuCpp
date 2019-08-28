@@ -124,6 +124,24 @@ namespace SuperMap
 		 */
 		bool Save();
 
+		/*
+		 * @en
+		 * @brief   Save as a new workspace file.
+		 * @wkPath  The absolute path of workspace file which will be saved as.
+		 * @return  Return ture if saved, otherwise return false.
+		 */
+		bool SaveAsFile(const string &wkPath);
+
+
+		/*
+		 * @en
+		 * @brief   Create an UDB datasource. If the datource is created, it will add into current workspace.
+		 * @udbPath The absolute path of UDB datasource file which will be created.
+		 * @name    An unique name of created datasource will used in current workspace.
+		 * @return  Return ture if saved, otherwise return false.
+		 */
+		bool CreateDatasourceUDB(const string &udbPath, const string &name);
+
 	private:
 		UGWorkspace* m_pUGWorkspace;
 		
