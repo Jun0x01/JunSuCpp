@@ -5,7 +5,7 @@
 #ifndef SU_WORKSPACE_INCLUDED
 #define SU_WORKSPACE_INCLUDED
 
-#include "Data/log.h"
+#include "Data/Log.h"
 #include "Workspace/UGWorkspace.h"
 
 

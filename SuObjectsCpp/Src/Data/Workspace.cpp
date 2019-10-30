@@ -306,4 +306,6 @@ bool Workspace::CreateDatasourceUDB(const string &udbPath, const string &name)
 	else {
 		Log::Error("Failed to created udb£¬the path is \"" + udbPath + "\"");
 	}
+
+	return isCreated;
 }

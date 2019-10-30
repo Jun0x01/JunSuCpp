@@ -399,7 +399,7 @@ bool SceneControl::SaveAs(string sceneName)
 	UGString validSceneName = pSStore->GetUnoccupiedSceneName(ugSceneName);
 	bool isAdd = pSStore->Add(validSceneName);
 	int count = pSStore->GetCount();
-	boolean isSaved = false;
+	bool isSaved = false;
 	if (isAdd)
 	{
 		UGSceneStorage* pSceneStorage = pSStore->GetSceneAt(count - 1);
