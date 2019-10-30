@@ -4,7 +4,7 @@
  */
 #include "JunSuQt.h"
 #include "Data/LicenseManager.h"
-#include "qlogging.h"
+#include <QtDebug>
 
 #include "PathAnalyst/UGPathAnalyst.h"
 #include "NetworkEnvironment/UGNetworkAnalyst.h"
@@ -450,6 +450,11 @@ void JunSuQt::Menu_Analyst_NetworkFindPath()
 
         UGDatasetVector* pNetworDataset = (UGDatasetVector *)pDatasource->GetDataset(_U("BuildNetwork"));
 
+        if(pNetworDataset == nullptr){
+
+            qWarning("请先打开工作空间networkdatset.swmu");
+            return;
+        }
         UGNetworkAnalyst* pNetworkAnalyst = new UGNetworkAnalyst();
         pNetworkAnalyst->SetDatasetNetwork(pNetworDataset);
         pNetworkAnalyst->SetFTWeightField(_U("SmLength"));
@@ -546,6 +551,11 @@ void JunSuQt::Menu_Analyst_GridBestPath()
 {
     UGWorkspace* pWorkspace = m_pMapControl->GetMapEditWnd()->m_mapWnd.GetWorkspace();
         UGDataSource* pDS = pWorkspace->GetDataSource(_U("dem"));
+        if(pDS == nullptr){
+
+            qWarning("请先打开工作空间dem.swmu");
+            return;
+        }
 
         UGDatasetRaster* pDatasetRaster = (UGDatasetRaster*)pDS->GetDatasets()->GetAt(0);
 
