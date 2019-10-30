@@ -3,6 +3,15 @@
  *  Date:   2019.05.15
  */
 #include "JunSuQt.h"
+#include "Data/LicenseManager.h"
+#include "qlogging.h"
+
+#include "PathAnalyst/UGPathAnalyst.h"
+#include "NetworkEnvironment/UGNetworkAnalyst.h"
+#include "NetworkEnvironment/UGNetworkTypesEx.h"
+
+#include "GridAnalyst/UGDistanceAnalysis.h"
+#include "Geometry/UGGeoLine.h"
 
 /**************** CallBack *********************/
 void SuCALLBACK InvalidateCallback(void * pWnd)
@@ -24,8 +33,14 @@ JunSuQt::JunSuQt(QWidget *parent)
 
 	initMenuBar();
 	//initToolBar();
+    bool isValid = LicenseManager::IsValidStd();
+//    if(isValid){
+        m_pMapControl = new MapControl(InvalidateCallback, this);
+//    }else {
 
-	m_pMapControl = new MapControl(InvalidateCallback, this);
+//        cout << "许可无效，请更新许可";
+//    }
+
 }
 
 JunSuQt::~JunSuQt() {
@@ -107,8 +122,31 @@ void JunSuQt::initMenuBar() {
 
 			connect(menuAction, SIGNAL(triggered()), this, SLOT(Menu_Draw_Polygon()));
 		}
+
 		menuBar->addMenu(menu);
 	}
+
+    // Menu -> Analyst
+    {
+        QMenu* menu = new QMenu("Analyst", menuBar);
+        // Analyst -> Network Find Path
+        {
+            QAction* menuAction = new QAction("Network Find Path", this);
+            menu->addAction(menuAction);
+            menu->addSeparator();
+
+            connect(menuAction, SIGNAL(triggered()), this, SLOT(Menu_Analyst_NetworkFindPath()));
+        }
+        // Analyst -> Grid Best Path
+        {
+            QAction* menuAction = new QAction("Grid Best Path", this);
+            menu->addAction(menuAction);
+            menu->addSeparator();
+
+            connect(menuAction, SIGNAL(triggered()), this, SLOT(Menu_Analyst_GridBestPath()));
+        }
+        menuBar->addMenu(menu);
+    }
 }
 
 void JunSuQt::initToolBar() {
@@ -233,11 +271,13 @@ void JunSuQt::mouseMoveEvent(QMouseEvent* event)
 {
 	int flag = getMouseOrKeyFlag(event);
 
+    if(m_pMapControl != NULL)
 	m_pMapControl->OnMouseMove(flag, event->x(), event->y());
 
 }
 void JunSuQt::resizeEvent(QResizeEvent* event)
 {
+    if(m_pMapControl != NULL)
 	m_pMapControl->OnSizeChanged(this->width(), this->height());
 }
 void JunSuQt::keyPressEvent(QKeyEvent* event)
@@ -400,4 +440,147 @@ void JunSuQt::ResetLastEditLayer(UGLayer* pLayer)
 		pLayers->SetEditableLayer(m_pLastEditLayer, false);
 	}
 	m_pLastEditLayer = pLayer;
+}
+
+void JunSuQt::Menu_Analyst_NetworkFindPath()
+{
+    UGWorkspace* pWorkspace = m_pMapControl->GetMapEditWnd()->m_mapWnd.m_Map.GetWorkspace();
+
+        UGDataSource* pDatasource = pWorkspace->GetDataSource(0);
+
+        UGDatasetVector* pNetworDataset = (UGDatasetVector *)pDatasource->GetDataset(_U("BuildNetwork"));
+
+        UGNetworkAnalyst* pNetworkAnalyst = new UGNetworkAnalyst();
+        pNetworkAnalyst->SetDatasetNetwork(pNetworDataset);
+        pNetworkAnalyst->SetFTWeightField(_U("SmLength"));
+        pNetworkAnalyst->SetTFWeightField(_U("SmLength"));
+        pNetworkAnalyst->SetNodeIDField(_U("SmNodeID"));
+        pNetworkAnalyst->SetArcIDField(_U("SmEdgeID"));
+        pNetworkAnalyst->SetFNodeIDField(_U("SmFNode"));
+        pNetworkAnalyst->SetTNodeIDField(_U("SmTNode"));
+        pNetworkAnalyst->SetNodeInterval(0);
+
+
+        UGAnalyseParams params;
+        //! brief网络分析路径点,设施点,配送点节点ID数组,
+        UGArray<UGuint> arrViaNodeIDs;
+        arrViaNodeIDs.Add(1);
+        arrViaNodeIDs.Add(3);
+        //params.arrViaNodeIDs.Add(1);
+        //params.arrViaNodeIDs.Add(3);
+        params.nOptions = UGNetworkAnalystEnv::UGRIRoutes;
+        //! brief网络分析路径点,设施点,配送点坐标点数组
+        UGPoint2Ds      arrViaPoints;
+
+        UGPoint2D pt1;
+        UGPoint2D pt2;
+        pt1.x = 104.066265539623;
+        pt1.y = 30.5410647678783;
+        pt2.x = 104.066362985461;
+        pt2.y = 30.5383626570618;
+        params.arrViaPoints.Add(pt1);
+        params.arrViaPoints.Add(pt2);
+
+        params.strCostName = _U("Length");
+
+        UGCostFields costFields;
+        costFields.strCostName = _U("Length");
+        costFields.strFTField = _U("SmLength");
+        costFields.strTFField = _U("SmLength");
+
+        UGArray<UGCostFields> costFs;
+        costFs.Add(costFields);
+        pNetworkAnalyst->SetCostFields(costFs);
+
+        UGArray<UGuint> arrBarrierNodeIDs;
+        arrBarrierNodeIDs.Add(4);
+
+
+        bool isCreated = pNetworkAnalyst->CreateAdjMatrix();
+        bool isSet = pNetworkAnalyst->SetBarrierNodes(arrBarrierNodeIDs);
+
+        UGPathAnalyst* pAnalyst = new UGPathAnalyst(pNetworkAnalyst);
+
+        UGResultInfo resultInfo;
+        double isFound = pAnalyst->FindPath(params, resultInfo, true);
+        UGArray<UGPoint2D> pointsM;
+        UGArray<UGPoint2D> pointsL;
+        UGPoint3Ds *pPiont3Ds;
+        UGGeoLineM *pLineM = NULL;
+        UGGeoLine *pLine = NULL;
+
+        if (isFound != -1) {
+            int lineCount = resultInfo.arrLineM.GetSize();
+
+
+            for (int i = 0; i < lineCount; i++) {
+                pLineM = new UGGeoLineM(resultInfo.arrLineM.GetAt(i));
+                //pLineM = &(resultInfo.arrLineM.GetAt(i));
+
+                pLine = &pLineM->GetLine();
+
+
+                int countM = pLineM->GetPointCount();
+                for (int j = 0; j < countM; j++) {
+                    UGPoint2D p1 = pLineM->GetPointAtIndex(j);
+                    UGPoint2D p;
+                    pLineM->GetPointAtIndex(p, j);
+                    pointsM.Add(p);
+                }
+
+                int countL = pLine->GetPointCount();
+                for (int j = 0; j < countL; j++) {
+                    UGPoint2D p;
+                    pLineM->GetPointAtIndex(p, j);
+                    pointsL.Add(p);
+                }
+            }
+//            cout << "LineCount " << lineCount << endl;
+        }
+        else {
+//            cout << "Not found" << endl;
+        }
+
+}
+void JunSuQt::Menu_Analyst_GridBestPath()
+{
+    UGWorkspace* pWorkspace = m_pMapControl->GetMapEditWnd()->m_mapWnd.GetWorkspace();
+        UGDataSource* pDS = pWorkspace->GetDataSource(_U("dem"));
+
+        UGDatasetRaster* pDatasetRaster = (UGDatasetRaster*)pDS->GetDatasets()->GetAt(0);
+
+        UGPoint2D startP(109.35, 39.3819444444445);
+        UGPoint2D destP(109.495555555556, 39.6980555555556);
+        double totalCost = 0;
+        UGDistanceAnalysis distanceAnalysis;
+
+        //dMaxUpsolpeDegree 和dMaxDownslopeDegree 大于等于90时不考虑坡度，
+        // nSmoothMethod: -1: 不光滑处理; 0: B样条法; 1: 磨角法
+        UGGeoLine* pGeoLine = distanceAnalysis.BestPathLine(startP, destP,totalCost, nullptr, pDatasetRaster, 90, 90, -1);
+
+        UGDatasetVector* p2 = (UGDatasetVector *)pDS->GetDatasets()->GetAt(1);
+
+        p2->Open();
+        UGQueryDef queryDef;
+        queryDef.m_nType = UGQueryDef::General;
+
+        queryDef.m_nOptions = UGQueryDef::Both;
+
+        queryDef.m_nMode = UGQueryDef::GeneralQuery;
+        queryDef.m_nCursorType = UGQueryDef::OpenDynamic;
+
+        UGRecordset *pRecordset = p2->Query(queryDef);
+        //pRecordset->Edit();
+        bool isAdd = pRecordset->AddNew(pGeoLine);
+        if (isAdd) {
+            bool isUpdate = pRecordset->Update();
+            if (isUpdate) {
+//                cout << "ok" <<endl;
+            }
+        }
+
+        pRecordset->Close();
+        delete pRecordset();
+
+        m_pMapControl->Refresh();
 }

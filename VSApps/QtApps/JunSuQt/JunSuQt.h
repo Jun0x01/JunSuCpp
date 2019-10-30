@@ -61,4 +61,6 @@ private slots:
 	void Menu_Draw_Line();
 	void Menu_Draw_Polygon();
 	void Menu_Edit_PanMap();
+    void Menu_Analyst_NetworkFindPath();
+    void Menu_Analyst_GridBestPath();
 };
