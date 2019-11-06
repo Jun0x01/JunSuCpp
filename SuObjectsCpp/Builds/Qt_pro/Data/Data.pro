@@ -426,14 +426,13 @@ unix:{
     QMAKE_CXXFLAGS =-fshort-wchar
 
     LIBS +=-L$${SUOBJECTSDIR}/bin/bin \
- -lSuAlgorithm   \
+       -lSuAlgorithm   \
        -lSuAlgorithm3D   \
-       -lSuAlgorithmVCG   \
        -lSuAllocation   \
-       -lSuAnalyst3D   \
        -lSuAnimation   \
        -lSuBase   \
        -lSuBase3D   \
+       -lSuBeyonDBCI   \
        -lSuBGDataCompiler   \
        -lSuBPlusTree   \
        -lSuCacheBuilder   \
@@ -441,7 +440,6 @@ unix:{
        -lSuChartBase   \
        -lSuChartToolkit   \
        -lSuCompactFile   \
-       -lSuCVToolkit   \
        -lSuDataCheck   \
        -lSuDataExchange   \
        -lSuDB2CI   \
@@ -453,76 +451,38 @@ unix:{
        -lSuDRDSCI   \
        -lSuElement   \
        -lSuEngine   \
-       -lSuEngineBaiduMaps   \
-       -lSuEngineBingMaps   \
+       -lSuEngineBD   \
+       -lSuEngineDataServer   \
        -lSuEngineDB2   \
-       -lSuEngineDRDS   \
        -lSuEngineES   \
        -lSuEngineExtendFile   \
-       -lSuEngineGBase   \
-       -lSuEngineGoogleMaps   \
-       -lSuEngineGP   \
+       -lSuEngineHWPG   \
        -lSuEngineImagePlugin   \
-       -lSuEngineKadb   \
        -lSuEngineKDB   \
-       -lSuEngineKingbase   \
-       -lSuEngineMapWorldMaps   \
-       -lSuEngineMySQL   \
        -lSuEngineODBC   \
-       -lSuEngineOGC   \
        -lSuEngineOGDC   \
-       -lSuEngineOpenStreetMaps   \
        -lSuEngineOracle   \
+       -lSuEngineOsp   \
        -lSuEnginePG   \
        -lSuEnginePGis   \
-       -lSuEngineRest   \
-       -lSuEngineSCV   \
-       -lSuEngineSDE   \
-       -lSuEngineSMCloud   \
        -lSuEngineSpatialite   \
-       -lSuEngineSQLPLUS   \
-       -lSuEngineSRDB   \
-       -lSuEngineSsp   \
        -lSuEngineUDB   \
        -lSuFileParser   \
-       -lSuFileParser3DModel   \
        -lSuFileParser3ds   \
-       -lSuFileParserAcad   \
-       -lSuFileParserAiGrid   \
        -lSuFileParserBGRID   \
-       -lSuFileParserBMP   \
        -lSuFileParserCSV   \
-       -lSuFileParserDEM   \
-       -lSuFileParserE00   \
-       -lSuFileParserECW   \
-       -lSuFileParserENC   \
-       -lSuFileParserFileGDB   \
-       -lSuFileParserFME   \
+       -lSuFileParserEGC   \
        -lSuFileParserGDAL   \
-       -lSuFileParserGRIB   \
        -lSuFileParserGrid   \
        -lSuFileParserGTiff   \
        -lSuFileParserHFA   \
-       -lSuFileParserKML   \
-       -lSuFileParserLidar   \
-       -lSuFileParserMAPGIS   \
        -lSuFileParserMitab   \
-       -lSuFileParserMrSID   \
-       -lSuFileParserPointCloud   \
        -lSuFileParserRAW   \
        -lSuFileParserSCV   \
        -lSuFileParserSGM   \
        -lSuFileParserShape   \
-       -lSuFileParserSTET   \
-       -lSuFileParserTEMS   \
-       -lSuFileParserVRT   \
        -lSuFilePyramid   \
-       -lSuFilePyramidECW   \
-       -lSuFilePyramidGDAL   \
-       -lSuFilePyramidMrSid   \
-       -lSuFilePyramidSIT   \
        -lSuFMELicense   \
-       -lSuGBaseCI   \
        -lSuGeneralization   \
        -lSuGeoCode   \
        -lSuGeometricNetwork   \
@@ -533,19 +493,16 @@ unix:{
        -lSuGeometryLayout   \
        -lSuGeometryPlot   \
        -lSuGeoOperation   \
-       -lSuGeoOperation3D   \
+       -lSuGPKG   \
        -lSuGraphics   \
        -lSuGraphics3D   \
-       -lSuGraphics3DOGRE   \
-       -lSuGraphicsPDF   \
-       -lSuGraphicsPS   \
-       -lSuGraphicsW   \
        -lSuGridAnalyst   \
        -lSuGridModeling   \
        -lSuInterNationalICU   \
        -lSuKDBCI   \
        -lSuLayer3DDataset   \
        -lSuLayer3DFile   \
+       -lSuLayer3DGeImage   \
        -lSuLayer3DMap   \
        -lSuLayer3DTree   \
        -lSuLayoutEditor   \
@@ -554,7 +511,7 @@ unix:{
        -lSuMap   \
        -lSuMapEditor   \
        -lSuMapServiceStub   \
-       -lSuMongoDBCI   \
+       -lSuMongoCI   \
        -lSuMosaic   \
        -lSuMySQLCI   \
        -lSuNetToolkit   \
@@ -571,14 +528,13 @@ unix:{
        -lSuPathAnalyst   \
        -lSuPathAnalystCH   \
        -lSuPathNavi   \
-       -lSuPGSQLCI   \
        -lSuPluginCommon   \
        -lSuPluginGECache   \
        -lSuPluginGlobalCache   \
-       -lSuPluginGridCache   \
        -lSuPluginMapCache   \
        -lSuPluginMapCache50   \
        -lSuPluginWebCache   \
+       -lSuPostgreSQLCI   \
        -lSuProjection   \
        -lSuProximity   \
        -lSuPublicTransport   \
@@ -588,20 +544,23 @@ unix:{
        -lSuRStarTree   \
        -lSuScene   \
        -lSuSceneEditor   \
-       -lSuSDECI   \
+       -lSuSheetJoin   \
        -lSuSpatialIndex   \
        -lSuSpatialQuery   \
        -lSuSQLiteCI   \
-       -lSuSRDBCI   \
        -lSuStream   \
        -lSuSymbol   \
        -lSuSymbolExchange   \
        -lSuSymbolMarker3D   \
        -lSuTheme3DBase   \
        -lSuTileStorage   \
+       -lSuTileStorageGPKG   \
+       -lSuTileStorageMongo   \
        -lSuToolkit   \
        -lSuTopoBase   \
        -lSuTopoBuilder   \
+       -lSuUniversalCI   \
+       -lSuUOracleCI   \
        -lSuWorkspace   \
 }
 
