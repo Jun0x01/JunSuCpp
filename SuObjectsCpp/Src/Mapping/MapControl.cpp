@@ -569,3 +569,129 @@ bool MapControl::SaveAs(string mapName)
 }
 
 
+/*
+ * 经纬度坐标值转成屏幕坐标
+ * @langitude     经度
+ * @latitude      纬度
+ * @srcEPSGCode   传入的经纬度值对应的坐标系的EPSGCode，默认4326,即WGS1984坐标系；若使用China2000,传入4490
+ */
+UGPoint MapControl::GeoCoordToPixel(double longitude, double latitude, int srcEPSGCode/*=4326*/)
+{
+	// 先转换成地图坐标，再转换成屏幕坐标
+
+	// 地图坐标系
+	const UGPrjCoordSys& mapPrj = m_pUGMapWnd->m_mapWnd.m_Map.GetPrjCoordSys();
+
+	int mapEPSGCode = mapPrj.GetEPSGCode();
+
+	UGPoint pResP = MapToPixel(longitude, latitude);
+	UGPrjCoordSys *pSrcPrj = new UGPrjCoordSys(srcEPSGCode);
+	// 默认值
+	if (mapPrj.GetProjection().GetProjectionType() != pSrcPrj->GetProjection().GetProjectionType()) {
+
+		//根据EPSGCode创建源坐标系
+		
+		UGRefTranslator ugRefTranslator;
+
+		ugRefTranslator.SetPrjCoordSysSrc(*pSrcPrj);         // 被转换点的坐标系
+		ugRefTranslator.SetPrjCoordSysDes(mapPrj);           // 转换后点的坐标系
+		// 设置转换方法：三参数
+		ugRefTranslator.SetGeoTransMethod(EmGeoTransMethod::MTH_GEOCENTRIC_TRANSLATION);
+
+		// 转换参数，根据设置的转换方法，有旋转，平移等时设置对应参数，没有要求就创建一个空对象
+		UGGeoTransParams *pTempParams = new UGGeoTransParams();
+		ugRefTranslator.SetGeoTransParams(*pTempParams);
+		delete pTempParams;
+		pTempParams = NULL;
+
+		// 传入的经纬度坐标点
+		UGPoint2D srcPt(longitude, latitude);
+
+		UGArray<UGPoint2D> ugArray;
+		ugArray.Add(srcPt);
+
+		int count = ugArray.GetSize();
+
+		bool result = ugRefTranslator.Translate(ugArray.GetData(), count);
+		if (result)
+		{
+			UGPoint2D res = ugArray.GetAt(0);
+			// 转换成屏幕坐标
+			return MapToPixel(res);
+		}
+		else
+		{
+			Log::Warning("GeoCoordToPixel > ugRefTranslator.Translate()转换失败，返回MapToPixel()转换的结果");
+			return pResP;
+		}
+
+	}
+	else 
+	{
+		// 坐标系相同直接转换屏幕坐标
+		return pResP;
+	}
+}
+
+/*
+ * 屏幕坐标转换成经纬度坐标
+ * @x             屏幕坐标X
+ * @y             屏幕坐标Y
+ * @destEPSGCode  转换后的经纬度值对应的坐标系的EPSGCode，默认4326,即WGS1984坐标系；若使用China2000,传入4490
+ */
+UGPoint2D MapControl::PixelToGeoCoord(int x, int y, int destEPSGCode /*= 4326*/)
+{
+	// 先转换成地图坐标，再转换成屏幕坐标
+
+	// 地图坐标系
+	const UGPrjCoordSys& mapPrj = m_pUGMapWnd->m_mapWnd.m_Map.GetPrjCoordSys();
+
+	int mapEPSGCode = mapPrj.GetEPSGCode();
+
+	// 先转换为地图坐标
+	UGPoint2D rePt = PixelToMap(x, y);
+
+	UGPrjCoordSys *pDestPrj = new UGPrjCoordSys(destEPSGCode);
+	// 默认值
+	if (mapPrj.GetProjection().GetProjectionType() != pDestPrj->GetProjection().GetProjectionType()) {
+
+		//根据EPSGCode创建源坐标系
+
+		UGRefTranslator ugRefTranslator;
+
+		ugRefTranslator.SetPrjCoordSysSrc(mapPrj);         // 被转换点的坐标系
+		ugRefTranslator.SetPrjCoordSysDes(*pDestPrj);      // 转换后点的坐标系
+		// 设置转换方法：三参数
+		ugRefTranslator.SetGeoTransMethod(EmGeoTransMethod::MTH_GEOCENTRIC_TRANSLATION);
+
+		// 转换参数，根据设置的转换方法，有旋转，平移等时设置对应参数，没有要求就创建一个空对象
+		UGGeoTransParams *pTempParams = new UGGeoTransParams();
+		ugRefTranslator.SetGeoTransParams(*pTempParams);
+		delete pTempParams;
+		pTempParams = NULL;
+
+		
+		UGArray<UGPoint2D> ugArray;
+		ugArray.Add(rePt);
+
+		int count = ugArray.GetSize();
+
+		bool result = ugRefTranslator.Translate(ugArray.GetData(), count);
+		if (result)
+		{
+			UGPoint2D res = ugArray.GetAt(0); // 获取转换结果
+			return res;
+		}
+		else
+		{
+			Log::Warning("PixelToGeoCoord > ugRefTranslator.Translate()转换失败，直接返回地图坐标");
+			return rePt;
+		}
+	}
+	else
+	{
+		// 坐标系相同直接转换地图坐标
+		return rePt;
+	}
+}
+

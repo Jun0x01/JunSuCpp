@@ -11,6 +11,8 @@
 #include "Graphics/UGGraphicsManager.h"
 #include "Drawing/UGDrawParamaters.h"
 #include "Data/Workspace.h"
+#include "Map/UGDynamicLayers.h"
+#include "Projection/UGRefTranslator.h"
 
 
 using namespace UGC;
@@ -201,6 +203,22 @@ namespace SuperMap
 			 * @return   Return true if saved or return false.
 			 */
 			bool SaveAs(string mapName);
+
+			/*
+			 * 经纬度坐标值转成屏幕坐标
+			 * @langitude     经度
+			 * @latitude      纬度
+			 * @srcEPSGCode   传入的经纬度值对应的坐标系的EPSGCode，默认4326,即WGS1984坐标系；若使用China2000,传入4490
+			 */
+			UGPoint GeoCoordToPixel(double longitude, double latitude, int srcEPSGCode = 4326);
+
+			/*
+			 * 屏幕坐标转换成经纬度坐标
+			 * @x             屏幕坐标X
+			 * @y             屏幕坐标Y
+			 * @destEPSGCode  转换后的经纬度值对应的坐标系的EPSGCode，默认4326,即WGS1984坐标系；若使用China2000,传入4490
+			 */
+			UGPoint2D PixelToGeoCoord(int x, int y, int destEPSGCode = 4326);
 	   };
 	//}
 }
