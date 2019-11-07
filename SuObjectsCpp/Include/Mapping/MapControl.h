@@ -14,6 +14,9 @@
 #include "Map/UGDynamicLayers.h"
 #include "Projection/UGRefTranslator.h"
 
+#include "Geometry/UGGeoPoint.h"
+#include "Geometry/UGGeoLine.h"
+
 
 using namespace UGC;
 using namespace SuperMap;
@@ -44,6 +47,8 @@ namespace SuperMap
 		   //@en the handle of Workspace, passed in through function SetWorkspace()  
 		   Workspace* m_pWorkspace;
 
+		   // 动态层
+		   UGDynamicLayer* pUGDynLayer;
 	   private:
 		   // Map window
 		   UGMapEditorWnd* m_pUGMapWnd;
@@ -205,20 +210,81 @@ namespace SuperMap
 			bool SaveAs(string mapName);
 
 			/*
-			 * 经纬度坐标值转成屏幕坐标
-			 * @langitude     经度
-			 * @latitude      纬度
-			 * @srcEPSGCode   传入的经纬度值对应的坐标系的EPSGCode，默认4326,即WGS1984坐标系；若使用China2000,传入4490
+			 * 经纬度坐标值转成屏幕坐标, 当然也支持传入投影坐标，只需将srcEPSGCode设置为响应的值即可
+			 * @langitude     经度或横向坐标值
+			 * @latitude      纬度或纵向坐标值
+			 * @srcEPSGCode   传入值对应的坐标系的EPSG Code，默认4326,即WGS1984坐标系；若使用China2000,则传入4490
 			 */
 			UGPoint GeoCoordToPixel(double longitude, double latitude, int srcEPSGCode = 4326);
 
 			/*
-			 * 屏幕坐标转换成经纬度坐标
+			 * 屏幕坐标转换成经纬度坐标, 当然也支持传入投影坐标，只需将destEPSGCode设置为响应的值即可
 			 * @x             屏幕坐标X
 			 * @y             屏幕坐标Y
-			 * @destEPSGCode  转换后的经纬度值对应的坐标系的EPSGCode，默认4326,即WGS1984坐标系；若使用China2000,传入4490
+			 * @destEPSGCode  转换后的经纬度值对应的坐标系的EPSG Code，默认4326,即WGS1984坐标系；若使用China2000,则传入4490
 			 */
 			UGPoint2D PixelToGeoCoord(int x, int y, int destEPSGCode = 4326);
+
+			/*
+			 * 将给定的点串转换为地图坐标, 对于创建动态层，跟踪层上的对象时很有用处，应为这些临时层需使用地图坐标，当然如果需要添加的点已经是地图坐标了就不需要转换了。
+			 * @pts           需要转换的一系列点，这些点是地理坐标或投影坐标的点
+			 * @srcEPSGCode   传入点串对应的坐标系的EPSG Code，默认4326,即WGS1984坐标系；若使用China2000,则传入4490
+ 			 */
+			bool ToMapCoords(UGPoint2Ds& pts, int srcEPSGCode = 4326);
+
+			/*
+			 * 将给定的点串转换为屏幕坐标
+			 * @pts           需要转换的一系列点，这些点是地理坐标或投影坐标的点
+			 * @outPts        转换后的屏幕坐标结果
+			 * @srcEPSGCode   传入点串对应的坐标系的EPSG Code，默认4326,即WGS1984坐标系；若使用China2000,则传入4490
+			 */
+			bool ToPixels(const UGPoint2Ds& pts, UGPoints& outPts, int srcEPSGCode = 4326);
+
+			/*
+			 * 将给定的点串转换到指定坐标系
+			 * @pts           需要转换的一系列点,这些点是屏幕坐标的点
+			 * @outPts        转换后的坐标结果
+			 * @srcEPSGCode   传入点串对应的坐标系的EPSG Code，默认4326,即WGS1984坐标系；若使用China2000,则传入4490
+			 */
+			bool ToGeoCoords(const UGPoints& pts, UGPoint2Ds& outPts, int destEPSGCode = 4326);
+
+			/*
+			 * 将给定坐标值的点添加到动态层
+			 * @keyName       添加到动态层对象的名称，不可重名
+			 * @x             经度或横向坐标值
+			 * @y             纬度或纵向坐标值
+			 * @size          点符号的大小，默认为4mm
+			 * @color         点符号的颜色值，对固定颜色的符号和图片符号无效; 颜色值格式为BGR(0xFFFFFF)，默认值为黑色
+			 * @symbolID      点符号库ID, 用于指定点的显示形状，默认值为0(内置的系统符号库id)，代表圆点; 
+			 *                工作空间资源中保存了符号库，可使用iDesktop软件查看或自定义。
+			 * @srcEPSGCode   传入的经纬度值对应的坐标系的EPSG Code，默认4326,即WGS1984坐标系；若使用China2000,则传入4490
+			 */
+			bool AddDynamicPoint(const UGString& keyName, double x, double y, int color = 0, double size = 4, int symbolID = 0, int srcEPSGCode = 4326);
+
+			/*
+			 * 将给定的两个点的坐标值作为线的两个端点，并添加到动态层
+			 * @keyName       添加到动态层对象的名称，不可重名
+			 * @x1, y1        第一个点的坐标值
+			 * @x2, y2        第二个点的坐标值
+			 * @color         线的颜色，对固定颜色的符号无效; 颜色值格式为BGR(0xFFFFFF)，默认值为黑色
+			 * @width         线宽，默认0.1mm;对固定线宽的符号无效
+			 * @symbolID      线符号库ID, 用于指定线的显示形状，默认值为0(内置的系统符号库id)，代表实线; 1代表虚线
+			 *                工作空间资源中保存了符号库，可使用iDesktop软件查看或自定义。
+			 * @srcEPSGCode   传入值对应的坐标系的EPSG Code，默认4326,即WGS1984坐标系；若使用China2000,则传入4490
+			 */
+			bool AddDynamicLine(const UGString& keyName, double x1, double y1, double x2, double y2, int color=0, double width=0.1, int symbolID=0, int srcEPSGCode = 4326);
+
+			/*
+			 * 将给定的点串添加到动态层
+			 * @keyName       添加到动态层对象的名称，不可重名
+			 * @pts           需要添加的点串
+			 * @color         线的颜色，默认值为黑色，对非固定风格的线符号有效
+			 * @width         线宽，默认0.1mm
+			 * @symbolID      线符号库ID, 用于指定线的显示形状，默认值为0(内置的系统符号库id)，代表实线; 1代表虚线
+			 *                工作空间资源中保存了符号库，可使用iDesktop软件查看或自定义。
+			 * @srcEPSGCode   传入点串对应的坐标系的EPSG Code，默认4326,即WGS1984坐标系；若使用China2000,则传入4490
+			 */
+			bool AddDynamicLine(const UGString& keyName, const UGPoint2Ds pts, int color = 0, double width = 0.1, int symbolID = 0, int srcEPSGCode = 4326);
 	   };
 	//}
 }

@@ -43,11 +43,18 @@ MapControl::MapControl(INVALIDATEPROC pInvalidateCallBack, void* pView)
 	mNeedRedraw = false;
 
 	mIsInWorkspace = false;
+
+	// 初始化动态层，并添加到地图窗口
+	pUGDynLayer = new UGDynamicLayer();
+	m_pUGMapWnd->m_mapWnd.m_Map.m_DynamicLayers.Add(pUGDynLayer);
 }
 MapControl::~MapControl()
 {
 	if (m_pUGMapWnd != NULL) 
 	{
+		// 移除动态层
+		m_pUGMapWnd->m_mapWnd.m_Map.m_DynamicLayers.RemoveAll();
+
 		// close map
 		m_pUGMapWnd->m_mapWnd.m_Map.Reset();
 		m_pUGMapWnd->m_mapWnd.Reset();
@@ -613,6 +620,7 @@ UGPoint MapControl::GeoCoordToPixel(double longitude, double latitude, int srcEP
 		int count = ugArray.GetSize();
 
 		bool result = ugRefTranslator.Translate(ugArray.GetData(), count);
+		delete pSrcPrj;
 		if (result)
 		{
 			UGPoint2D res = ugArray.GetAt(0);
@@ -628,6 +636,7 @@ UGPoint MapControl::GeoCoordToPixel(double longitude, double latitude, int srcEP
 	}
 	else 
 	{
+		delete pSrcPrj;
 		// 坐标系相同直接转换屏幕坐标
 		return pResP;
 	}
@@ -677,6 +686,7 @@ UGPoint2D MapControl::PixelToGeoCoord(int x, int y, int destEPSGCode /*= 4326*/)
 		int count = ugArray.GetSize();
 
 		bool result = ugRefTranslator.Translate(ugArray.GetData(), count);
+		delete pDestPrj;
 		if (result)
 		{
 			UGPoint2D res = ugArray.GetAt(0); // 获取转换结果
@@ -690,8 +700,267 @@ UGPoint2D MapControl::PixelToGeoCoord(int x, int y, int destEPSGCode /*= 4326*/)
 	}
 	else
 	{
+		delete pDestPrj;
 		// 坐标系相同直接转换地图坐标
 		return rePt;
 	}
 }
 
+
+/*
+* 将给定的点串转换为地图坐标, 对于创建动态层，跟踪层上的对象时很有用处，应为这些临时层需使用地图坐标，当然如果需要添加的点已经是地图坐标了就不需要转换了。
+* @pts           需要转换的一系列点，这些点是地理坐标或投影坐标的点; 注意转换时会直接将pts中的值修改为地图坐标系的值
+* @srcEPSGCode   传入点串对应的坐标系的EPSGCode，默认4326,即WGS1984坐标系；若使用China2000,则传入4490
+*/
+bool MapControl::ToMapCoords(UGPoint2Ds& pts, int srcEPSGCode /*= 4326*/)
+{
+	// 地图坐标系
+	const UGPrjCoordSys& mapPrj = m_pUGMapWnd->m_mapWnd.m_Map.GetPrjCoordSys();
+
+	int mapEPSGCode = mapPrj.GetEPSGCode();
+
+
+	UGPrjCoordSys *pSrcPrj = new UGPrjCoordSys(srcEPSGCode);
+	// 默认值
+	if (mapPrj.GetProjection().GetProjectionType() != pSrcPrj->GetProjection().GetProjectionType()) {
+
+		//根据EPSGCode创建源坐标系
+
+		UGRefTranslator ugRefTranslator;
+
+		ugRefTranslator.SetPrjCoordSysSrc(*pSrcPrj);         // 被转换点的坐标系
+		ugRefTranslator.SetPrjCoordSysDes(mapPrj);      // 转换后点的坐标系
+		// 设置转换方法：三参数
+		ugRefTranslator.SetGeoTransMethod(EmGeoTransMethod::MTH_GEOCENTRIC_TRANSLATION);
+
+		// 转换参数，根据设置的转换方法，有旋转，平移等时设置对应参数，没有要求就创建一个空对象
+		UGGeoTransParams *pTempParams = new UGGeoTransParams();
+		ugRefTranslator.SetGeoTransParams(*pTempParams);
+		delete pTempParams;
+		pTempParams = NULL;
+		
+		int count = pts.GetSize();
+
+		bool result = ugRefTranslator.Translate(pts.GetData(), count);
+		if (result)
+		{
+		}
+		else
+		{
+			Log::Warning("PixelToGeoCoord > ugRefTranslator.Translate()转换失败，直接返回地图坐标");
+		}
+		delete pSrcPrj;
+		return result;
+	}
+	else
+	{
+		delete pSrcPrj;
+		// 坐标系相同不用转换
+		return true;
+	}
+}
+
+/*
+ * 将给定的点串转换为屏幕坐标
+ * @pts           需要转换的一系列点，这些点是地理坐标或投影坐标的点
+ * @srcEPSGCode   传入点串对应的坐标系的EPSGCode，默认4326,即WGS1984坐标系；若使用China2000,则传入4490
+ */
+bool MapControl::ToPixels(const UGPoint2Ds& pts, UGPoints& outPts, int srcEPSGCode/* = 4326*/)
+{
+	UGPoint2Ds ptsTemp(pts);
+	bool res = ToMapCoords(ptsTemp, srcEPSGCode);
+	if (res) {
+		for (int i = 0; i < ptsTemp.GetSize(); i++) {
+			UGPoint p = MapToPixel(ptsTemp.GetAt(i));
+			outPts.Add(p);
+		}
+	}
+	return res;
+}
+
+/*
+ * 将给定的点串转换到指定坐标系
+ * @pts           需要转换的一系列点,这些点是屏幕坐标的点
+ * @srcEPSGCode   传入点串对应的坐标系的EPSGCode，默认4326,即WGS1984坐标系；若使用China2000,则传入4490
+ */
+bool MapControl::ToGeoCoords(const UGPoints& pts, UGPoint2Ds& outPts, int destEPSGCode /*= 4326*/)
+{
+	for (int i = 0; i < pts.GetSize(); i++) {
+		UGPoint2D p = PixelToMap(pts.GetAt(i));
+		outPts.Add(p);
+	}
+	// 地图坐标系
+	const UGPrjCoordSys& mapPrj = m_pUGMapWnd->m_mapWnd.m_Map.GetPrjCoordSys();
+
+	int mapEPSGCode = mapPrj.GetEPSGCode();
+
+
+	UGPrjCoordSys *pDestPrj = new UGPrjCoordSys(destEPSGCode);
+	// 默认值
+	if (mapPrj.GetProjection().GetProjectionType() != pDestPrj->GetProjection().GetProjectionType()) {
+
+		//根据EPSGCode创建源坐标系
+
+		UGRefTranslator ugRefTranslator;
+
+		ugRefTranslator.SetPrjCoordSysSrc(mapPrj);         // 被转换点的坐标系
+		ugRefTranslator.SetPrjCoordSysDes(*pDestPrj);      // 转换后点的坐标系
+		// 设置转换方法：三参数
+		ugRefTranslator.SetGeoTransMethod(EmGeoTransMethod::MTH_GEOCENTRIC_TRANSLATION);
+
+		// 转换参数，根据设置的转换方法，有旋转，平移等时设置对应参数，没有要求就创建一个空对象
+		UGGeoTransParams *pTempParams = new UGGeoTransParams();
+		ugRefTranslator.SetGeoTransParams(*pTempParams);
+		delete pTempParams;
+		pTempParams = NULL;
+
+		int count = outPts.GetSize();
+
+		bool result = ugRefTranslator.Translate(outPts.GetData(), count);
+		if (result)
+		{
+		}
+		else
+		{
+			Log::Warning("PixelToGeoCoord > ugRefTranslator.Translate()转换失败，直接返回地图坐标");
+		}
+		delete pDestPrj;
+		return result;
+	}
+	else
+	{
+		delete pDestPrj;
+		// 坐标系相同不用转换
+		return true;
+	}
+
+}
+
+/*
+* 将给定坐标值的点添加到动态层,
+* @x             经度或横向坐标值
+* @y             纬度或纵向坐标值
+* @size          点符号的大小，默认为4mm
+* @color         点符号的颜色值，对固定颜色的符号和图片符号无效; 颜色值格式为BGR(0xFFFFFF)，默认值为黑色
+* @symbolID      点符号库ID, 用于指定点的显示形状，默认值为0(内置的系统符号库id)，代表圆点;
+*                工作空间资源中保存了符号库，可使用iDesktop软件查看或自定义。
+* @srcEPSGCode   传入的经纬度值对应的坐标系的EPSGCode，默认4326,即WGS1984坐标系；若使用China2000,则传入4490
+*/
+bool MapControl::AddDynamicPoint(const UGString& keyName, double x, double y, int color /*= 0*/, double size /*= 4*/, int symbolID /*= 0*/, int srcEPSGCode /*= 4326*/)
+{
+	// 转换到地图坐标
+	UGPoint2Ds pts;
+	UGPoint2D pt(x, y);
+	pts.Add(pt);
+
+	bool isToMap = ToMapCoords(pts, srcEPSGCode);
+	if (isToMap) 
+	{
+		UGPoint2D ptMap = pts.GetAt(0);
+		// 创建对象
+		UGGeoPoint* pGeo = new UGGeoPoint();
+		pGeo->SetX(ptMap.x);
+		pGeo->SetY(ptMap.y);
+
+		// 初始化风格, 设置点对象风格
+		UGStyle* pStyle = new UGStyle();
+		pStyle->SetLineColor(color);
+		pStyle->SetMarkerSize(size);
+		pStyle->SetMarkerStyle(symbolID);
+
+		pGeo->SetStyle(pStyle);
+		delete pStyle;
+	
+		// 添加到动态层
+		return pUGDynLayer->Add(keyName, pGeo);
+	}
+	else
+	{
+		return false;
+	}
+}
+
+/*
+ * 将给定的两个点的坐标值作为线的两个端点，并添加到动态层
+ * @keyName       添加到动态层对象的名称，不可重名
+ * @x1, y1        第一个点的坐标值
+ * @x2, y2        第二个点的坐标值
+ * @color         线的颜色，对固定颜色的符号无效; 颜色值格式为BGR(0xFFFFFF)，默认值为黑色
+ * @width         线宽，默认0.1mm
+ * @symbolID      线符号库ID, 用于指定线的显示形状，默认值为0(内置的系统符号库id)，代表实线; 1代表虚线
+ *                工作空间资源中保存了符号库，可使用iDesktop软件查看或自定义。
+ * @srcEPSGCode   传入的经纬度值对应的坐标系的EPSGCode，默认4326,即WGS1984坐标系；若使用China2000,则传入4490
+ */
+bool MapControl::AddDynamicLine(const UGString& keyName, double x1, double y1, double x2, double y2, int color /*= 0*/, double width /*= 0.1*/, int symbolID /*= 0*/, int srcEPSGCode /*= 4326*/)
+{
+	// 转换到地图坐标
+	UGPoint2Ds pts;
+	UGPoint2D pt1(x1, y1);
+	UGPoint2D pt2(x2, y2);
+	pts.Add(pt1);
+	pts.Add(pt2);
+
+	bool isToMap = ToMapCoords(pts, srcEPSGCode);
+	if (isToMap)
+	{
+		// 创建对象
+		UGGeoLine* pGeo = new UGGeoLine();
+		pGeo->AddSub(pts.GetData(), pts.GetSize());
+
+		// 初始化风格, 设置对象风格
+		UGStyle* pStyle = new UGStyle();
+		pStyle->SetLineColor(color);
+		pStyle->SetLineWidth(width);
+		pStyle->SetMarkerStyle(symbolID);
+
+		pGeo->SetStyle(pStyle);
+		delete pStyle;
+
+		// 添加到动态层
+		return pUGDynLayer->Add(keyName, pGeo);
+	}
+	else
+	{
+		return false;
+	}
+}
+
+/*
+* 将给定的点串添加到动态层
+* @keyName       添加到动态层对象的名称，不可重名
+* @pts           需要添加的点串
+* @color         线的颜色，对固定颜色的符号无效; 颜色值格式为BGR(0xFFFFFF)，默认值为黑色
+* @width         线宽，默认0.1mm
+* @symbolID      线符号库ID, 用于指定线的显示形状，默认值为0(内置的系统符号库id)，代表实线; 1代表虚线
+*                工作空间资源中保存了符号库，可使用iDesktop软件查看或自定义。
+* @srcEPSGCode   传入点串对应的坐标系的EPSG Code，默认4326,即WGS1984坐标系；若使用China2000,则传入4490
+*/
+bool MapControl::AddDynamicLine(const UGString& keyName, const UGPoint2Ds pts, int color /*= 0*/, double width /*= 0.1*/, int symbolID /*= 0*/, int srcEPSGCode /*= 4326*/)
+{
+	// 转换到地图坐标
+	UGPoint2Ds pts1(pts); // 新建点串，避免改变原始值
+
+	bool isToMap = ToMapCoords(pts1, srcEPSGCode);
+	if (isToMap)
+	{
+		// 创建对象
+		UGGeoLine* pGeo = new UGGeoLine();
+		pGeo->AddSub(pts1.GetData(), pts1.GetSize());
+
+		// 初始化风格, 设置对象风格
+		UGStyle* pStyle = new UGStyle();
+		pStyle->SetLineColor(color);
+		pStyle->SetLineWidth(width);
+		pStyle->SetMarkerStyle(symbolID);
+
+		pGeo->SetStyle(pStyle);
+		delete pStyle;
+
+		// 添加到动态层
+		return pUGDynLayer->Add(keyName, pGeo);
+	}
+	else
+	{
+		return false;
+	}
+}
