@@ -4,7 +4,7 @@
  */
 #include "JunSuQt.h"
 #include "Data/LicenseManager.h"
-#include <QtDebug>
+#include <QDebug>
 
 #include "PathAnalyst/UGPathAnalyst.h"
 #include "NetworkEnvironment/UGNetworkAnalyst.h"
@@ -41,6 +41,8 @@ JunSuQt::JunSuQt(QWidget *parent)
 //        cout << "许可无效，请更新许可";
 //    }
 
+		pDyLayer = new UGDynamicLayer();
+		m_pMapControl->GetMapEditWnd()->m_mapWnd.m_Map.m_DynamicLayers.Add(pDyLayer);
 }
 
 JunSuQt::~JunSuQt() {
@@ -147,6 +149,62 @@ void JunSuQt::initMenuBar() {
         }
         menuBar->addMenu(menu);
     }
+
+    // Menu -> DynamicLayer
+    {
+        QMenu* menu = new QMenu("DynamicLayer", menuBar);
+        // DynamicLayer -> Add Line
+        {
+            QAction* menuAction = new QAction("Add All", this);
+            menu->addAction(menuAction);
+            menu->addSeparator();
+
+            connect(menuAction, SIGNAL(triggered()), this, SLOT(Menu_Dynamic_AddAll()));
+        }
+        menuBar->addMenu(menu);
+        // DynamicLayer -> Visible
+        {
+            QAction* menuAction = new QAction("Visible", this);
+            menu->addAction(menuAction);
+            menu->addSeparator();
+
+            connect(menuAction, SIGNAL(triggered()), this, SLOT(Menu_Dynamic_Visible()));
+        }
+        menuBar->addMenu(menu);
+        // DynamicLayer -> Invisible
+        {
+            QAction* menuAction = new QAction("Invisible", this);
+            menu->addAction(menuAction);
+            menu->addSeparator();
+
+            connect(menuAction, SIGNAL(triggered()), this, SLOT(Menu_Dynamic_Invisible()));
+        }
+        menuBar->addMenu(menu);
+
+		// DynamicLayer -> Add Point And Line
+		{
+			QAction* menuAction = new QAction("Add Point And Line", this);
+			menu->addAction(menuAction);
+			menu->addSeparator();
+
+			connect(menuAction, SIGNAL(triggered()), this, SLOT(Menu_Dynamic_AddPointAndLine()));
+		}
+		menuBar->addMenu(menu);
+    }
+
+    // Menu -> CoordsysTransform
+    {
+        QMenu* menu = new QMenu("CoordsysTransform", menuBar);
+        // Eidt -> Pan Map
+        {
+            QAction* menuAction = new QAction("GeoCoordToPixel", this);
+            menu->addAction(menuAction);
+            menu->addSeparator();
+
+            connect(menuAction, SIGNAL(triggered()), this, SLOT(Menu_Coordsys_GeoCoordToPixel()));
+        }
+        menuBar->addMenu(menu);
+    }
 }
 
 void JunSuQt::initToolBar() {
@@ -239,6 +297,8 @@ void JunSuQt::mousePressEvent(QMouseEvent* event)
 		m_pMapControl->OnMidMouseDown(flag, event->x(), event->y());
 	}
 
+	pt.setX(event->x());
+	pt.setY(event->y());
 }
 void JunSuQt::mouseReleaseEvent(QMouseEvent* event)
 {
@@ -590,7 +650,129 @@ void JunSuQt::Menu_Analyst_GridBestPath()
         }
 
         pRecordset->Close();
-        delete pRecordset();
+        delete pRecordset;
 
         m_pMapControl->Refresh();
+}
+
+
+
+void JunSuQt::Menu_Dynamic_AddAll()
+{
+
+        UGStyle* pStyle = new UGStyle();
+        
+        pStyle->SetLineWidth(3);
+		pStyle->SetLineColor(UGColor(0xFF000000));   // Black
+        //pStyle->SetLineColor(UGColor(0x00FF0000)); // Blue
+        pStyle->SetLineColor(UGColor(0x0000FF00)); // Green
+        pStyle->SetLineColor(UGColor(0x000000FF)); // Red
+		pStyle->SetFillOpaqueRate(50);
+
+        UGPoint2Ds *pts = new UGPoint2Ds();
+        UGPoint2D p1 = m_pMapControl->PixelToMap(pt.x(), pt.y()); // clicked position
+        UGPoint2D p2 = m_pMapControl->PixelToMap(pt.x() + 50, pt.y() + 50); // offset 50 pixels
+		UGPoint2D p3 = m_pMapControl->PixelToMap(pt.x() + 20, pt.y() + 100); 
+
+        pts->Add(p1);
+        pts->Add(p2);
+		pts->Add(p3);
+
+        UGGeoLine *pLine = new UGGeoLine();
+
+        pLine->AddSub(pts->GetData(), 2);
+
+
+
+        pLine->SetStyle(pStyle);
+
+		UGGeoPoint* pPoint = new UGGeoPoint();
+		pPoint->SetX(p1.x);
+		pPoint->SetY(p1.y);
+		pStyle->SetMarkerSize(10);
+		//pStyle->SetMarkerStyle(4);
+		//pPoint->SetStyle(pStyle);
+
+		UGGeoRegion* pRegion = new UGGeoRegion();
+		pRegion->AddSub(pts->GetData(), 3);
+
+		pStyle->SetFillForeColor(0x00FF00);
+
+		pRegion->SetStyle(pStyle);
+
+		delete pStyle;
+
+	
+
+        pDyLayer->Add(UGString(_U("L")), pLine);
+	    pDyLayer->Add(UGString(_U("P")), pPoint);
+		pDyLayer->Add(UGString(_U("R")), pRegion);
+//        pLine->GetStyle()->SetIsVisible(false);
+		//delete pLine;
+
+//        m_pMapControl->GetMapEditWnd()->m_mapWnd.m_Map.m_DynamicLayers.Add(pDyLayer);
+        m_pMapControl->Refresh();
+}
+
+void JunSuQt::Menu_Dynamic_Visible()
+{
+     pDyLayer->Find(_U("L"))->GetStyle()->SetIsVisible(true);
+     m_pMapControl->Refresh();
+}
+void JunSuQt::Menu_Dynamic_Invisible()
+{
+     pDyLayer->Find(_U("L"))->GetStyle()->SetIsVisible(false);
+
+     m_pMapControl->Refresh();
+}
+void JunSuQt::Menu_Dynamic_AddPointAndLine()
+{
+	UGPoint2Ds *pts = new UGPoint2Ds();
+	UGPoint2D p1 = m_pMapControl->PixelToGeoCoord(pt.x(), pt.y() + 200); // clicked position
+	UGPoint2D p2 = m_pMapControl->PixelToGeoCoord(pt.x() + 50, pt.y() + 250); // offset 50 pixels
+	UGPoint2D p3 = m_pMapControl->PixelToGeoCoord(pt.x() + 20, pt.y() + 300);
+
+	pts->Add(p1);
+	pts->Add(p2);
+	pts->Add(p3);
+
+	m_pMapControl->AddDynamicPoint(_U("P1"), p1.x, p1.y);
+	m_pMapControl->AddDynamicLine(_U("L1"), p1.x, p1.y, p2.x, p2.y);
+	m_pMapControl->AddDynamicLine(_U("L2"), *pts);
+
+	m_pMapControl->Refresh();
+}
+
+void JunSuQt::Menu_Coordsys_GeoCoordToPixel()
+{
+	UGPoint2D pmap = m_pMapControl->PixelToMap(pt.x(), pt.y());
+    UGPoint2D p = m_pMapControl->PixelToGeoCoord(pt.x(), pt.y()); // clicked position : pt
+    UGPoint pt1 = m_pMapControl->GeoCoordToPixel(p.x, p.y);
+	qDebug("Map: pmap.x: %lf, pmap.y: %lf", pmap.x, pmap.y);
+	qDebug("Pixel: pt.x: %d, pt.y: %d", pt.x(), pt.y());
+	qDebug("Pixel tans: pt1.x: %d, pt1.y: %d", pt1.x, pt1.y);
+	qDebug("GeoP: p.x: %lf, pt.y: %lf", p.x, p.y);
+
+	UGPoint2Ds pts;
+	pts.Add(p);
+	bool isTomap = m_pMapControl->ToMapCoords(pts);
+	UGPoint2D ptMap = pts.GetAt(0);
+
+	pts.RemoveAll();
+	pts.Add(p);
+	UGPoints outPts;
+	bool isToPixel = m_pMapControl->ToPixels(pts, outPts);
+
+	UGPoint ptPixel = outPts.GetAt(0);
+
+	UGPoints ptsPixels;
+	ptsPixels.Add(pt1);
+	UGPoint2Ds outPt2Ds;
+	bool isToGeo = m_pMapControl->ToGeoCoords(ptsPixels, outPt2Ds);
+
+	UGPoint2D ptGeo = outPt2Ds.GetAt(0);
+
+	qDebug("ToMap, isToMap: %d, ptMap.x: %lf, ptMap.y: %lf", isTomap, ptMap.x, ptMap.y);
+	qDebug("ToPixels, isToPixels: %d, ptPixel.x: %d, ptPixel.y: %d", isToPixel, ptPixel.x, ptPixel.y);
+	qDebug("ToGeo, isToGeo: %d, ptGeo.x: %lf, ptGeo.y, %lf", isToGeo, ptGeo.x, ptGeo.y);
 }

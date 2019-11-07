@@ -63,4 +63,16 @@ private slots:
 	void Menu_Edit_PanMap();
     void Menu_Analyst_NetworkFindPath();
     void Menu_Analyst_GridBestPath();
+
+    void Menu_Dynamic_AddAll();
+    void Menu_Dynamic_Visible();
+    void Menu_Dynamic_Invisible();
+
+	void Menu_Dynamic_AddPointAndLine();
+
+    void Menu_Coordsys_GeoCoordToPixel();
+
+private:
+    UGDynamicLayer *pDyLayer;
+    QPoint pt;
 };
