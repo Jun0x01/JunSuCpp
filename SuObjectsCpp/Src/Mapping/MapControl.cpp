@@ -99,7 +99,7 @@ void MapControl::Initialize(INVALIDATEPROC pCallBack, void* pView)
 	pUGMap->m_strName = _U("UnTitledMap");
 	pUGMap->SetDescription(_U(""));
 	pUGMap->SetAngle(0.0);
-	pUGMap->SetColorMode(UGDrawParamaters::UGMapColorMode::cmDefault);
+    pUGMap->SetColorMode(UGDrawParamaters::/*UGMapColorMode::*/cmDefault);
 	pUGMap->SetLineSmoothingMode(true);
 	pUGMap->SetTextSmoothingMode(true);
 	pUGMap->SetTextFixedAngle(false);
@@ -112,7 +112,7 @@ void MapControl::Initialize(INVALIDATEPROC pCallBack, void* pView)
 	pUGMap->SetModifiedFlag(false);
 
 	// default settings
-	m_pUGMapWnd->SetUserAction(UGDrawParamaters::UGMapUserAction::uaPan); // uaPointModeSelect
+    m_pUGMapWnd->SetUserAction(UGDrawParamaters::/*UGMapUserAction::*/uaPan); // uaPointModeSelect
 	m_pUGMapWnd->SetMarginPanEnable(true); // auto scrolling
 	m_pUGMapWnd->SetMarginPanPercent(0.5);
 	m_pUGMapWnd->SetSelectionTolerance(1);
@@ -266,7 +266,7 @@ void MapControl::OnLMouseUp(unsigned int nFlags, int x, int y, void* pHDC)
 	m_pUGMapWnd->OnLButtonUp(pGraphics, getKeyUGFlags(nFlags), pt);               // Will call InvalidateCallback if map need to redraw
 	DisposeUGGrapics(pGraphics);
 	int action = m_pUGMapWnd->GetUserAction();
-	if (action != UGDrawParamaters::UGMapUserAction::uaPan)
+    if (action != UGDrawParamaters::/*UGMapUserAction::*/uaPan)
 	{
 		Invalidate();                                                             // Not call InvalidateCallback in Edit or Draw mode, so call Invalidate(); no need to call in Pan mode
 	}
@@ -274,7 +274,7 @@ void MapControl::OnLMouseUp(unsigned int nFlags, int x, int y, void* pHDC)
 void MapControl::OnLMouseDbClick(unsigned int nFlags, int x, int y, void* pHDC)
 {
 	int action = m_pUGMapWnd->GetUserAction();
-	if (action == UGDrawParamaters::UGMapUserAction::uaPan)
+    if (action == UGDrawParamaters::/*UGMapUserAction::*/uaPan)
 	{// double click to zoom in
 		double ratio = 5 / 4.0;
 		MouseScale(ratio, x, y);
@@ -297,7 +297,7 @@ void MapControl::OnMouseMove(unsigned int nFlags, int x, int y, void* pHDC)
 	if (pHDC == NULL)
 	{
 		int action = m_pUGMapWnd->GetUserAction();
-		if (action == UGDrawParamaters::UGMapUserAction::uaPan)
+        if (action == UGDrawParamaters::/*UGMapUserAction::*/uaPan)
 		{
 			Invalidate(false);      // No need to redraw in Pan mode
 		}
@@ -351,7 +351,7 @@ void MapControl::OnRMouseUp(unsigned int nFlags, int x, int y, void* pHDC)
 
 void MapControl::OnMidMouseDown(unsigned int nFlags, int x, int y, void* pHDC)
 {
-	if (m_pUGMapWnd->GetUserAction() == UGDrawParamaters::UGMapUserAction::uaPan)
+    if (m_pUGMapWnd->GetUserAction() == UGDrawParamaters::/*UGMapUserAction::*/uaPan)
 	{
 		OnLMouseDown(nFlags, x, y, pHDC);
 	}  
@@ -359,7 +359,7 @@ void MapControl::OnMidMouseDown(unsigned int nFlags, int x, int y, void* pHDC)
 
 void MapControl::OnMidMouseUp(unsigned int nFlags, int x, int y, void* pHDC)
 {
-	if (m_pUGMapWnd->GetUserAction() == UGDrawParamaters::UGMapUserAction::uaPan)
+    if (m_pUGMapWnd->GetUserAction() == UGDrawParamaters::/*UGMapUserAction::*/uaPan)
 	{
 		OnLMouseUp(nFlags, x, y, pHDC);
 	}
@@ -446,7 +446,7 @@ void MapControl::Refresh()
 
 bool MapControl::isExecuteRButton() {
 	int action = m_pUGMapWnd->GetUserAction();
-	if (action == UGDrawParamaters::UGMapUserAction::uaPan) {
+    if (action == UGDrawParamaters::/*UGMapUserAction::*/uaPan) {
 		return false;
 	}
 	else 
@@ -600,10 +600,10 @@ UGPoint MapControl::GeoCoordToPixel(double longitude, double latitude, int srcEP
 		
 		UGRefTranslator ugRefTranslator;
 
-		ugRefTranslator.SetPrjCoordSysSrc(*pSrcPrj);         // 被转换点的坐标系
+        ugRefTranslator.SetPrjCoordSysSrc(*pSrcPrj);         // 被转换点的坐标系
 		ugRefTranslator.SetPrjCoordSysDes(mapPrj);           // 转换后点的坐标系
 		// 设置转换方法：三参数
-		ugRefTranslator.SetGeoTransMethod(EmGeoTransMethod::MTH_GEOCENTRIC_TRANSLATION);
+        ugRefTranslator.SetGeoTransMethod(UGC::/*EmGeoTransMethod::*/MTH_GEOCENTRIC_TRANSLATION);
 
 		// 转换参数，根据设置的转换方法，有旋转，平移等时设置对应参数，没有要求就创建一个空对象
 		UGGeoTransParams *pTempParams = new UGGeoTransParams();
@@ -671,7 +671,7 @@ UGPoint2D MapControl::PixelToGeoCoord(int x, int y, int destEPSGCode /*= 4326*/)
 		ugRefTranslator.SetPrjCoordSysSrc(mapPrj);         // 被转换点的坐标系
 		ugRefTranslator.SetPrjCoordSysDes(*pDestPrj);      // 转换后点的坐标系
 		// 设置转换方法：三参数
-		ugRefTranslator.SetGeoTransMethod(EmGeoTransMethod::MTH_GEOCENTRIC_TRANSLATION);
+        ugRefTranslator.SetGeoTransMethod(UGC::/*EmGeoTransMethod::*/MTH_GEOCENTRIC_TRANSLATION);
 
 		// 转换参数，根据设置的转换方法，有旋转，平移等时设置对应参数，没有要求就创建一个空对象
 		UGGeoTransParams *pTempParams = new UGGeoTransParams();
@@ -731,7 +731,7 @@ bool MapControl::ToMapCoords(UGPoint2Ds& pts, int srcEPSGCode /*= 4326*/)
 		ugRefTranslator.SetPrjCoordSysSrc(*pSrcPrj);         // 被转换点的坐标系
 		ugRefTranslator.SetPrjCoordSysDes(mapPrj);      // 转换后点的坐标系
 		// 设置转换方法：三参数
-		ugRefTranslator.SetGeoTransMethod(EmGeoTransMethod::MTH_GEOCENTRIC_TRANSLATION);
+        ugRefTranslator.SetGeoTransMethod(UGC::/*EmGeoTransMethod::*/MTH_GEOCENTRIC_TRANSLATION);
 
 		// 转换参数，根据设置的转换方法，有旋转，平移等时设置对应参数，没有要求就创建一个空对象
 		UGGeoTransParams *pTempParams = new UGGeoTransParams();
@@ -806,7 +806,7 @@ bool MapControl::ToGeoCoords(const UGPoints& pts, UGPoint2Ds& outPts, int destEP
 		ugRefTranslator.SetPrjCoordSysSrc(mapPrj);         // 被转换点的坐标系
 		ugRefTranslator.SetPrjCoordSysDes(*pDestPrj);      // 转换后点的坐标系
 		// 设置转换方法：三参数
-		ugRefTranslator.SetGeoTransMethod(EmGeoTransMethod::MTH_GEOCENTRIC_TRANSLATION);
+        ugRefTranslator.SetGeoTransMethod(UGC::/*EmGeoTransMethod::*/MTH_GEOCENTRIC_TRANSLATION);
 
 		// 转换参数，根据设置的转换方法，有旋转，平移等时设置对应参数，没有要求就创建一个空对象
 		UGGeoTransParams *pTempParams = new UGGeoTransParams();

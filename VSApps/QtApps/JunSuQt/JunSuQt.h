@@ -1,6 +1,7 @@
 #pragma once
 
-#include <QtWidgets/QMainWindow>
+//#include <QtWidgets/QMainWindow>
+#include <QMainWindow>// Qt 4.8.6, Linux   ”√
 /*
  *  Author: Jun0x01@github.com
  *  Date:   2019.05.15

@@ -425,6 +425,12 @@ win32{
 unix:{
     # 16bit wchar
     QMAKE_CXXFLAGS =-fshort-wchar
+    # 支持C++11
+    QMAKE_CXXFLAGS += -std=c++11
+    # 对std库使用旧ABI, 也可在头文件开始处使用#define _GLIBCXX_USE_CXX11_ABI 0, 如此只对该文件起作用；但独立的库更好管理;
+    # 新ABI在库中的链接名称如_cxx11::std::string, 旧ABI在库中名称如std::string
+    # GCC 默认值为1，使用新ABI;
+    DEFINES += _GLIBCXX_USE_CXX11_ABI=0
 
     LIBS +=-L$${SUOBJECTSDIR}/bin/bin \
        -lSuAlgorithm   \

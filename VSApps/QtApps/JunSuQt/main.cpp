@@ -1,5 +1,6 @@
 #include "JunSuQt.h"
-#include <QtWidgets/QApplication>
+//#include <QtWidgets/QApplication>
+#include <QApplication> // Qt 4.8.6, Linux   ”√
 
 int main(int argc, char *argv[])
 {

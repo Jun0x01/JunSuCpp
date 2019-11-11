@@ -300,44 +300,44 @@ UGLayer3D* SceneControl::AddLayerFromDataset(string datasourceName, string datas
 		UGDataset* pDataset = pDatasource->GetDataset(ugDatasetName);
 		if (pDataset != NULL)
 		{
-			UGLayer3DType layerType = UGLayer3DType::l3dNone;
+            UGLayer3DType layerType = UGC::/*UGLayer3DType::*/l3dNone;
 			UGDataset::DatasetType datasetType = pDataset->GetType();
 
-			if (datasetType == UGDataset::DatasetType::Image || datasetType == UGDataset::DatasetType::ImageCollection ||
-				datasetType == UGDataset::DatasetType::Grid  || datasetType == UGDataset::DatasetType::GridCollection)
+            if (datasetType == UGDataset::/*DatasetType::*/Image || datasetType == UGDataset::/*DatasetType::*/ImageCollection ||
+                datasetType == UGDataset::/*DatasetType::*/Grid  || datasetType == UGDataset::/*DatasetType::*/GridCollection)
 			{
-				layerType = UGLayer3DType::l3dDatasetImage;
+                layerType = UGC::/*UGLayer3DType::*/l3dDatasetImage;
 			}
-			else if(datasetType == UGDataset::DatasetType::Model)
+            else if(datasetType == UGDataset::/*DatasetType::*/Model)
 			{
-				layerType = UGLayer3DType::l3dDatasetModelPro;
+                layerType = UGC::/*UGLayer3DType::*/l3dDatasetModelPro;
 			}
-			else if (datasetType == UGDataset::DatasetType::MBGrid) // Volume 
+            else if (datasetType == UGDataset::/*DatasetType::*/MBGrid) // Volume
 			{
-				layerType = UGLayer3DType::l3dDatasetVolume;
+                layerType = UGC::/*UGLayer3DType::*/l3dDatasetVolume;
 			}
-			else if (datasetType == UGDataset::DatasetType::Point || datasetType == UGDataset::DatasetType::PointZ) // PointZ -> Point3D
+            else if (datasetType == UGDataset::/*DatasetType::*/Point || datasetType == UGDataset::/*DatasetType::*/PointZ) // PointZ -> Point3D
 			{
 				if (((UGDatasetVector*)pDataset)->GetParentDataset() == NULL)
 				{
-					layerType = UGLayer3DType::l3dDatasetVectorPoint;
+                    layerType = UGC::/*UGLayer3DType::*/l3dDatasetVectorPoint;
 				}
 				else
 				{
-					layerType = UGLayer3DType::l3dDatasetVector;
+                    layerType = UGC::/*UGLayer3DType::*/l3dDatasetVector;
 				}
 				
 			}
-			else if (datasetType == UGDataset::DatasetType::Line || datasetType == UGDataset::DatasetType::LineZ ||
-				     datasetType == UGDataset::DatasetType::Region || datasetType == UGDataset::DatasetType::RegionZ ||
-				     datasetType == UGDataset::DatasetType::Network3D)
+            else if (datasetType == UGDataset::/*DatasetType::*/Line || datasetType == UGDataset::/*DatasetType::*/LineZ ||
+                     datasetType == UGDataset::/*DatasetType::*/Region || datasetType == UGDataset::/*DatasetType::*/RegionZ ||
+                     datasetType == UGDataset::/*DatasetType::*/Network3D)
 			{
-				layerType = UGLayer3DType::l3dDatasetVectorLR;
+                layerType = UGC::/*UGLayer3DType::*/l3dDatasetVectorLR;
 			}
-			else if (datasetType == UGDataset::DatasetType::Text || datasetType == UGDataset::DatasetType::Network ||
-				     datasetType == UGDataset::DatasetType::LineM || datasetType == UGDataset::DatasetType::CAD )
+            else if (datasetType == UGDataset::/*DatasetType::*/Text || datasetType == UGDataset::/*DatasetType::*/Network ||
+                     datasetType == UGDataset::/*DatasetType::*/LineM || datasetType == UGDataset::/*DatasetType::*/CAD )
 			{
-				layerType = UGLayer3DType::l3dDatasetVector;
+                layerType = UGC::/*UGLayer3DType::*/l3dDatasetVector;
 			}
 
 			pLayer = m_pUGSceneWnd->GetScene3D()->m_Layers.AddLayer(layerType, ugDatasetName, ugDatasetName);

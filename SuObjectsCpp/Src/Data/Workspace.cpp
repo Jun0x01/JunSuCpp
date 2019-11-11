@@ -105,7 +105,7 @@ bool Workspace::OpenWorkspaceDB(UGWorkspace::UGWorkspaceType type, const string 
 	wkCon.m_strUser = ug_userName;
 	wkCon.m_strPassword = ug_password;
 	wkCon.m_strWorkspaceName = ug_workspaceName;
-	if (UGWorkspace::UGWorkspaceType::WS_Version_Sql == type)
+	if (UGWorkspace::/*UGWorkspaceType::*/WS_Version_Sql == type)
 	{
 		wkCon.m_strDriver = _U("SQL Server");
 	}
@@ -173,7 +173,7 @@ UGDataSource* Workspace::OpenDatasourceDB(UGEngineType type, const string &name,
 	dcon.m_strPassword = ug_password;
 	dcon.m_bReadOnly = readOnly;
 
-	if (UGEngineType::SQLPlus == type)
+    if (UGC::/*UGEngineType::*/SQLPlus == type)
 	{
 		dcon.m_strDriver = _U("SQL Server");
 	}
@@ -289,10 +289,10 @@ bool Workspace::CreateDatasourceUDB(const string &udbPath, const string &name)
 	UGString ugName;
 	ugName.FromStd(name);
 
-	UGDataSource* datasource = UGDataSourceManager::CreateDataSource(UGEngineType::UDB);;
+    UGDataSource* datasource = UGDataSourceManager::CreateDataSource(UGC::/*UGEngineType::*/UDB);;
 	UGDsConnection& cn = datasource->GetConnectionInfo();
 	cn.m_strServer = ugUDBpath;
-	cn.m_nType = UGEngineType::UDB;
+    cn.m_nType = UGC::/*UGEngineType::*/UDB;
 	cn.m_strAlias = ugName;
 	cn.m_bReadOnly = false;
 	cn.m_bExclusive = true;

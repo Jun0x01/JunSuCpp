@@ -4,6 +4,10 @@
  */
 #ifndef SU_EXPORTS_INCLUDED
 #define SU_EXPORTS_INCLUDED
+// support Qt 4.8.6 on Linux
+#include <limits>
+#include <typeinfo>
+
 #include "Stream/ugdefs.h"
 
 // define system's export and import
