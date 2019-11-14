@@ -42,6 +42,7 @@ BEGIN_MESSAGE_MAP(JunSuCpp, CWinAppEx)
 	ON_COMMAND(ID_EDIT_SELECT, &JunSuCpp::OnEdit_SelectGeoObject)
 	ON_COMMAND(ID_EDIT_EDITNODES, &JunSuCpp::OnEdit_EditNodes)
 	ON_COMMAND(ID_EDIT_PAN, &JunSuCpp::OnEdit_Pan)
+	ON_COMMAND(ID_EDIT_ADDNODES, &JunSuCpp::OnEdit_Addnodes)
 END_MESSAGE_MAP()
 
 
@@ -640,9 +641,9 @@ void JunSuCpp::OnEdit_EditNodes()
 		{
 			UGMapEditorWnd* pMapWnd = ((MapView*)((MapFrame*)pWnd)->GetActiveView())->GetMapControl()->GetMapEditWnd();
 			UGLayer* pLayer = pMapWnd->m_mapWnd.m_Map.GetCurrentLayer();
-			if (pLayer != NULL)
+			if (pLayer != NULL) // 没选中对象，pLayer为NULL, 需先选中一个对象
 			{
-				pMapWnd->SetUserAction(UGDrawParamaters::UGMapUserAction::uaEdit);
+				pMapWnd->GetEditToolPack()->SetAccessibilityActionPointMode(UGC::UGEditType::EAA_EditPoint);
 			}
 			else
 			{
@@ -662,3 +663,36 @@ void JunSuCpp::OnEdit_EditNodes()
 }
 
 
+
+
+void JunSuCpp::OnEdit_Addnodes()
+{
+	CWnd* pWnd = ((JunSuMainFrame*)AfxGetMainWnd())->MDIGetActive();
+	if (NULL != pWnd)
+	{
+		string targetName = typeid(MapFrame).name();
+		string wndName = typeid(*pWnd).name();
+		if (0 == targetName.compare(wndName))
+		{
+			UGMapEditorWnd* pMapWnd = ((MapView*)((MapFrame*)pWnd)->GetActiveView())->GetMapControl()->GetMapEditWnd();
+			UGLayer* pLayer = pMapWnd->m_mapWnd.m_Map.GetCurrentLayer();
+			if (pLayer != NULL) // 没选中对象，pLayer为NULL，需先选中一个对象
+			{
+				pMapWnd->GetEditToolPack()->SetAccessibilityActionPointMode(UGC::UGEditType::EAA_AddPoint);
+			}
+			else
+			{
+				// TODO: output log
+			}
+
+		}
+		else
+		{
+			// TODO: output log
+		}
+	}
+	else
+	{
+		// TODO: output log
+	}
+}

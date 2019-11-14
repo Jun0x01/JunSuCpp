@@ -72,6 +72,7 @@ public:
 	afx_msg void OnEdit_SelectGeoObject();
 	afx_msg void OnEdit_EditNodes();
 	afx_msg void OnEdit_Pan();
+	afx_msg void OnEdit_Addnodes();
 };
 
 extern JunSuCpp theApp;
