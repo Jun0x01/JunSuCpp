@@ -13,6 +13,9 @@
 #include "GridAnalyst/UGDistanceAnalysis.h"
 #include "Geometry/UGGeoLine.h"
 
+
+#include "GeometryPlot/UGGOLibraryManager.h"
+
 /**************** CallBack *********************/
 void SuCALLBACK InvalidateCallback(void * pWnd)
 {
@@ -43,6 +46,18 @@ JunSuQt::JunSuQt(QWidget *parent)
 
 		pDyLayer = new UGDynamicLayer();
 		m_pMapControl->GetMapEditWnd()->m_mapWnd.m_Map.m_DynamicLayers.Add(pDyLayer);
+
+        UGString strJYLibPath = _U("..\\..\\..\\TestData\\Plot\\JY.plot");
+        UGString strTYLibPath = _U("..\\..\\..\\TestData\\Plot\\TY.plot");
+
+        UGGOLibraryManager* pLibManager = UGGOLibraryManager::GetInstance();
+        if (NULL == pLibManager)
+        {
+            return;
+        }
+        //添加标号库
+        UGint nJYLibId = pLibManager->AddGOLibrary(strJYLibPath);
+        UGint nTYLibId = pLibManager->AddGOLibrary(strTYLibPath);
 }
 
 JunSuQt::~JunSuQt() {
@@ -204,6 +219,61 @@ void JunSuQt::initMenuBar() {
             connect(menuAction, SIGNAL(triggered()), this, SLOT(Menu_Coordsys_GeoCoordToPixel()));
         }
         menuBar->addMenu(menu);
+    }
+
+	// Menu -> Symbol
+	{
+		QMenu* menu = new QMenu("Symbol", menuBar);
+		// Eidt -> Create Marker Symbol
+		{
+			QAction* menuAction = new QAction("Create Marker Symbol", this);
+			menu->addAction(menuAction);
+			menu->addSeparator();
+
+			connect(menuAction, SIGNAL(triggered()), this, SLOT(addPointCutomSymbol()));
+		}
+		menuBar->addMenu(menu);
+	}
+
+    // Menu -> Layers
+    {
+        QMenu* menu = new QMenu("Layers", menuBar);
+        // Layers -> Visible
+        {
+			QAction* menuAction = new QAction("Visible_CAD", this);
+            menu->addAction(menuAction);
+            menu->addSeparator();
+
+            connect(menuAction, SIGNAL(triggered()), this, SLOT(Menu_Layers_Visible()));
+        }
+        // Layers -> Invisible
+        {
+			QAction* menuAction = new QAction("Invisible_CAD", this);
+            menu->addAction(menuAction);
+            menu->addSeparator();
+
+            connect(menuAction, SIGNAL(triggered()), this, SLOT(Menu_Layers_Invisible()));
+        }
+
+        // Layers -> Visible
+        {
+            QAction* menuAction = new QAction("Visible_Point", this);
+            menu->addAction(menuAction);
+            menu->addSeparator();
+
+            connect(menuAction, SIGNAL(triggered()), this, SLOT(Menu_Layers_Visible1()));
+        }
+        // Layers -> Invisible
+        {
+			QAction* menuAction = new QAction("Invisible_Point", this);
+            menu->addAction(menuAction);
+            menu->addSeparator();
+
+            connect(menuAction, SIGNAL(triggered()), this, SLOT(Menu_Layers_Invisible1()));
+        }
+        menuBar->addMenu(menu);
+
+
     }
 }
 
@@ -775,4 +845,41 @@ void JunSuQt::Menu_Coordsys_GeoCoordToPixel()
 	qDebug("ToMap, isToMap: %d, ptMap.x: %lf, ptMap.y: %lf", isTomap, ptMap.x, ptMap.y);
 	qDebug("ToPixels, isToPixels: %d, ptPixel.x: %d, ptPixel.y: %d", isToPixel, ptPixel.x, ptPixel.y);
 	qDebug("ToGeo, isToGeo: %d, ptGeo.x: %lf, ptGeo.y, %lf", isToGeo, ptGeo.x, ptGeo.y);
+}
+
+void JunSuQt::Menu_Layers_Visible(){
+
+    UGLayers* pUGLayers = m_pMapControl->GetUGLayers();
+    UGLayer* pLayer = pUGLayers->GetLayer(_U("DrawCAD@World"));
+    if(NULL != pLayer)
+        pLayer->SetVisible(true);
+    m_pMapControl->Refresh();
+
+}
+
+
+void JunSuQt::Menu_Layers_Invisible(){
+    UGLayers* pUGLayers = m_pMapControl->GetUGLayers();
+    UGLayer* pLayer = pUGLayers->GetLayer(_U("DrawCAD@World"));
+    if(NULL != pLayer)
+        pLayer->SetVisible(false);
+    m_pMapControl->Refresh();
+}
+
+void JunSuQt::Menu_Layers_Visible1(){
+
+    UGLayers* pUGLayers = m_pMapControl->GetUGLayers();
+    UGLayer* pLayer = pUGLayers->GetLayer(_U("River_Network_Node@World"));
+    if(NULL != pLayer)
+        pLayer->SetVisible(true);
+    m_pMapControl->Refresh();
+}
+
+
+void JunSuQt::Menu_Layers_Invisible1(){
+    UGLayers* pUGLayers = m_pMapControl->GetUGLayers();
+    UGLayer* pLayer = pUGLayers->GetLayer(_U("River_Network_Node@World"));
+    if(NULL != pLayer)
+        pLayer->SetVisible(false);
+    m_pMapControl->Refresh();
 }

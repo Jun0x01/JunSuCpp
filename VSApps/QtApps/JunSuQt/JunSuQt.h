@@ -73,6 +73,12 @@ private slots:
 
     void Menu_Coordsys_GeoCoordToPixel();
 
+
+    void Menu_Layers_Visible();
+    void Menu_Layers_Invisible();
+    void Menu_Layers_Visible1();
+    void Menu_Layers_Invisible1();
+
 private:
     UGDynamicLayer *pDyLayer;
     QPoint pt;
