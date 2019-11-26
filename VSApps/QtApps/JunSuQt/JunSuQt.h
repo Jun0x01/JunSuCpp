@@ -6,6 +6,7 @@
  *  Author: Jun0x01@github.com
  *  Date:   2019.05.15
  */
+#include <qtextstream.h>
 #include "ui_JunSuQt.h"
 #include <qurl.h>
 #include <qdir.h>
@@ -22,7 +23,7 @@ class JunSuQt : public QMainWindow
 	Q_OBJECT
 
 public:
-	JunSuQt(QWidget *parent = Q_NULLPTR);
+    JunSuQt(QWidget *parent = NULL/*Q_NULLPTR*/);
 	~JunSuQt();
 private:
 	Ui::JunSuQtClass ui;

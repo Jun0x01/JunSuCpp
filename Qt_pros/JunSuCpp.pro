@@ -9,7 +9,9 @@
 TEMPLATE = subdirs
 SUBDIRS +=  ../SuObjectsCpp/Builds/Qt_pro/Data/Data.pro \
     ../SuObjectsCpp/Builds/Qt_pro/Mapping/Mapping.pro \
-    ../VSApps/QtApps/JunSuQt/JunSuQt.pro
+    ../VSApps/QtApps/JunSuQt/JunSuQt.pro \
+    Check_so \
+    Check_so1
 
 CONFIG += ordered
 message($${QMAKE_TARGET.arch})

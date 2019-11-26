@@ -222,18 +222,18 @@ void JunSuQt::initMenuBar() {
     }
 
 	// Menu -> Symbol
-	{
-		QMenu* menu = new QMenu("Symbol", menuBar);
-		// Eidt -> Create Marker Symbol
-		{
-			QAction* menuAction = new QAction("Create Marker Symbol", this);
-			menu->addAction(menuAction);
-			menu->addSeparator();
+//	{
+//		QMenu* menu = new QMenu("Symbol", menuBar);
+//		// Eidt -> Create Marker Symbol
+//		{
+//			QAction* menuAction = new QAction("Create Marker Symbol", this);
+//			menu->addAction(menuAction);
+//			menu->addSeparator();
 
-			connect(menuAction, SIGNAL(triggered()), this, SLOT(addPointCutomSymbol()));
-		}
-		menuBar->addMenu(menu);
-	}
+//			connect(menuAction, SIGNAL(triggered()), this, SLOT(addPointCutomSymbol()));
+//		}
+//		menuBar->addMenu(menu);
+//	}
 
     // Menu -> Layers
     {
@@ -642,7 +642,6 @@ void JunSuQt::Menu_Analyst_NetworkFindPath()
         UGArray<UGPoint2D> pointsL;
         UGPoint3Ds *pPiont3Ds;
         UGGeoLineM *pLineM = NULL;
-        UGGeoLine *pLine = NULL;
 
         if (isFound != -1) {
             int lineCount = resultInfo.arrLineM.GetSize();
@@ -652,7 +651,7 @@ void JunSuQt::Menu_Analyst_NetworkFindPath()
                 pLineM = new UGGeoLineM(resultInfo.arrLineM.GetAt(i));
                 //pLineM = &(resultInfo.arrLineM.GetAt(i));
 
-                pLine = &pLineM->GetLine();
+               UGGeoLine geoLine = pLineM->GetLine();
 
 
                 int countM = pLineM->GetPointCount();
@@ -663,7 +662,7 @@ void JunSuQt::Menu_Analyst_NetworkFindPath()
                     pointsM.Add(p);
                 }
 
-                int countL = pLine->GetPointCount();
+                int countL = geoLine.GetPointCount();
                 for (int j = 0; j < countL; j++) {
                     UGPoint2D p;
                     pLineM->GetPointAtIndex(p, j);
