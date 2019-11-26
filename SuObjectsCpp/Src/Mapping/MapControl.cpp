@@ -8,7 +8,7 @@
 using namespace SuperMap;
 
 /**************** Invalidate CallBack *********************/
-void SuCALLBACK InvalidateCallback(void * p)
+void SuCALLBACK InvalidateCallbackMapControl(void * p)
 {
 	MapControl* pThis = (MapControl*)p;
 
@@ -28,7 +28,7 @@ MapControl::MapControl(INVALIDATEPROC pInvalidateCallBack, void* pView)
 	m_pWnd = pView;
 	m_pInvalidateCallback = pInvalidateCallBack;
 	//Initialize(pInvalidateCallBack, pView);
-	Initialize(InvalidateCallback, this);
+	Initialize(InvalidateCallbackMapControl, this);
 
 	/*UGWorkspace* pWorkspace = m_pUGMapWnd->m_mapWnd.m_Map.GetWorkspace();
 	if(pWorkspace == NULL){
