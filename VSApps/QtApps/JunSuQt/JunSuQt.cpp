@@ -43,12 +43,17 @@ JunSuQt::JunSuQt(QWidget *parent)
 
 //        cout << "许可无效，请更新许可";
 //    }
+        QString appDir = QCoreApplication::applicationDirPath();
+        QString curDir = QDir::currentPath();
+        qDebug() << "appDir: " << appDir << endl;
+        qDebug() << "curDir: " << curDir << endl;
+
 
 		pDyLayer = new UGDynamicLayer();
 		m_pMapControl->GetMapEditWnd()->m_mapWnd.m_Map.m_DynamicLayers.Add(pDyLayer);
 
-        UGString strJYLibPath = _U("..\\..\\..\\TestData\\Plot\\JY.plot");
-        UGString strTYLibPath = _U("..\\..\\..\\TestData\\Plot\\TY.plot");
+        UGString strJYLibPath = _U("../../../TestData/Plot/JY.plot");
+        UGString strTYLibPath = _U("../../../TestData/Plot/TY.plot");
 
         UGGOLibraryManager* pLibManager = UGGOLibraryManager::GetInstance();
         if (NULL == pLibManager)
@@ -56,8 +61,12 @@ JunSuQt::JunSuQt(QWidget *parent)
             return;
         }
         //添加标号库
-        UGint nJYLibId = pLibManager->AddGOLibrary(strJYLibPath);
+        //UGint nJYLibId = -1;
+		UGint nJYLibId = pLibManager->AddGOLibrary(strJYLibPath);
         UGint nTYLibId = pLibManager->AddGOLibrary(strTYLibPath);
+
+        qDebug() << "JYLibId: " << UGFile::IsExist(strJYLibPath) << ", id: " << nJYLibId << endl;
+        qDebug() << "TYLibId: " << UGFile::IsExist(strTYLibPath) << ", id: " << nTYLibId << endl;
 }
 
 JunSuQt::~JunSuQt() {
@@ -710,7 +719,7 @@ void JunSuQt::Menu_Analyst_GridBestPath()
 
         UGRecordset *pRecordset = p2->Query(queryDef);
         //pRecordset->Edit();
-        bool isAdd = pRecordset->AddNew(pGeoLine);
+        bool isAdd = false; //pRecordset->AddNew(pGeoLine);
         if (isAdd) {
             bool isUpdate = pRecordset->Update();
             if (isUpdate) {
