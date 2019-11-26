@@ -164,6 +164,18 @@ BOOL JunSuCpp::InitInstance()
 	{
 		((JunSuMainFrame *)m_pMainWnd)->GetWorkspaceView()->SetWorkspace(m_pWorkspace);
 	}
+
+	UGString strJYLibPath = _U("..\\..\\..\\TestData\\Plot\\JY.plot");
+	UGString strTYLibPath = _U("..\\..\\..\\TestData\\Plot\\TY.plot");
+	
+	UGGOLibraryManager* pLibManager = UGGOLibraryManager::GetInstance();
+	if (NULL != pLibManager)
+	{
+		//Ìí¼Ó±êºÅ¿â
+		UGint nJYLibId = pLibManager->AddGOLibrary(strJYLibPath);
+		UGint nTYLibId = pLibManager->AddGOLibrary(strTYLibPath);
+	}
+	
 	return TRUE;
 }
 

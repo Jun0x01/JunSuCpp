@@ -17,6 +17,7 @@
 #include "MapFrm.h"
 #include "SceneFrame.h"
 #include "SceneView.h"
+#include "GeometryPlot/UGGOLibraryManager.h"
 
 using namespace SuperMap;
 
