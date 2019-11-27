@@ -161,6 +161,9 @@ namespace SuperMap
 			 */
 			void SetWorkspace(Workspace* pWorkspace);
 
+			// Return the related Workspace's pointer.
+			Workspace* GetWorkspace();
+
 			/*
 			 * @en
 			 * @brief Get UGLayers handler of current map, which manager layers in the map.

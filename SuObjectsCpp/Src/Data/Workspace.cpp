@@ -282,30 +282,34 @@ bool Workspace::SaveAsFile(const string &wkPath)
 	}
 }
 
-bool Workspace::CreateDatasourceUDB(const string &udbPath, const string &name)
+UGDataSource* Workspace::CreateDatasourceUDB(const string &udbPath, const string &name)
 {
 	UGString ugUDBpath;
 	ugUDBpath.FromStd(udbPath);
 	UGString ugName;
 	ugName.FromStd(name);
 
-    UGDataSource* datasource = UGDataSourceManager::CreateDataSource(UGC::/*UGEngineType::*/UDB);;
-	UGDsConnection& cn = datasource->GetConnectionInfo();
+    UGDataSource* pDatasource = UGDataSourceManager::CreateDataSource(UGC::/*UGEngineType::*/UDB);;
+	UGDsConnection& cn = pDatasource->GetConnectionInfo();
 	cn.m_strServer = ugUDBpath;
     cn.m_nType = UGC::/*UGEngineType::*/UDB;
 	cn.m_strAlias = ugName;
 	cn.m_bReadOnly = false;
-	cn.m_bExclusive = true;
-	cn.m_bAutoConnect = false;
+	//cn.m_bExclusive = true;     // 默认为false. 该参数与m_bReadOnly相反，使用其一即可。即只有只读和独占两种状态。
+	//cn.m_bAutoConnect = false;  // 默认为true, 使用默认值。若设置成false，会导致保存到工作空间后，再次打开工作空间时，该数据源打开失败
 
-	bool isCreated = datasource->Create();
+	bool isCreated = pDatasource->Create();
+
 	if (isCreated)
 	{
-		m_pUGWorkspace->m_DataSources.Insert(ugName, datasource);
+		m_pUGWorkspace->m_DataSources.Insert(ugName, pDatasource); // 将新建数据源和工作空间关联，以便保存到文件。
+
 	}
 	else {
+		delete pDatasource;
+		pDatasource = NULL;
 		Log::Error("Failed to created udb，the path is \"" + udbPath + "\"");
 	}
 
-	return isCreated;
+	return pDatasource;
 }

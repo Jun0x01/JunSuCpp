@@ -492,6 +492,11 @@ void MapControl::SetWorkspace(Workspace* workspace)
 	}
 }
 
+Workspace* MapControl::GetWorkspace()
+{
+	return m_pWorkspace;
+}
+
 bool MapControl::OpenMap(string mapName)
 {
 	UGString ugMapName;

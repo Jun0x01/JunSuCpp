@@ -138,9 +138,9 @@ namespace SuperMap
 		 * @brief   Create an UDB datasource. If the datource is created, it will add into current workspace.
 		 * @udbPath The absolute path of UDB datasource file which will be created.
 		 * @name    An unique name of created datasource will used in current workspace.
-		 * @return  Return ture if saved, otherwise return false.
+		 * @return  Return pointer of UGDataSource if created. If failed to create, return NULL.
 		 */
-		bool CreateDatasourceUDB(const string &udbPath, const string &name);
+		UGDataSource* CreateDatasourceUDB(const string &udbPath, const string &name);
 
 	private:
 		UGWorkspace* m_pUGWorkspace;
