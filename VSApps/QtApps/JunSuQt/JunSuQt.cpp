@@ -105,6 +105,7 @@ void JunSuQt::initMenuBar() {
 
 			menu->addAction(menuAction);
 			menu->addSeparator();
+			connect(menuAction, SIGNAL(triggered()), this, SLOT(Menu_File_Close()));
 		}
 		menuBar->addMenu(menu);
 	}
