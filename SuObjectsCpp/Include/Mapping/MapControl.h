@@ -288,6 +288,19 @@ namespace SuperMap
 			 * @srcEPSGCode   传入点串对应的坐标系的EPSG Code，默认4326,即WGS1984坐标系；若使用China2000,则传入4490
 			 */
 			bool AddDynamicLine(const UGString& keyName, const UGPoint2Ds pts, int color = 0, double width = 0.1, int symbolID = 0, int srcEPSGCode = 4326);
+
+			/*
+			 * 设置动态层中的对象是否可见
+			 * @keyName       添加到动态层的对象的名称
+			 * @isVisible     对象是否可见
+			 * @needRefresh   是否立即刷新地图，默认true.
+			 */
+			void SetDynamicGeoVisible(const UGString& keyName, bool isVisible, bool needRefresh = true);
+
+			/*
+			 * 设置是否使用动态投影显示地图, 修改后会立即刷新地图
+			 */
+			void SetMapDynamicProjection(bool isDynamicPrjection);
 	   };
 	//}
 }

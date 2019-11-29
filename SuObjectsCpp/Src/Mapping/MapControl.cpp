@@ -597,24 +597,22 @@ UGPoint MapControl::GeoCoordToPixel(double longitude, double latitude, int srcEP
 	int mapEPSGCode = mapPrj.GetEPSGCode();
 
 	UGPoint pResP = MapToPixel(longitude, latitude);
-	UGPrjCoordSys *pSrcPrj = new UGPrjCoordSys(srcEPSGCode);
+	UGPrjCoordSys srcPrj(srcEPSGCode);
 	// 默认值
-	if (mapPrj.GetProjection().GetProjectionType() != pSrcPrj->GetProjection().GetProjectionType()) {
+	if (mapPrj != srcPrj) {
 
 		//根据EPSGCode创建源坐标系
 		
 		UGRefTranslator ugRefTranslator;
 
-        ugRefTranslator.SetPrjCoordSysSrc(*pSrcPrj);         // 被转换点的坐标系
+        ugRefTranslator.SetPrjCoordSysSrc(srcPrj);         // 被转换点的坐标系
 		ugRefTranslator.SetPrjCoordSysDes(mapPrj);           // 转换后点的坐标系
 		// 设置转换方法：三参数
         ugRefTranslator.SetGeoTransMethod(UGC::/*EmGeoTransMethod::*/MTH_GEOCENTRIC_TRANSLATION);
 
 		// 转换参数，根据设置的转换方法，有旋转，平移等时设置对应参数，没有要求就创建一个空对象
-		UGGeoTransParams *pTempParams = new UGGeoTransParams();
-		ugRefTranslator.SetGeoTransParams(*pTempParams);
-		delete pTempParams;
-		pTempParams = NULL;
+		UGGeoTransParams tempParams;
+		ugRefTranslator.SetGeoTransParams(tempParams);
 
 		// 传入的经纬度坐标点
 		UGPoint2D srcPt(longitude, latitude);
@@ -625,7 +623,6 @@ UGPoint MapControl::GeoCoordToPixel(double longitude, double latitude, int srcEP
 		int count = ugArray.GetSize();
 
 		bool result = ugRefTranslator.Translate(ugArray.GetData(), count);
-		delete pSrcPrj;
 		if (result)
 		{
 			UGPoint2D res = ugArray.GetAt(0);
@@ -637,11 +634,9 @@ UGPoint MapControl::GeoCoordToPixel(double longitude, double latitude, int srcEP
 			Log::Warning("GeoCoordToPixel > ugRefTranslator.Translate()转换失败，返回MapToPixel()转换的结果");
 			return pResP;
 		}
-
 	}
 	else 
 	{
-		delete pSrcPrj;
 		// 坐标系相同直接转换屏幕坐标
 		return pResP;
 	}
@@ -665,25 +660,22 @@ UGPoint2D MapControl::PixelToGeoCoord(int x, int y, int destEPSGCode /*= 4326*/)
 	// 先转换为地图坐标
 	UGPoint2D rePt = PixelToMap(x, y);
 
-	UGPrjCoordSys *pDestPrj = new UGPrjCoordSys(destEPSGCode);
+	UGPrjCoordSys destPrj(destEPSGCode);
 	// 默认值
-	if (mapPrj.GetProjection().GetProjectionType() != pDestPrj->GetProjection().GetProjectionType()) {
+	if (mapPrj != destPrj) {
 
 		//根据EPSGCode创建源坐标系
 
 		UGRefTranslator ugRefTranslator;
 
 		ugRefTranslator.SetPrjCoordSysSrc(mapPrj);         // 被转换点的坐标系
-		ugRefTranslator.SetPrjCoordSysDes(*pDestPrj);      // 转换后点的坐标系
+		ugRefTranslator.SetPrjCoordSysDes(destPrj);      // 转换后点的坐标系
 		// 设置转换方法：三参数
         ugRefTranslator.SetGeoTransMethod(UGC::/*EmGeoTransMethod::*/MTH_GEOCENTRIC_TRANSLATION);
 
 		// 转换参数，根据设置的转换方法，有旋转，平移等时设置对应参数，没有要求就创建一个空对象
-		UGGeoTransParams *pTempParams = new UGGeoTransParams();
-		ugRefTranslator.SetGeoTransParams(*pTempParams);
-		delete pTempParams;
-		pTempParams = NULL;
-
+		UGGeoTransParams tempParams;
+		ugRefTranslator.SetGeoTransParams(tempParams);
 		
 		UGArray<UGPoint2D> ugArray;
 		ugArray.Add(rePt);
@@ -691,7 +683,6 @@ UGPoint2D MapControl::PixelToGeoCoord(int x, int y, int destEPSGCode /*= 4326*/)
 		int count = ugArray.GetSize();
 
 		bool result = ugRefTranslator.Translate(ugArray.GetData(), count);
-		delete pDestPrj;
 		if (result)
 		{
 			UGPoint2D res = ugArray.GetAt(0); // 获取转换结果
@@ -705,7 +696,6 @@ UGPoint2D MapControl::PixelToGeoCoord(int x, int y, int destEPSGCode /*= 4326*/)
 	}
 	else
 	{
-		delete pDestPrj;
 		// 坐标系相同直接转换地图坐标
 		return rePt;
 	}
@@ -725,24 +715,22 @@ bool MapControl::ToMapCoords(UGPoint2Ds& pts, int srcEPSGCode /*= 4326*/)
 	int mapEPSGCode = mapPrj.GetEPSGCode();
 
 
-	UGPrjCoordSys *pSrcPrj = new UGPrjCoordSys(srcEPSGCode);
+	UGPrjCoordSys srcPrj(srcEPSGCode);
 	// 默认值
-	if (mapPrj.GetProjection().GetProjectionType() != pSrcPrj->GetProjection().GetProjectionType()) {
+	if (mapPrj != srcPrj) {
 
 		//根据EPSGCode创建源坐标系
 
 		UGRefTranslator ugRefTranslator;
 
-		ugRefTranslator.SetPrjCoordSysSrc(*pSrcPrj);         // 被转换点的坐标系
+		ugRefTranslator.SetPrjCoordSysSrc(srcPrj);         // 被转换点的坐标系
 		ugRefTranslator.SetPrjCoordSysDes(mapPrj);      // 转换后点的坐标系
 		// 设置转换方法：三参数
         ugRefTranslator.SetGeoTransMethod(UGC::/*EmGeoTransMethod::*/MTH_GEOCENTRIC_TRANSLATION);
 
 		// 转换参数，根据设置的转换方法，有旋转，平移等时设置对应参数，没有要求就创建一个空对象
-		UGGeoTransParams *pTempParams = new UGGeoTransParams();
-		ugRefTranslator.SetGeoTransParams(*pTempParams);
-		delete pTempParams;
-		pTempParams = NULL;
+		UGGeoTransParams tempParams;
+		ugRefTranslator.SetGeoTransParams(tempParams);
 		
 		int count = pts.GetSize();
 
@@ -754,12 +742,10 @@ bool MapControl::ToMapCoords(UGPoint2Ds& pts, int srcEPSGCode /*= 4326*/)
 		{
 			Log::Warning("PixelToGeoCoord > ugRefTranslator.Translate()转换失败，直接返回地图坐标");
 		}
-		delete pSrcPrj;
 		return result;
 	}
 	else
 	{
-		delete pSrcPrj;
 		// 坐标系相同不用转换
 		return true;
 	}
@@ -799,25 +785,23 @@ bool MapControl::ToGeoCoords(const UGPoints& pts, UGPoint2Ds& outPts, int destEP
 
 	int mapEPSGCode = mapPrj.GetEPSGCode();
 
-
-	UGPrjCoordSys *pDestPrj = new UGPrjCoordSys(destEPSGCode);
+	
+	UGPrjCoordSys destPrj(destEPSGCode);
 	// 默认值
-	if (mapPrj.GetProjection().GetProjectionType() != pDestPrj->GetProjection().GetProjectionType()) {
+	if (mapPrj != destPrj) {
 
 		//根据EPSGCode创建源坐标系
 
 		UGRefTranslator ugRefTranslator;
 
 		ugRefTranslator.SetPrjCoordSysSrc(mapPrj);         // 被转换点的坐标系
-		ugRefTranslator.SetPrjCoordSysDes(*pDestPrj);      // 转换后点的坐标系
+		ugRefTranslator.SetPrjCoordSysDes(destPrj);      // 转换后点的坐标系
 		// 设置转换方法：三参数
         ugRefTranslator.SetGeoTransMethod(UGC::/*EmGeoTransMethod::*/MTH_GEOCENTRIC_TRANSLATION);
 
 		// 转换参数，根据设置的转换方法，有旋转，平移等时设置对应参数，没有要求就创建一个空对象
-		UGGeoTransParams *pTempParams = new UGGeoTransParams();
-		ugRefTranslator.SetGeoTransParams(*pTempParams);
-		delete pTempParams;
-		pTempParams = NULL;
+		UGGeoTransParams tempParams;
+		ugRefTranslator.SetGeoTransParams(tempParams);
 
 		int count = outPts.GetSize();
 
@@ -829,12 +813,10 @@ bool MapControl::ToGeoCoords(const UGPoints& pts, UGPoint2Ds& outPts, int destEP
 		{
 			Log::Warning("PixelToGeoCoord > ugRefTranslator.Translate()转换失败，直接返回地图坐标");
 		}
-		delete pDestPrj;
 		return result;
 	}
 	else
 	{
-		delete pDestPrj;
 		// 坐标系相同不用转换
 		return true;
 	}
@@ -968,4 +950,27 @@ bool MapControl::AddDynamicLine(const UGString& keyName, const UGPoint2Ds pts, i
 	{
 		return false;
 	}
+}
+
+void MapControl::SetDynamicGeoVisible(const UGString& keyName, bool isVisible, bool needRefresh)
+{
+	UGGeometry* pGeo = pUGDynLayer->Find(keyName);
+	if (NULL != pGeo)
+	{
+		UGStyle* pStyle = pGeo->GetStyle();
+		if (NULL != pStyle && pStyle->IsVisible != isVisible) 
+		{
+			pStyle->SetIsVisible(isVisible);
+			if (needRefresh)
+				Refresh();
+		}
+	}
+}
+
+/*
+ * 设置是否使用动态投影显示地图
+ */
+void MapControl::SetMapDynamicProjection(bool isDynamicPrjection)
+{
+	m_pUGMapWnd->m_mapWnd.m_Map.SetProjectionOnTheFly(isDynamicPrjection);
 }
