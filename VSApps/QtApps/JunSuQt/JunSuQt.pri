@@ -7,8 +7,13 @@
 #message("You are running qmake on a generated .pro file. This may not work!")
 
 
-HEADERS += ./JunSuQt.h
+HEADERS += ./JunSuQt.h \
+           ./MainWindow.h \
+           ./MapView.h
 SOURCES += ./JunSuQt.cpp \
-    ./main.cpp
-FORMS += ./JunSuQt.ui
+           ./main.cpp \
+           ./MainWindow.cpp \
+           ./MapView.cpp
+FORMS += ./JunSuQt.ui \
+         ./MainWindow.ui
 RESOURCES += ./JunSuQt.qrc
