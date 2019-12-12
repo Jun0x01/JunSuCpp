@@ -1,6 +1,14 @@
 <RCC>
-    <qresource prefix="/JunSuQt">
-        <file>Resources/open.png</file>
-        <file>Resources/Line.png</file>
+    <qresource prefix="/Images">
+        <file>Resources/File/New.png</file>
+        <file>Resources/File/Open.png</file>
+        <file>Resources/File/Save.png</file>
+        <file>Resources/File/SaveAs.png</file>
+        <file>Resources/Workspace/smwu.png</file>
+        <file>Resources/Workspace/Datasources.png</file>
+        <file>Resources/Workspace/Maps.png</file>
+        <file>Resources/Workspace/Scenes.png</file>
+        <file>Resources/Workspace/smw.png</file>
+        <file>Resources/Workspace/sxw.png</file>
     </qresource>
 </RCC>

@@ -61,7 +61,7 @@ win32{
     CONFIG(debug, debug|release){
 
     LIBPATH = $${SUOBJECTSDIR}/lib/libd_x64
-    LIBS +=-lSuAlgorithm3Dd   \
+    LIBS +=       -lSuAlgorithm3Dd   \
        -lSuAlgorithmd   \
        -lSuAlgorithmVCGd   \
        -lSuAllocationd   \
@@ -71,6 +71,7 @@ win32{
        -lSuBased   \
        -lSuBGDataCompilerd   \
        -lSuBPlusTreed   \
+       -lSuCacheBuilder3Dd   \
        -lSuCacheBuilderd   \
        -lSuCacheFiled   \
        -lSuChartBased   \
@@ -94,6 +95,7 @@ win32{
        -lSuEngineDRDSd   \
        -lSuEngineESd   \
        -lSuEngineExtendFiled   \
+       -lSuEngineGanosd   \
        -lSuEngineGBased   \
        -lSuEngineGoogleMapsd   \
        -lSuEngineGPd   \
@@ -119,9 +121,7 @@ win32{
        -lSuFileParser3DModeld   \
        -lSuFileParser3dsd   \
        -lSuFileParserAcadd   \
-       -lSuFileParserAiGridd   \
-       -lSuFileParserBGRIDd   \
-       -lSuFileParserBMPd   \
+       -lSuFileParserBitMapd   \
        -lSuFileParserCSVd   \
        -lSuFileParserd   \
        -lSuFileParserDEMd   \
@@ -129,34 +129,27 @@ win32{
        -lSuFileParserE00d   \
        -lSuFileParserECWd   \
        -lSuFileParserENCd   \
-       -lSuFileParserFileGDBd   \
        -lSuFileParserFMEd   \
        -lSuFileParserGDALd   \
        -lSuFileParserGEOJSONd   \
        -lSuFileParserGJBd   \
-       -lSuFileParserGPKGd   \
-       -lSuFileParserGRIBd   \
-       -lSuFileParserGridd   \
-       -lSuFileParserGTiffd   \
-       -lSuFileParserHFAd   \
        -lSuFileParserKMLd   \
        -lSuFileParserLidard   \
        -lSuFileParserMAPGISd   \
        -lSuFileParserMitabd   \
        -lSuFileParserMrSIDd   \
+       -lSuFileParserOGRd   \
        -lSuFileParserOrangeTabd   \
        -lSuFileParserOSMd   \
        -lSuFileParserPGDBVd   \
        -lSuFileParserPointCloudd   \
        -lSuFileParserRAWd   \
+       -lSuFileParserS3MBd   \
        -lSuFileParserSCVd   \
        -lSuFileParserSGMd   \
-       -lSuFileParserShaped   \
        -lSuFileParserSimpleJsond   \
-       -lSuFileParserSTETd   \
        -lSuFileParserTEMSd   \
        -lSuFileParserVCTd   \
-       -lSuFileParserVRTd   \
        -lSuFilePyramidd   \
        -lSuFilePyramidECWd   \
        -lSuFilePyramidGDALd   \
@@ -223,6 +216,7 @@ win32{
        -lSuProjectiond   \
        -lSuProximityd   \
        -lSuPublicTransportd   \
+       -lSuRealspaced   \
        -lSuRectifyd   \
        -lSuRenderd   \
        -lSuRepresentationd   \
@@ -240,10 +234,13 @@ win32{
        -lSuSymbolMarker3Dd   \
        -lSuTheme3DBased   \
        -lSuTileStoraged   \
+       -lSuToolkit3Dd   \
        -lSuToolkitd   \
+       -lSuToolkitPointCloudd   \
        -lSuTopoBased   \
        -lSuTopoBuilderd   \
        -lSuWorkspaced   \
+
     }else:CONFIG(release, debug|release){
 
     LIBPATH = $${SUOBJECTSDIR}/lib/lib_x64
@@ -489,7 +486,6 @@ unix:{
        -lSuFileParserCSV   \
        -lSuFileParserEGC   \
        -lSuFileParserGDAL   \
-       -lSuFileParserGrid   \
        -lSuFileParserGTiff   \
        -lSuFileParserHFA   \
        -lSuFileParserMitab   \

@@ -40,7 +40,7 @@
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>文件</string>
+     <string>File</string>
     </property>
     <addaction name="actionNew"/>
     <addaction name="actionOpen"/>
@@ -126,29 +126,45 @@
    <widget class="QWidget" name="dockWidgetContents_4"/>
   </widget>
   <action name="actionNew">
+   <property name="icon">
+    <iconset resource="JunSuQt.qrc">
+     <normaloff>:/Images/Resources/File/New.png</normaloff>:/Images/Resources/File/New.png</iconset>
+   </property>
    <property name="text">
-    <string>新建</string>
+    <string>New</string>
    </property>
   </action>
   <action name="actionOpen">
+   <property name="icon">
+    <iconset resource="JunSuQt.qrc">
+     <normaloff>:/Images/Resources/File/Open.png</normaloff>:/Images/Resources/File/Open.png</iconset>
+   </property>
    <property name="text">
-    <string>打开</string>
+    <string>Open</string>
    </property>
    <property name="toolTip">
     <string>打开工作空间或数据源文件</string>
    </property>
   </action>
   <action name="actionSave">
+   <property name="icon">
+    <iconset resource="JunSuQt.qrc">
+     <normaloff>:/Images/Resources/File/Save.png</normaloff>:/Images/Resources/File/Save.png</iconset>
+   </property>
    <property name="text">
-    <string>保存</string>
+    <string>Save</string>
    </property>
    <property name="toolTip">
     <string>保存工作空间</string>
    </property>
   </action>
   <action name="actionSaveAs">
+   <property name="icon">
+    <iconset resource="JunSuQt.qrc">
+     <normaloff>:/Images/Resources/File/SaveAs.png</normaloff>:/Images/Resources/File/SaveAs.png</iconset>
+   </property>
    <property name="text">
-    <string>另存为</string>
+    <string>SaveAs</string>
    </property>
    <property name="toolTip">
     <string>另存为工作空间</string>
@@ -156,10 +172,12 @@
   </action>
   <action name="actionExit">
    <property name="text">
-    <string>退出</string>
+    <string>Exit</string>
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="JunSuQt.qrc"/>
+ </resources>
  <connections/>
 </ui>
