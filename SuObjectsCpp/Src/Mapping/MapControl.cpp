@@ -958,7 +958,7 @@ void MapControl::SetDynamicGeoVisible(const UGString& keyName, bool isVisible, b
 	if (NULL != pGeo)
 	{
 		UGStyle* pStyle = pGeo->GetStyle();
-		if (NULL != pStyle && pStyle->IsVisible != isVisible) 
+        if (NULL != pStyle && pStyle->IsVisible() != isVisible)
 		{
 			pStyle->SetIsVisible(isVisible);
 			if (needRefresh)
@@ -973,4 +973,13 @@ void MapControl::SetDynamicGeoVisible(const UGString& keyName, bool isVisible, b
 void MapControl::SetMapDynamicProjection(bool isDynamicPrjection)
 {
 	m_pUGMapWnd->m_mapWnd.m_Map.SetProjectionOnTheFly(isDynamicPrjection);
+}
+
+void MapControl::CloseMap()
+{
+	// close current map
+	m_pUGMapWnd->m_mapWnd.m_Map.Reset();
+	m_pUGMapWnd->m_mapWnd.m_Map.m_strName = _U("UntitledMap");
+	m_pUGMapWnd->m_mapWnd.m_Map.SetModifiedFlag(false);
+	m_pUGMapWnd->Refresh();
 }

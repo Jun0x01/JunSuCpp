@@ -142,6 +142,12 @@ namespace SuperMap
 		 */
 		UGDataSource* CreateDatasourceUDB(const string &udbPath, const string &name);
 
+		/**
+		 * @en
+		 * Close the workspace. Must close all maps related to the workspace first.
+		 */
+		void Close();
+
 	private:
 		UGWorkspace* m_pUGWorkspace;
 		

@@ -313,3 +313,9 @@ UGDataSource* Workspace::CreateDatasourceUDB(const string &udbPath, const string
 
 	return pDatasource;
 }
+
+
+void Workspace::Close()
+{
+	m_pUGWorkspace->Close();
+}

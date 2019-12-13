@@ -301,6 +301,11 @@ namespace SuperMap
 			 * 设置是否使用动态投影显示地图, 修改后会立即刷新地图
 			 */
 			void SetMapDynamicProjection(bool isDynamicPrjection);
+
+			/*
+			 * 关闭当前地图
+			 */
+			void CloseMap();
 	   };
 	//}
 }
