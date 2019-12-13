@@ -148,6 +148,15 @@ namespace SuperMap
 		 */
 		void Close();
 
+		/*
+		 * @en
+		 * @brief     Create a new workspace file.
+		 * @wkPath    The absolute path of workspace file which will be created.
+		 * @password  Password of workspace, the default is an empty string
+		 * @return    Return ture if created, otherwise return false.
+		 */
+		bool CreateAsFile(const string &wkPath, const string password = "");
+
 	private:
 		UGWorkspace* m_pUGWorkspace;
 		
