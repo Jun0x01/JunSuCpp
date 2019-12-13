@@ -12,6 +12,8 @@
 #include <qdir.h>
 
 #include "Mapping/MapControl.h"
+#include "Data/Workspace.h"
+
 #include <QPainter>
 #include <QWheelEvent>
 
@@ -83,4 +85,6 @@ private slots:
 private:
     UGDynamicLayer *pDyLayer;
     QPoint pt;
+
+	Workspace* pWorkspace;
 };

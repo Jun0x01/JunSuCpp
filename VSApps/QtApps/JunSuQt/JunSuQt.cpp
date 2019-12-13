@@ -67,11 +67,16 @@ JunSuQt::JunSuQt(QWidget *parent)
 
         qDebug() << "JYLibId: " << UGFile::IsExist(strJYLibPath) << ", id: " << nJYLibId << endl;
         qDebug() << "TYLibId: " << UGFile::IsExist(strTYLibPath) << ", id: " << nTYLibId << endl;
+
+		pWorkspace = new Workspace();
+		m_pMapControl->SetWorkspace(pWorkspace);
 }
 
 JunSuQt::~JunSuQt() {
 
+	CloseWorkspace();
 	delete m_pMapControl;
+	delete pWorkspace;
 }
 
 
@@ -519,21 +524,11 @@ void JunSuQt::OpenWorkspace(string strPath)
 	// Close first
 	CloseWorkspace();
 
-	// Open workspace file
-	UGString wkPath;
-	wkPath.FromStd(strPath);       // Convert String
-
-	UGWorkspaceConnection wkCon;
-
-	wkCon.m_strServer = wkPath;
-	wkCon.m_nWorkspaceType = UGWorkspace::WS_Version_SMWU;
-
-	UGWorkspace* pWorkspace = m_pMapControl->GetMapEditWnd()->m_mapWnd.m_Map.GetWorkspace();
-	if (pWorkspace->Open(wkCon))
+	if (pWorkspace->OpenWorkspaceFile(strPath))
 	{
-		if (pWorkspace->m_MapStorages.GetCount() > 0)
+		if (pWorkspace->GetUGWorkspace()->m_MapStorages.GetCount() > 0)
 		{
-			UGString mapName = pWorkspace->m_MapStorages.GetNameAt(0);
+			UGString mapName = pWorkspace->GetUGWorkspace()->m_MapStorages.GetNameAt(0);
 			UGbool isOpen = m_pMapControl->GetMapEditWnd()->m_mapWnd.m_Map.Open(mapName);
 			m_pMapControl->Refresh();
 		}
@@ -546,18 +541,10 @@ void JunSuQt::OpenWorkspace(string strPath)
 
 void JunSuQt::CloseWorkspace()
 {
-	UGMap* pUGMap = &(m_pMapControl->GetMapEditWnd()->m_mapWnd.m_Map);
-	// close map
-	pUGMap->Reset();
-	pUGMap->m_strName = _U("UntitledMap");
-	pUGMap->SetModifiedFlag(false);
-	m_pMapControl->Refresh();
-
-	// close workspace
-	UGWorkspace* pWorkspace = pUGMap->GetWorkspace();
-	pWorkspace->Close();
-
+	m_pMapControl->CloseMap();
 	Pan();
+	// close workspace
+	pWorkspace->Close();
 }
 
 void JunSuQt::Menu_Edit_PanMap()
