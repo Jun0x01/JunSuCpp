@@ -5,9 +5,8 @@
 #ifndef SU_LOG_INCLUDED
 #define SU_LOG_INCLUDED
 
+#include "UGStrConvertor.h"
 
-#include "Data/exportsDefine.h"
-#include <iostream>
 using namespace std;
 
 namespace SuperMap

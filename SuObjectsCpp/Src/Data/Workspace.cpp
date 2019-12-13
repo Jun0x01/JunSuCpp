@@ -66,8 +66,7 @@ bool Workspace::OpenWorkspaceFile(const string &filePath, const string &password
 		int count = m_pUGWorkspace->m_DataSources.GetCount();
 		if (0 == count)
 		{
-			string name;
-			m_pUGWorkspace->GetCaption().ToStd(name);
+			string name = UGStrConvertor::Tostring(m_pUGWorkspace->GetCaption());
 			Log::Warning("Worksapce: " + name + ", it donesn't contain any datasource or failed to open datasources in workspace.");
 		}
 		return true;
@@ -318,4 +317,51 @@ UGDataSource* Workspace::CreateDatasourceUDB(const string &udbPath, const string
 void Workspace::Close()
 {
 	m_pUGWorkspace->Close();
+}
+
+bool Workspace::CreateAsFile(const string &wkPath, const string password/* = ""*/)
+{
+	// Convert string to UGString
+	UGString ug_filePath;
+	ug_filePath.FromStd(wkPath);
+	UGString ug_password;
+	ug_password.FromStd(password);
+
+	if (UGFile::IsExist(ug_filePath))
+	{
+		
+		return false;
+	}
+
+	UGWorkspaceConnection& wkCon = m_pUGWorkspace->m_WorkspaceConnection;
+	wkCon.m_strServer = ug_filePath;
+	wkCon.m_strPassword = ug_password;
+
+	// Check workspace's type according to the file's suffix
+	int index = wkPath.rfind('.');
+	string wkType = wkPath.substr(index + 1, wkPath.length() - index);
+
+	if (wkType.compare("smwu") == 0 || wkType.compare("SMWU") == 0)
+	{
+		wkCon.m_nWorkspaceType = UGWorkspace::WS_Version_SMWU;
+	}
+	else if (wkType.compare("smw") == 0 || wkType.compare("SMW") == 0)
+	{
+		wkCon.m_nWorkspaceType = UGWorkspace::WS_Version_SMW;
+	}
+	else if (wkType.compare("sxwu") == 0 || wkType.compare("SXWU") == 0)
+	{
+		wkCon.m_nWorkspaceType = UGWorkspace::WS_Version_SXWU;
+	}
+	else if (wkType.compare("sxw") == 0 || wkType.compare("SXW") == 0)
+	{
+		wkCon.m_nWorkspaceType = UGWorkspace::WS_Version_SXW;
+	}
+
+	// 2.Set workspace version
+	if (wkCon.m_nVersion == 0) {
+		wkCon.m_nVersion = UG_WORKSPACE_VERSION_20120328;
+	}
+	return m_pUGWorkspace->SaveAs(m_pUGWorkspace->m_WorkspaceConnection);
+
 }
