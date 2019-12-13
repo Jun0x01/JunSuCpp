@@ -10,5 +10,8 @@
         <file>Resources/Workspace/Scenes.png</file>
         <file>Resources/Workspace/smw.png</file>
         <file>Resources/Workspace/sxw.png</file>
+        <file>Resources/Workspace/Map.png</file>
+        <file>Resources/Workspace/Scene.png</file>
+        <file>Resources/Workspace/Datasource.png</file>
     </qresource>
 </RCC>

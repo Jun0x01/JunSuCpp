@@ -6,6 +6,13 @@
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 
+#include "Data/Workspace.h"
+#include "Data/UGStrConvertor.h"
+
+#include "Icons.h"
+
+using namespace SuperMap;
+
 class WorkspaceView : public QTreeWidget
 {
     Q_OBJECT
@@ -20,9 +27,22 @@ private:
     QTreeWidgetItem* pTreeMaps;
     QTreeWidgetItem* pTreeScenes;
 
+    QIcon iconWk;
+    QIcon iconDSes;
+    QIcon iconMaps;
+    QIcon iconScenes;
+
+
 // private functions
 private:
     void addTreeWorkspaceItem();
+    void clearItems(QTreeWidgetItem* pItem);
+
+public:
+    void updateWorkspaceList(Workspace& workspace);
+
+
+
 signals:
 
 public slots:
