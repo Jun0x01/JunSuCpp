@@ -8,13 +8,13 @@
 2. [Gitee码云: JunSuCpp](https://gitee.com/Jun0x01/JunSuCpp), 同步自Github的项目，下载速度较好。
 ### 应用截图
 1. JunSuMFCDialog二维地图添加标绘符号
-   ![如图](Images/App_Plot.png)
+   ![如图](https://github.com/Jun0x01/JunSuCpp/blob/master/Images/App_Plot.png)
 2. JunSuCpp二维地图绘制面对象
-   ![如图](Images/App_Map_Draw.png)
+   ![如图](https://github.com/Jun0x01/JunSuCpp/blob/master/Images/App_Map_Draw.png)
 3. JunSuCpp打开CBD场景展示模型数据
-   ![如图](Images/App_Scene_CBD.png)
+   ![如图](https://github.com/Jun0x01/JunSuCpp/blob/master/Images/App_Scene_CBD.png)
 4. JunSuCpp打开MaSai场景展示OSGB数据
-   ![如图](Images/App_Scene_OSGB.png)
+   ![如图](https://github.com/Jun0x01/JunSuCpp/blob/master/Images/App_Scene_OSGB.png)
 
 注：TestData目录中仅有二维地图数据，因三维数据较大，没有上传GitHub。应用中采用选择文件方式打开，因此可以使用自己制作的工作空间数据，或是超图软件其他产品提供的示范数据。
 
@@ -73,30 +73,30 @@ JunSuCpp
    3) PropertySheet_General.props  -- 定义宏名"SuObjectsDir"指向SuperMap Objects C++ 产品包目录，并配置同文件目录; 头文件包括include,include/private 两个目录
    如图：
 ```
-![如图](Images/PropertyManager.png)
+![如图](https://github.com/Jun0x01/JunSuCpp/blob/master/Images/PropertyManager.png)
 
 2. VS开发，以VS2017为例，说明打开解决方案后，需要修改的配置
 - 打开属性管理器，在任意一个项目配置中打开"PropertySheet_General.props"配置文件，修改“自定义宏” -> "SuObjectsDir"指定的SuperMap iObjects for C++产品包目录。
 如图：
-![如图](Images/Property-SuObjectsDir.png)
+![如图](https://github.com/Jun0x01/JunSuCpp/blob/master/Images/Property-SuObjectsDir.png)
 
 - 打开工程属性，配置编译工具版本，如图：
-![如图](Images/Property-Platform_Toolset.png)
+![如图](https://github.com/Jun0x01/JunSuCpp/blob/master/Images/Property-Platform_Toolset.png)
 
 - Qt工程，右键工程 -> Qt工程设置，检查设置Qt版本以及使用的模块，本项目只使用Core, GUI, Widgets, 如图:
-  ![如图](Images/Property-QtProjectSettings.png)
+  ![如图](https://github.com/Jun0x01/JunSuCpp/blob/master/Images/Property-QtProjectSettings.png)
 
 - 运行库配置，该项目中直接在工程属性中进行配置，可不依赖系统环境Path, 如图配置应用工程:
-  ![如图](Images/Property-RuntimeLibs.png)
+  ![如图](https://github.com/Jun0x01/JunSuCpp/blob/master/Images/Property-RuntimeLibs.png)
 
 - 若使用VS2012打开解决方案，其配置方法类似
 
 3. Qt Creator开发，以Qt 5.9.3为例，说明配置方法
 - 使用nmake编译，工具 -> 选项 -> 编译&运行 -> 常规设置 -> 不勾选 “使用jom 代替nmake”, 如图:
-  ![如图](Images/Qt_Option_namake.png)
+  ![如图](https://github.com/Jun0x01/JunSuCpp/blob/master/Images/Qt_Option_namake.png)
 
 - 项目属性，编译环境配置SuObjectsDir变量，设置SuperMap iObjects for C+产品目录，如图：
-  ![如图](Images/Qt_BuildEnvironment.png)
+  ![如图](https://github.com/Jun0x01/JunSuCpp/blob/master/Images/Qt_BuildEnvironment.png)
 
 - 项目属性，运行环境中，将SuperMap iObjects for C++ 运行库目录添加到Path, 如图：
-  ![如图](Images/Qt_RunEnvironment.png)
+  ![如图](https://github.com/Jun0x01/JunSuCpp/blob/master/Images/Qt_RunEnvironment.png)
