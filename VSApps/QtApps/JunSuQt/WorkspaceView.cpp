@@ -141,3 +141,32 @@ void WorkspaceView::updateWorkspaceList(Workspace& workspace)
         pItem->setIcon(0, Icons::getInstance().iconScene);
     }
 }
+
+void WorkspaceView::updateNewDatasource(UGDataSource& ugDatasource)
+{
+	UGString ugDsName =  ugDatasource.GetAlias();
+
+
+	UGEngineType dsType = ugDatasource.GetEngineType();
+	string dsName = UGStrConvertor::Tostring(ugDsName);
+
+	QTreeWidgetItem* pDsItem = new QTreeWidgetItem(pTreeDatasources);
+	pDsItem->setText(0, QString().fromStdString(dsName));
+	pDsItem->setIcon(0, Icons::getInstance().iconDs);
+
+	// 数据集
+	UGDatasets* pDatasets = ugDatasource.GetDatasets();
+	int datasetCount = pDatasets->GetSize();
+	for (int j = 0; j < datasetCount; j++)
+	{
+
+		UGDataset* pDataset = pDatasets->GetAt(j);
+		UGString ugDatasetName = pDataset->GetName();
+		string datasetName = UGStrConvertor::Tostring(ugDatasetName);
+
+		UGDataset::DatasetType datasetType = pDataset->GetType();
+
+		QTreeWidgetItem* pDatasetItem = new QTreeWidgetItem(pDsItem);
+		pDatasetItem->setText(0, QString().fromStdString(datasetName));
+	}
+}

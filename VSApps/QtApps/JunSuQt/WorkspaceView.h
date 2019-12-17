@@ -40,6 +40,7 @@ private:
 
 public:
     void updateWorkspaceList(Workspace& workspace);
+	void updateNewDatasource(UGDataSource& ugDatasource);
 
 
 

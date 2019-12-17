@@ -33,7 +33,10 @@ private:
 
 
 private slots:
+	void Menu_File_New();
     void Menu_File_Open();
+    void Menu_File_Save();
+    void Menu_File_SaveAs();
     void Menu_File_Exit();
 };
 
