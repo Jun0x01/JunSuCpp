@@ -23,12 +23,16 @@ class WorkspaceView : public QTreeWidget
 		TypeDataosources,
 		TypeMaps,
 		TypeScenes,
+		TypeMap,
+		TypeScene,
 
+		// 数据源
 		TypeDatasource,
 		TypeDatasourceUDB,
 		TypeDatasourceUDBX,  // UGC::Spatialite = 2054
 		TypeDatasourceIMG,
 
+		// 数据集
 		TypeDataset,
 		TypeDatasetPoint,
 		TypeDatasetLine,
@@ -58,11 +62,6 @@ private:
     QTreeWidgetItem* pTreeDatasources;
     QTreeWidgetItem* pTreeMaps;
     QTreeWidgetItem* pTreeScenes;
-
-    QIcon iconWk;
-    QIcon iconDSes;
-    QIcon iconMaps;
-    QIcon iconScenes;
 
 	int ItemDataType;  // QTreeWidgetItem存放数据类型，自定义类型
 
