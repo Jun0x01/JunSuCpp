@@ -18,6 +18,7 @@ class WorkspaceView : public QTreeWidget
 {
     Q_OBJECT
 
+public:
 	enum ItemType {
 		TypeWorkspace,
 		TypeDataosources,
@@ -52,6 +53,8 @@ class WorkspaceView : public QTreeWidget
 		TypeDatasetNetwork3D,
 	};
 
+	int ItemDataType;  // QTreeWidgetItem存放数据类型，自定义类型
+
 public:
     explicit WorkspaceView(QWidget *parent = nullptr);
 
@@ -63,7 +66,21 @@ private:
     QTreeWidgetItem* pTreeMaps;
     QTreeWidgetItem* pTreeScenes;
 
-	int ItemDataType;  // QTreeWidgetItem存放数据类型，自定义类型
+
+
+	QWidget* pMainWindow;
+
+	// 定义几个右键菜单
+	QMenu* menuWorkspace;
+	QMenu* menuDatasources;
+	QMenu* menuMaps;
+	QMenu* menuScenes;
+
+	QMenu* menuDatasource;
+	QMenu* menuDataset;
+	QMenu* menuMap;
+	QMenu* menuScene;
+
 
 // private functions
 private:
@@ -74,11 +91,10 @@ public:
     void updateWorkspaceList(Workspace& workspace);
 	void updateNewDatasource(UGDataSource& ugDatasource);
 
-
-
 signals:
 
 public slots:
+
 };
 
 #endif // WORKSPACEVIEW_H

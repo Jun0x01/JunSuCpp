@@ -3,13 +3,12 @@
 #include "Engine/UGDataset.h"
 #include "Base/OgdcArray.h"
 
-WorkspaceView::WorkspaceView(QWidget *parent) : QTreeWidget(parent)
+WorkspaceView::WorkspaceView(QWidget *parent) : QTreeWidget(parent), pMainWindow(NULL)
 {
 
 //    this->headerItem()->setText(0, tr("No Workspace"));
 
     pListWorkspaceItems = new QList<QTreeWidgetItem>();
-
 
     // 添加默认的工作空间列表
     addTreeWorkspaceItem();
@@ -19,6 +18,10 @@ WorkspaceView::WorkspaceView(QWidget *parent) : QTreeWidget(parent)
 //    this->expandItem();        // 展开指定item
 
 	ItemDataType = Qt::UserRole + 1;
+
+	// 允许右键菜单
+	setContextMenuPolicy(Qt::CustomContextMenu);
+
 }
 
 void WorkspaceView::addTreeWorkspaceItem(){

@@ -12,6 +12,9 @@ MainWindow::MainWindow(QWidget *parent) :
     pWorkspaceView = new WorkspaceView();
     ui->dockWidget_workspace->setWidget(pWorkspaceView);
 
+	// 设置工作空间列表的右键菜单信号
+	connect(pWorkspaceView, SIGNAL(customContextMenuRequested(const QPoint&)), SLOT(onCustomContextMenu(const QPoint&)));
+
     /***************** 设置信号 ***********************/
 	// MenuBar -> File
     connect(ui->actionNew,    SIGNAL(triggered()), SLOT(Menu_File_New()));
@@ -145,8 +148,123 @@ void MainWindow::Menu_File_SaveAs()
 	qDebug("No action");
 }
 
+void MainWindow::Menu_File_Close()
+{
+	CloseWorkspace();
+}
+
 void MainWindow::Menu_File_Exit()
 {
 	close();
 }
 
+// Menus
+void MainWindow::onCustomContextMenu(const QPoint& pos)
+{
+
+	QTreeWidgetItem* item = pWorkspaceView->currentItem();
+
+	if (NULL != item)
+	{
+		WorkspaceView::ItemType type = (WorkspaceView::ItemType)item->data(0, pWorkspaceView->ItemDataType).toInt();
+		if (type == WorkspaceView::TypeWorkspace)
+		{
+			QMenu menu;
+
+			QAction* action1 = new QAction(tr("Open a workspace"));
+			connect(action1, SIGNAL(triggered()), this, SLOT(Menu_File_Open()));
+			menu.addAction(action1);
+
+			QAction* action2 = new QAction(tr("Save"));
+			connect(action2, SIGNAL(triggered()), this, SLOT(Menu_File_Save()));
+			menu.addAction(action2);
+
+			QAction* action3 = new QAction(tr("Save As"));
+			connect(action3, SIGNAL(triggered()), this, SLOT(Menu_File_SaveAs()));
+			menu.addAction(action3);
+
+			QAction* action4 = new QAction(tr("Close"));
+			connect(action4, SIGNAL(triggered()), this, SLOT(Menu_File_Close()));
+			menu.addAction(action4);
+
+			menu.exec(QCursor::pos());
+		}
+		else if (type == WorkspaceView::TypeMap)
+		{
+			QMenu menu;
+
+			QAction* action1 = new QAction(tr("Open"));
+			connect(action1, SIGNAL(triggered()), this, SLOT(onOpenMap()));
+			menu.addAction(action1);
+
+			menu.exec(QCursor::pos());
+		}
+		else if (type == WorkspaceView::TypeScene)
+		{
+			QMenu menu;
+
+			QAction* action1 = new QAction(tr("Open"));
+			connect(action1, SIGNAL(triggered()), this, SLOT(onOpenScene()));
+			menu.addAction(action1);
+
+			menu.exec(QCursor::pos());
+		}
+		else if (type == WorkspaceView::TypeDatasource)
+		{
+
+		}
+		else if (type >= WorkspaceView::TypeDataset)
+		{
+			QMenu menu;
+
+			// 地图使用
+			QAction* action11 = new QAction(tr("Add to new map"));
+			connect(action11, SIGNAL(triggered()), this, SLOT(onAddToNewMap()));
+			menu.addAction(action11);
+			// 如果没有地图窗口，则不添加此项
+			QAction* action12 = new QAction(tr("Add to current map"));
+			connect(action12, SIGNAL(triggered()), this, SLOT(onAddToCurMap()));
+			menu.addAction(action12);
+
+			menu.addSeparator();
+
+			// 场景使用
+			QAction* action21 = new QAction(tr("Add to new scene"));
+			connect(action21, SIGNAL(triggered()), this, SLOT(onAddToNewScene()));
+			menu.addAction(action21);
+			// 如果没有场景窗口，则不添加此项
+			QAction* action22 = new QAction(tr("Add to current scene"));
+			connect(action22, SIGNAL(triggered()), this, SLOT(onAddToCurScene()));
+			menu.addAction(action22);
+
+			menu.exec(QCursor::pos());
+		}
+	}
+}
+
+
+// 数据集菜单事件
+void MainWindow::onOpenMap()
+{
+
+}
+void MainWindow::onOpenScene()
+{
+
+}
+void MainWindow::onAddToNewMap()
+{
+
+}
+void MainWindow::onAddToCurMap()
+{
+
+}
+void MainWindow::onAddToNewScene()
+{
+
+}
+void MainWindow::onAddToCurScene()
+{
+
+}
