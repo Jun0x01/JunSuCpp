@@ -17,7 +17,30 @@ Icons::Icons():
     iconScenes(":/Images/Resources/Workspace/Scenes.png"),
 	iconDs(":/Images/Resources/Workspace/Datasource.png"),
     iconMap(":/Images/Resources/Workspace/Map.png"),
-    iconScene(":/Images/Resources/Workspace/Scene.png")
+    iconScene(":/Images/Resources/Workspace/Scene.png"),
+    iconDsUDB(":/Images/Resources/Datasource/Image_UDB.png"),
+    iconDsUDBX(":/Images/Resources/Datasource/Image_UDBX.png"),
+    iconDsImage(":/Images/Resources/Datasource/Image_Img.png"),
+    iconDsOSM(":/Images/Resources/Datasource/Image_OSM.png"),
+    iconDsRest(":/Images/Resources/Datasource/Image_Rest.png"),
+    iconDsOGC(":/Images/Resources/Datasource/Image_OGC.png"),
+    iconDsWeb(":/Images/Resources/Datasource/Image_DatasourceWeb.png"),
+    iconDataset(":/Images/Resources/Datasets/Image_Unknown.png"),
+    iconDatasetPoint(":/Images/Resources/Datasets/Image_Point.png"),
+    iconDatasetLine(":/Images/Resources/Datasets/Image_Line.png"),
+    iconDatasetRegion(":/Images/Resources/Datasets/Image_Region.png"),
+    iconDatasetCAD(":/Images/Resources/Datasets/Image_CAD.png"),
+    iconDatasetText(":/Images/Resources/Datasets/Image_Text.png"),
+    iconDatasetTabular(":/Images/Resources/Datasets/Image_Tabular.png"),
+    iconDatasetNetwork(":/Images/Resources/Datasets/Image_NetWork.png"),
+    iconDatasetGrid(":/Images/Resources/Datasets/Image_DatasetGrid.png"),
+    iconDatasetDEM(":/Images/Resources/Datasets/Image_DatasetGrid.png"),
+    iconDatasetImage(":/Images/Resources/Datasets/Image_DatasetImage.png"),
+    iconDatasetPoint3D(":/Images/Resources/Datasets/Image_Point3D.png"),
+    iconDatasetLine3D(":/Images/Resources/Datasets/Image_Line3D.png"),
+    iconDatasetRegion3D(":/Images/Resources/Datasets/Image_Regin3D.png"),
+    iconDatasetModel(":/Images/Resources/Datasets/Image_Model.png"),
+    iconDatasetNetwork3D(":/Images/Resources/Datasets/Image_Network3D.png")
 {
 
 }

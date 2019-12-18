@@ -13,5 +13,28 @@
         <file>Resources/Workspace/Map.png</file>
         <file>Resources/Workspace/Scene.png</file>
         <file>Resources/Workspace/Datasource.png</file>
+        <file>Resources/Datasource/Image_Datasource.png</file>
+        <file>Resources/Datasource/Image_Img.png</file>
+        <file>Resources/Datasource/Image_OSM.png</file>
+        <file>Resources/Datasource/Image_REST.png</file>
+        <file>Resources/Datasource/Image_UDB.png</file>
+        <file>Resources/Datasource/Image_UDBX.png</file>
+        <file>Resources/Datasets/Image_CAD.png</file>
+        <file>Resources/Datasets/Image_Line.png</file>
+        <file>Resources/Datasets/Image_Line3D.png</file>
+        <file>Resources/Datasets/Image_Model.png</file>
+        <file>Resources/Datasets/Image_NetWork.png</file>
+        <file>Resources/Datasets/Image_Network3D.png</file>
+        <file>Resources/Datasets/Image_Point.png</file>
+        <file>Resources/Datasets/Image_Point3D.png</file>
+        <file>Resources/Datasets/Image_Region.png</file>
+        <file>Resources/Datasets/Image_Region3D.png</file>
+        <file>Resources/Datasets/Image_Tabular.png</file>
+        <file>Resources/Datasets/Image_Text.png</file>
+        <file>Resources/Datasets/Image_Unknown.png</file>
+        <file>Resources/Datasets/Image_DatasetImage.png</file>
+        <file>Resources/Datasets/Image_DatasetGrid.png</file>
+        <file>Resources/Datasource/Image_OGC.png</file>
+        <file>Resources/Datasource/Image_DatasourceWeb.png</file>
     </qresource>
 </RCC>

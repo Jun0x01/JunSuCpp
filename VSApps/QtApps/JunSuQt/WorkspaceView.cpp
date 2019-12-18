@@ -18,6 +18,7 @@ WorkspaceView::WorkspaceView(QWidget *parent) : QTreeWidget(parent)
     this->expandAll();           // 展开全部
 //    this->expandItem();        // 展开指定item
 
+	ItemDataType = Qt::UserRole + 1;
 }
 
 void WorkspaceView::addTreeWorkspaceItem(){
@@ -38,6 +39,12 @@ void WorkspaceView::addTreeWorkspaceItem(){
     pTreeDatasources->setIcon(0, Icons::getInstance().iconDSes);
     pTreeMaps->setIcon(0, Icons::getInstance().iconMaps);
     pTreeScenes->setIcon(0, Icons::getInstance().iconScenes);
+
+	// 设置类型
+	pItemWorkspace->setData(0, ItemDataType, QVariant::fromValue((int)TypeWorkspace));
+	pTreeDatasources->setData(0, ItemDataType, QVariant::fromValue((int)TypeDataosources));
+	pTreeMaps->setData(0, ItemDataType, QVariant::fromValue((int)TypeMaps));
+	pTreeScenes->setData(0, ItemDataType, QVariant::fromValue((int)TypeScenes));
 
 //    pListWorkspaceItems->append(pItemWorkspace);
 }
@@ -76,6 +83,12 @@ void WorkspaceView::updateWorkspaceList(Workspace& workspace)
     pTreeMaps->setIcon(0, Icons::getInstance().iconMaps);
     pTreeScenes->setIcon(0, Icons::getInstance().iconScenes);
 
+	// 设置类型
+	pItemWorkspace->setData(0, ItemDataType, QVariant::fromValue((int)TypeWorkspace));
+	pTreeDatasources->setData(0, ItemDataType, QVariant::fromValue((int)TypeDataosources));
+	pTreeMaps->setData(0, ItemDataType, QVariant::fromValue((int)TypeMaps));
+	pTreeScenes->setData(0, ItemDataType, QVariant::fromValue((int)TypeScenes));
+
     UGWorkspace* pUGWorkspace = workspace.GetUGWorkspace();
     string wkName = UGStrConvertor::Tostring(pUGWorkspace->GetCaption());
 
@@ -97,12 +110,39 @@ void WorkspaceView::updateWorkspaceList(Workspace& workspace)
         pDsItem->setText(0, QString().fromStdString(dsName));
 		pDsItem->setIcon(0, Icons::getInstance().iconDs);
 
+		ItemType dsItemType = TypeDatasource;
+		switch (dsType)
+		{
+		case UGC::UDB:
+			dsItemType = TypeDatasourceUDB;
+			pDsItem->setIcon(0, Icons::getInstance().iconDsUDB);
+			break;
+		case UGC::Spatialite:
+			dsItemType = TypeDatasourceUDBX;
+			pDsItem->setIcon(0, Icons::getInstance().iconDsUDBX);
+			break;
+		case UGC::ImagePlugins:
+			dsItemType = TypeDatasourceIMG;
+			pDsItem->setIcon(0, Icons::getInstance().iconDsImage);
+			break;
+		case UGC::Rest:
+			pDsItem->setIcon(0, Icons::getInstance().iconDsRest);
+			break;
+		case UGC::OpenStreetMaps:
+			pDsItem->setIcon(0, Icons::getInstance().iconDsOSM);
+			break;
+		case UGC::WEB:
+		case UGC::SuperMapCloud:
+			pDsItem->setIcon(0, Icons::getInstance().iconDsWeb);
+			break;
+		}
+		pDsItem->setData(0, ItemDataType, QVariant::fromValue((int)dsItemType)); // 设置数据源类型
+
         // 数据集
         UGDatasets* pDatasets = pDatasource->GetDatasets();
         int datasetCount =pDatasets->GetSize();
         for(int j=0; j<datasetCount; j++)
         {
-
 
             UGDataset* pDataset = pDatasets->GetAt(j);
             UGString ugDatasetName = pDataset->GetName();
@@ -112,6 +152,73 @@ void WorkspaceView::updateWorkspaceList(Workspace& workspace)
 
             QTreeWidgetItem* pDatasetItem = new QTreeWidgetItem(pDsItem);
             pDatasetItem->setText(0, QString().fromStdString(datasetName));
+
+			ItemType datasetItemType = TypeDataset;
+			switch (datasetType)
+			{
+			case UGDataset::/*DatasetType::*/Point:
+				datasetItemType = TypeDatasetPoint;
+				pDatasetItem->setIcon(0, Icons::getInstance().iconDatasetPoint);
+				break;
+			case UGDataset::Line:
+				datasetItemType = TypeDatasetLine;
+				pDatasetItem->setIcon(0, Icons::getInstance().iconDatasetLine);
+				break;
+			case UGDataset::Region:
+				datasetItemType = TypeDatasetRegion;
+				pDatasetItem->setIcon(0, Icons::getInstance().iconDatasetRegion);
+				break;
+			case UGDataset::CAD:
+				datasetItemType = TypeDatasetCAD;
+				pDatasetItem->setIcon(0, Icons::getInstance().iconDatasetCAD);
+				break;
+			case UGDataset::Text:
+				datasetItemType = TypeDatasetText;
+				pDatasetItem->setIcon(0, Icons::getInstance().iconDatasetText);
+				break;
+
+			case UGDataset::Tabular:
+				datasetItemType = TypeDatasetTabular;
+				pDatasetItem->setIcon(0, Icons::getInstance().iconDatasetTabular);
+				break;
+			case UGDataset::Network:
+				datasetItemType = TypeDatasetNetwork;
+				pDatasetItem->setIcon(0, Icons::getInstance().iconDatasetNetwork);
+				break;
+			case UGDataset::Grid:
+				datasetItemType = TypeDatasetGrid;
+				pDatasetItem->setIcon(0, Icons::getInstance().iconDatasetGrid);
+				break;
+			case UGDataset::DEM:
+				datasetItemType = TypeDatasetDEM;
+				pDatasetItem->setIcon(0, Icons::getInstance().iconDatasetDEM);
+				break;
+
+			case UGDataset::PointZ:
+				datasetItemType = TypeDatasetPoint3D;
+				pDatasetItem->setIcon(0, Icons::getInstance().iconDatasetPoint3D);
+				break;
+			case UGDataset::LineZ:
+				datasetItemType = TypeDatasetLine3D;
+				pDatasetItem->setIcon(0, Icons::getInstance().iconDatasetLine3D);
+				break;
+			case UGDataset::RegionZ:
+				datasetItemType = TypeDatasetRegion3D;
+				pDatasetItem->setIcon(0, Icons::getInstance().iconDatasetRegion3D);
+				break;
+			case UGDataset::Model:
+				datasetItemType = TypeDatasetModel;
+				pDatasetItem->setIcon(0, Icons::getInstance().iconDatasetModel);
+				break;
+			case UGDataset::Network3D:
+				datasetItemType = TypeDatasetNetwork3D;
+				pDatasetItem->setIcon(0, Icons::getInstance().iconDatasetNetwork3D);
+				break;
+			default:
+				pDatasetItem->setIcon(0, Icons::getInstance().iconDataset);
+				break;
+			}
+			pDatasetItem->setData(0, ItemDataType, QVariant::fromValue((int)datasetItemType)); // 设置数据集类型
         }
     }
 
