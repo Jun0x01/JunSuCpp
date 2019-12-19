@@ -18,7 +18,7 @@ namespace SuperMap
 
 	public:
 
-		static string Tostring(const UGString &str);
+        static string Tostring(const UGString &str,OGDCCharset::Charset charset = OGDCCharset::UTF8 );
 	};
 }
 #endif
