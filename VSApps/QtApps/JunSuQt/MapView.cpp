@@ -77,7 +77,7 @@ unsigned int MapView::getMouseOrKeyFlag(QMouseEvent* event)
 
 void MapView::wheelEvent(QWheelEvent* event)
 {
-    if(m_pMapControl == NULL)
+    if(m_pMapControl != NULL)
     {
         m_pMapControl->OnMouseWheel(0, event->delta(), event->x(), event->y());
     }

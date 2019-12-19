@@ -7,6 +7,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     statusBar()->hide(); // 隐藏状态栏
+	// 设置鼠标跟随，使编辑对象时效果更好
+	this->setMouseTracking(true);
+	this->centralWidget()->setMouseTracking(true);
 
     // 添加WorkspaceView到工作空间的dock窗口中
     pWorkspaceView = new WorkspaceView();
@@ -32,27 +35,59 @@ MainWindow::MainWindow(QWidget *parent) :
 	/***************** 结束设置信号 ***********************/
 
     pWorkspace = new Workspace();
+
+	/****************** 增加MDI ***************************/
+	// MDI
+	pMdiArea = new QMdiArea();
+	pMdiArea->setViewMode(QMdiArea::TabbedView);
+	pMdiArea->setTabsClosable(true);
+    pMdiArea->setMouseTracking(true);   // 设置鼠标跟随，使编辑对象时效果更好
+	pMdiArea->setMinimumSize(300, 200);
+	setCentralWidget(pMdiArea);
+	connect(pMdiArea, &QMdiArea::subWindowActivated, this, &MainWindow::MDI_OnSubWindowActivated);
+
+	pCurWorkspaceViewItem = NULL;
+	pCurMapOrSceneWidget = NULL;
+   /****************************************************/
 }
 
 MainWindow::~MainWindow()
 {
-    delete ui;
+	pCurWorkspaceViewItem = NULL;
 
 	CloseWorkspace();
-	delete pWorkspace;
+	delete pWorkspace; // Must close map firstly.
+
+	delete ui;
 }
 
 void MainWindow::CloseWorkspace()
 {
     // First, close all associated maps
-
+	QList<QMdiSubWindow*> subWndList = pMdiArea->subWindowList();
+	for (QMdiSubWindow* pSubWnd : subWndList)
+	{
+		QWidget* pWidget = pSubWnd->widget();
+		if (typeid(*pWidget) == typeid(MapView))
+		{
+			((MapView*)pWidget)->getMapControl()->CloseMap();
+		}
+	}
     // Second, close workspace
     pWorkspace->Close();
 }
 
 void MainWindow::Menu_File_New()
 {
-	qDebug("No action");
+	MapView* pMapView = new MapView();
+	pMapView->setAttribute(Qt::WA_DeleteOnClose); // 关闭后就释放
+	pMapView->getMapControl()->SetWorkspace(pWorkspace);
+	QString title("New Map");
+
+	pMapView->setWindowTitle(title);
+
+	pMdiArea->addSubWindow(pMapView);
+	pMapView->show();
 }
 
 
@@ -163,6 +198,7 @@ void MainWindow::onCustomContextMenu(const QPoint& pos)
 {
 
 	QTreeWidgetItem* item = pWorkspaceView->currentItem();
+	pCurWorkspaceViewItem = item;
 
 	if (NULL != item)
 	{
@@ -246,7 +282,21 @@ void MainWindow::onCustomContextMenu(const QPoint& pos)
 // 数据集菜单事件
 void MainWindow::onOpenMap()
 {
+	if (pCurWorkspaceViewItem != NULL)
+	{
+		QString name = pCurWorkspaceViewItem->text(0);
 
+		MapView* pMapView = new MapView();
+		pMapView->setAttribute(Qt::WA_DeleteOnClose); // 关闭后就释放
+		pMapView->getMapControl()->SetWorkspace(pWorkspace);
+		QString title(name);
+
+		pMapView->setWindowTitle(title);
+
+		pMdiArea->addSubWindow(pMapView);
+		pMapView->show();
+		pMapView->getMapControl()->OpenMap(name.toStdString());
+	}
 }
 void MainWindow::onOpenScene()
 {
@@ -254,10 +304,49 @@ void MainWindow::onOpenScene()
 }
 void MainWindow::onAddToNewMap()
 {
+	if (pCurWorkspaceViewItem != NULL)
+	{
+		QString datasetName = pCurWorkspaceViewItem->text(0);
+		QTreeWidgetItem* pDatasourceItem = pCurWorkspaceViewItem->parent();
+		QString datasourceName = pDatasourceItem->text(0);
 
+
+		MapView* pMapView = new MapView();
+		pMapView->setAttribute(Qt::WA_DeleteOnClose); // 关闭后就释放
+		pMapView->getMapControl()->SetWorkspace(pWorkspace);
+		// 添加图层
+		pMapView->getMapControl()->AddDataset(datasourceName.toStdString(), datasetName.toStdString());
+
+		QString title(datasetName + "@" + datasourceName);
+		pMapView->setWindowTitle(title);
+
+		pMdiArea->addSubWindow(pMapView);
+		pMapView->show();
+
+	}
 }
 void MainWindow::onAddToCurMap()
 {
+	if (pCurMapOrSceneWidget != NULL)
+	{
+		if (typeid(*pCurMapOrSceneWidget) == typeid(MapView))
+		{
+			MapView* pMapView = (MapView*)pCurMapOrSceneWidget;
+
+			QString datasetName = pCurWorkspaceViewItem->text(0);
+			QTreeWidgetItem* pDatasourceItem = pCurWorkspaceViewItem->parent();
+			QString datasourceName = pDatasourceItem->text(0);
+
+			// 添加图层
+			pMapView->getMapControl()->AddDataset(datasourceName.toStdString(), datasetName.toStdString());
+			pMapView->getMapControl()->Refresh();
+			
+		}
+		else
+		{
+
+		}
+	}
 
 }
 void MainWindow::onAddToNewScene()
@@ -266,5 +355,16 @@ void MainWindow::onAddToNewScene()
 }
 void MainWindow::onAddToCurScene()
 {
+
+}
+
+void MainWindow::MDI_OnSubWindowActivated()
+{
+	QMdiSubWindow* subWnd = pMdiArea->activeSubWindow();
+	pCurMapOrSceneWidget = NULL;
+	if (subWnd != NULL)
+	{
+		pCurMapOrSceneWidget = subWnd->widget();
+	}
 
 }
