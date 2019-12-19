@@ -23,6 +23,19 @@ WorkspaceView::WorkspaceView(QWidget *parent) : QTreeWidget(parent), pMainWindow
 	setContextMenuPolicy(Qt::CustomContextMenu);
 
 }
+void WorkspaceView::mouseDoubleClickEvent(QMouseEvent *event)
+{
+	QTreeWidget::mouseDoubleClickEvent(event);
+	QTreeWidgetItem* pItem = currentItem();
+	if (pItem != NULL) 
+	{
+		emit doubleClickedItem(pItem);
+	}
+	else
+	{
+		
+	}
+}
 
 void WorkspaceView::addTreeWorkspaceItem(){
     // 初始化

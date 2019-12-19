@@ -92,9 +92,11 @@ public:
 	void updateNewDatasource(UGDataSource& ugDatasource);
 
 signals:
-
+	void doubleClickedItem(QTreeWidgetItem* item);
 public slots:
 
+protected:
+	virtual void mouseDoubleClickEvent(QMouseEvent *event);
 };
 
 #endif // WORKSPACEVIEW_H

@@ -47,6 +47,9 @@ private slots:
 	void onCustomContextMenu(const QPoint& pos); // Rigt click event
 	void MDI_OnSubWindowActivated(); // MDI窗口激活事件
 
+	// WorkspaceView 双击事件
+	void onDoubleClickedWorkspaceViewItem(QTreeWidgetItem* pItem);
+
 	// 文件菜单事件
 	void Menu_File_New();
     void Menu_File_Open();
