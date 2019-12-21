@@ -140,7 +140,7 @@ void MapControl::Invalidate(bool reDraw)
 UGuint MapControl::getKeyUGFlags(unsigned int flag)
 {
 	UGint flags = 0;
-	if(flag == UG_MK_CONTROL || flag== UG_MK_SHIFT){
+	if(flag & UG_MK_CONTROL || flag & UG_MK_SHIFT){
 		flags = flag;
 	}
 // 	if(flag == UG_MK_LBUTTON){

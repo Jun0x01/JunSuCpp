@@ -62,7 +62,7 @@ void SceneControl::Initialize(void* pWndHandle, int dpiX, int dpiY)
 		SceneControl::mIsInitializeUGRoot3D = true;
 	}
 
-	Window3D wnd = (Window3D)pWndHandle;       // IntPtr in VS, wndId() in Qt
+	Window3D wnd = (Window3D)pWndHandle;       
 	UGScene3D* pScene = m_pRoot3D->CreateScene(wnd);
 	pScene->SetType(UGC::ST_EARTH_SPHERICAL);
 
@@ -86,7 +86,7 @@ void SceneControl::Initialize(void* pWndHandle, int dpiX, int dpiY)
 UGuint SceneControl::getKeyUGFlags(unsigned int flag)
 {
 	UGint flags = 0;
-	if(flag == UG_VK_MENU || flag== UG_VK_SHIFT || UG_VK_CONTROL){
+	if(flag & UG_VK_MENU || flag & UG_VK_SHIFT || flag & UG_VK_CONTROL){
 		flags = flag; // TODO: change
 	}
 

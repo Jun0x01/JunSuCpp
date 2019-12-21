@@ -38,8 +38,9 @@ namespace SuperMap
 	   public:
 		   /*
 		    *@en
-			*@pInvalidateCallBack  A callback function pointer through which to invalidate the Window if scene content is updated
-			*@pWnd  the Window which owns the invalidate callback function
+			*@pWndHandle  window's handle, (HWND)CWnd::m_hWnd in MFC, (HWND)QWidget::winId() in Qt
+			*@dpiX        logical dpi in horizontal
+			*@dpiY        logical dpi in vertical
 		   */
 		   SceneControl(void* pWndHandle, int dpiX, int dpiY);
 		   virtual ~SceneControl();
@@ -55,7 +56,7 @@ namespace SuperMap
 		   Workspace* m_pInnerWorkspace;
 
 	   private:
-		   // Map window
+		   // Scene window
 		   UGSceneEditorWnd* m_pUGSceneWnd;
 		   static UGRoot3D* m_pRoot3D;
 		   UGCameraWorld* m_pCameraWorld;
