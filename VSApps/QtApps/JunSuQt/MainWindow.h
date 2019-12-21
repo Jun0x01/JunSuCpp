@@ -9,6 +9,7 @@
 
 #include "WorkspaceView.h"
 #include "MapView.h"
+#include "SceneView.h"
 
 using namespace SuperMap;
 namespace Ui {

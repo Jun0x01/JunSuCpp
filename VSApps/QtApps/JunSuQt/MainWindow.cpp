@@ -17,6 +17,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	// 设置工作空间列表的右键菜单信号
 	connect(pWorkspaceView, SIGNAL(customContextMenuRequested(const QPoint&)), SLOT(onCustomContextMenu(const QPoint&)));
+	// 双击信号
+	connect(pWorkspaceView, SIGNAL(doubleClickedItem(QTreeWidgetItem*)), this, SLOT(onDoubleClickedWorkspaceViewItem(QTreeWidgetItem*)));
 
     /***************** 设置信号 ***********************/
 	// MenuBar -> File
@@ -300,7 +302,27 @@ void MainWindow::onOpenMap()
 }
 void MainWindow::onOpenScene()
 {
+	if (pCurWorkspaceViewItem != NULL)
+	{
+		QString name = pCurWorkspaceViewItem->text(0);
 
+		SceneView* sceneView = new SceneView();
+		sceneView->setAttribute(Qt::WA_DeleteOnClose); // 关闭后就释放
+
+		QString title(name);
+		sceneView->setWindowTitle(title);
+		pMdiArea->addSubWindow(sceneView);
+		sceneView->show();
+
+		SceneControl* sceneControl = sceneView->GetSceneControl();
+
+		sceneControl->SetWorkspace(pWorkspace);
+		bool isOpen = sceneControl->OpenScene(name.toStdString());
+		if (!isOpen)
+		{
+			//TODO: ouput log
+		}
+	}
 }
 void MainWindow::onAddToNewMap()
 {
@@ -351,11 +373,48 @@ void MainWindow::onAddToCurMap()
 }
 void MainWindow::onAddToNewScene()
 {
+	if (pCurWorkspaceViewItem != NULL)
+	{
+		QString datasetName = pCurWorkspaceViewItem->text(0);
+		QTreeWidgetItem* pDatasourceItem = pCurWorkspaceViewItem->parent();
+		QString datasourceName = pDatasourceItem->text(0);
 
+
+		SceneView* sceneView = new SceneView();
+		sceneView->setAttribute(Qt::WA_DeleteOnClose); // 关闭后就释放
+
+		QString title(datasetName + "@" + datasourceName);
+		sceneView->setWindowTitle(title);
+
+		pMdiArea->addSubWindow(sceneView);
+		sceneView->show();
+
+		sceneView->GetSceneControl()->SetWorkspace(pWorkspace);
+		// 添加图层
+		sceneView->GetSceneControl()->AddLayerFromDataset(datasourceName.toStdString(), datasetName.toStdString());
+	}
 }
 void MainWindow::onAddToCurScene()
 {
+	if (pCurMapOrSceneWidget != NULL)
+	{
+		if (typeid(*pCurMapOrSceneWidget) == typeid(SceneView))
+		{
+			SceneView* sceneView = (SceneView*)pCurMapOrSceneWidget;
 
+			QString datasetName = pCurWorkspaceViewItem->text(0);
+			QTreeWidgetItem* pDatasourceItem = pCurWorkspaceViewItem->parent();
+			QString datasourceName = pDatasourceItem->text(0);
+
+			// 添加图层
+			sceneView->GetSceneControl()->AddLayerFromDataset(datasourceName.toStdString(), datasetName.toStdString());
+			sceneView->GetSceneControl()->Refresh();
+		}
+		else
+		{
+
+		}
+	}
 }
 
 void MainWindow::MDI_OnSubWindowActivated()
@@ -366,5 +425,18 @@ void MainWindow::MDI_OnSubWindowActivated()
 	{
 		pCurMapOrSceneWidget = subWnd->widget();
 	}
+}
 
+void MainWindow::onDoubleClickedWorkspaceViewItem(QTreeWidgetItem* pItem)
+{
+	pCurWorkspaceViewItem = pItem;
+	WorkspaceView::ItemType type = (WorkspaceView::ItemType)pItem->data(0, pWorkspaceView->ItemDataType).toInt();
+	if (type == WorkspaceView::TypeMap)
+	{
+		onOpenMap();
+	}
+	if (type == WorkspaceView::TypeScene)
+	{
+		onOpenScene();
+	}
 }

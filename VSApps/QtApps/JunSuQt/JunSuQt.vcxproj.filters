@@ -48,6 +48,9 @@
     <ClCompile Include="Icons.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SceneView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="JunSuQt.h">
@@ -60,6 +63,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="WorkspaceView.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="SceneView.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
