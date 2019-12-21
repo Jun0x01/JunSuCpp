@@ -340,7 +340,9 @@ UGLayer3D* SceneControl::AddLayerFromDataset(string datasourceName, string datas
                 layerType = UGC::/*UGLayer3DType::*/l3dDatasetVector;
 			}
 
-			pLayer = m_pUGSceneWnd->GetScene3D()->m_Layers.AddLayer(layerType, ugDatasetName, ugDatasetName);
+			UGString ugLayerName = ugDatasetName + _U("@") + ugDatasourceName;
+			
+			pLayer = m_pUGSceneWnd->GetScene3D()->m_Layers.AddLayer(layerType, ugLayerName, ugLayerName);
 		}
 		else
 		{
