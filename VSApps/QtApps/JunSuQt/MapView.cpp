@@ -24,8 +24,14 @@ MapView::MapView(QWidget *parent) : QWidget(parent)
         // C2143: syntax error: missing ')' before '}'
         // C2143: syntax error: missing ';' before '}'
     }
+
+
+	pMapLayersView = new MapLayersView();
 }
-MapView::~MapView() {
+MapView::~MapView() 
+{
+	pMapLayersView->setParent(NULL);
+	delete pMapLayersView;
 
     delete m_pMapControl;
 }
@@ -176,4 +182,9 @@ MapControl* MapView::getMapControl()
 void MapView::onSaveMap()
 {
 
+}
+
+MapLayersView* MapView::getMapLayersView()
+{
+	return pMapLayersView;
 }

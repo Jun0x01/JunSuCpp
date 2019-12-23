@@ -47,6 +47,8 @@ public:
 	QIcon iconDatasetRegion3D;
 	QIcon iconDatasetModel;
 	QIcon iconDatasetNetwork3D;
+
+	QIcon iconLayerGroup;
 };
 
 #endif // ICONS_H

@@ -45,12 +45,14 @@
     <Import Project="..\..\..\PropertySheets\PropertySheet_x64d.props" />
     <Import Project="..\..\..\PropertySheets\PropertySheets_Link_SuObjectsCpp.props" />
     <Import Project="..\..\..\PropertySheets\PropertySheet_General.props" />
+    <Import Project="..\..\..\PropertySheets\OutDirPropertySheet.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\PropertySheets\PropertySheet_x64.props" />
     <Import Project="..\..\..\PropertySheets\PropertySheets_Link_SuObjectsCpp.props" />
     <Import Project="..\..\..\PropertySheets\PropertySheet_General.props" />
+    <Import Project="..\..\..\PropertySheets\OutDirPropertySheet.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -118,17 +120,53 @@
     </QtRcc>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Icons.cpp" />
     <ClCompile Include="JunSuQt.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MainWindow.cpp" />
+    <ClCompile Include="MapLayersView.cpp" />
+    <ClCompile Include="MapView.cpp" />
+    <ClCompile Include="SceneView.cpp" />
+    <ClCompile Include="WorkspaceView.cpp" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="JunSuQt.h" />
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="JunSuQt.ui" />
+    <QtUic Include="MainWindow.ui" />
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="JunSuQt.qrc" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="MainWindow.h">
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets;$(SuObjectsDir)\include;$(SuObjectsDir)\include\private;$(SolutionDir)..\SuObjectsCpp\Include</IncludePath>
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets;$(SuObjectsDir)\include;$(SuObjectsDir)\include\private;$(SolutionDir)..\SuObjectsCpp\Include</IncludePath>
+    </QtMoc>
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="MapView.h">
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets;$(SuObjectsDir)\include;$(SuObjectsDir)\include\private;$(SolutionDir)..\SuObjectsCpp\Include</IncludePath>
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets;$(SuObjectsDir)\include;$(SuObjectsDir)\include\private;$(SolutionDir)..\SuObjectsCpp\Include</IncludePath>
+    </QtMoc>
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="WorkspaceView.h">
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets;$(SuObjectsDir)\include;$(SuObjectsDir)\include\private;$(SolutionDir)..\SuObjectsCpp\Include</IncludePath>
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets;$(SuObjectsDir)\include;$(SuObjectsDir)\include\private;$(SolutionDir)..\SuObjectsCpp\Include</IncludePath>
+    </QtMoc>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Icons.h" />
+    <QtMoc Include="MapLayersView.h">
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets;$(SuObjectsDir)\include;$(SuObjectsDir)\include\private;$(SolutionDir)..\SuObjectsCpp\Include</IncludePath>
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets;$(SuObjectsDir)\include;$(SuObjectsDir)\include\private;$(SolutionDir)..\SuObjectsCpp\Include</IncludePath>
+    </QtMoc>
+    <QtMoc Include="SceneView.h">
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets;$(SuObjectsDir)\include;$(SuObjectsDir)\include\private;$(SolutionDir)..\SuObjectsCpp\Include</IncludePath>
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets;$(SuObjectsDir)\include;$(SuObjectsDir)\include\private;$(SolutionDir)..\SuObjectsCpp\Include</IncludePath>
+    </QtMoc>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

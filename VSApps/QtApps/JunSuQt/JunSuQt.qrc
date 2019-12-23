@@ -36,5 +36,6 @@
         <file>Resources/Datasets/Image_DatasetGrid.png</file>
         <file>Resources/Datasource/Image_OGC.png</file>
         <file>Resources/Datasource/Image_DatasourceWeb.png</file>
+        <file>Resources/Layers/LayerGroup.png</file>
     </qresource>
 </RCC>

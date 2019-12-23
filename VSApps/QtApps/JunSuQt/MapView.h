@@ -9,6 +9,8 @@
 #include "Mapping/MapControl.h"
 #include "Data/LicenseManager.h"
 
+#include "MapLayersView.h"
+
 /**
  * @brief 地图窗口
  */
@@ -43,9 +45,11 @@ private:
 
     QPoint pt;
 
+	MapLayersView* pMapLayersView;
 
 public:
     MapControl* getMapControl();
+	MapLayersView* getMapLayersView();
 
 signals:
 

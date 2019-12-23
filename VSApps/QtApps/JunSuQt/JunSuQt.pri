@@ -12,14 +12,16 @@ HEADERS += ./JunSuQt.h \
            ./MapView.h \
     $$PWD/WorkspaceView.h \
     $$PWD/Icons.h \
-    $$PWD/SceneView.h
+    $$PWD/SceneView.h \
+    $$PWD/MapLayersView.h
 SOURCES += ./JunSuQt.cpp \
            ./main.cpp \
            ./MainWindow.cpp \
            ./MapView.cpp \
     $$PWD/WorkspaceView.cpp \
     $$PWD/Icons.cpp \
-    $$PWD/SceneView.cpp
+    $$PWD/SceneView.cpp \
+    $$PWD/MapLayersView.cpp
 FORMS += ./JunSuQt.ui \
          ./MainWindow.ui
 RESOURCES += ./JunSuQt.qrc

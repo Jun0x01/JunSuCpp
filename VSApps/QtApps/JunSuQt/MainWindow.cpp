@@ -74,6 +74,10 @@ void MainWindow::CloseWorkspace()
 		{
 			((MapView*)pWidget)->getMapControl()->CloseMap();
 		}
+		else if (typeid(*pWidget) == typeid(SceneView))
+		{
+			
+		}
 	}
     // Second, close workspace
     pWorkspace->Close();
@@ -298,6 +302,8 @@ void MainWindow::onOpenMap()
 		pMdiArea->addSubWindow(pMapView);
 		pMapView->show();
 		pMapView->getMapControl()->OpenMap(name.toStdString());
+
+		pMapView->getMapLayersView()->updateLayers(pMapView->getMapControl());
 	}
 }
 void MainWindow::onOpenScene()
@@ -345,6 +351,7 @@ void MainWindow::onAddToNewMap()
 		pMdiArea->addSubWindow(pMapView);
 		pMapView->show();
 
+		pMapView->getMapLayersView()->updateLayers(pMapView->getMapControl());
 	}
 }
 void MainWindow::onAddToCurMap()
@@ -360,9 +367,12 @@ void MainWindow::onAddToCurMap()
 			QString datasourceName = pDatasourceItem->text(0);
 
 			// 添加图层
-			pMapView->getMapControl()->AddDataset(datasourceName.toStdString(), datasetName.toStdString());
-			pMapView->getMapControl()->Refresh();
-			
+			UGLayer* pLayer = pMapView->getMapControl()->AddDataset(datasourceName.toStdString(), datasetName.toStdString());
+			if (NULL != pLayer) 
+			{
+				pMapView->getMapControl()->Refresh();
+				pMapView->getMapLayersView()->addLayer(pLayer);
+			}
 		}
 		else
 		{
@@ -424,6 +434,13 @@ void MainWindow::MDI_OnSubWindowActivated()
 	if (subWnd != NULL)
 	{
 		pCurMapOrSceneWidget = subWnd->widget();
+		if (typeid(*pCurMapOrSceneWidget) == typeid(MapView))
+		{
+			this->ui->dockWidget_layerlist->setWidget(((MapView*)pCurMapOrSceneWidget)->getMapLayersView());
+		}
+	}
+	else {
+		//this->ui->dockWidget_layerlist->setWidget(NULL);
 	}
 }
 
