@@ -12,12 +12,17 @@ SceneView::SceneView(QWidget *parent) : QWidget(parent)
 	renderTimer = new QTimer();
 	connect(renderTimer, SIGNAL(timeout()), this, SLOT(RenderInTimer()));
 	isRenderTimerStarted = false;
+
+	pSceneLayersView = new SceneLayersView();
 }
 
 SceneView::~SceneView()
 {
 	renderTimer->stop();
 	delete renderTimer;
+
+	/*pSceneLayersView->setParent(NULL);
+	delete pSceneLayersView;*/
 
 	delete m_pSceneControl;
 }
@@ -148,4 +153,9 @@ void SceneView::RenderInTimer()
 		}
 
 	}
+}
+
+SceneLayersView* SceneView::getSceneLayersView()
+{
+	return pSceneLayersView;
 }

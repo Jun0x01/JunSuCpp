@@ -13,6 +13,8 @@
 
 #include "Mapping/SceneControl.h"
 
+#include "SceneLayersView.h"
+
 using namespace SuperMap;
 
 class SceneView : public QWidget
@@ -43,12 +45,13 @@ private:
 	SceneControl* m_pSceneControl;
 	bool isRenderTimerStarted;
 	QTimer* renderTimer; // ³¡¾°äÖÈ¾¶¨Ê±Æ÷
-	
+
+	SceneLayersView* pSceneLayersView;
 
 public:
 	SceneControl* GetSceneControl();
 
-	
+	SceneLayersView* getSceneLayersView();
 
 signals:
 

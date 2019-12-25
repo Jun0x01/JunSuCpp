@@ -37,5 +37,8 @@
         <file>Resources/Datasource/Image_OGC.png</file>
         <file>Resources/Datasource/Image_DatasourceWeb.png</file>
         <file>Resources/Layers/LayerGroup.png</file>
+        <file>Resources/Layers/Layer3D_ImageCache3D.png</file>
+        <file>Resources/Layers/Layer3D_OSGBCache.png</file>
+        <file>Resources/Layers/Layer3D_Terrain.png</file>
     </qresource>
 </RCC>

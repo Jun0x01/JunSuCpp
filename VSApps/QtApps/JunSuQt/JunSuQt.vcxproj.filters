@@ -54,6 +54,9 @@
     <ClCompile Include="MapLayersView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SceneLayersView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="JunSuQt.h">
@@ -72,6 +75,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="MapLayersView.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="SceneLayersView.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

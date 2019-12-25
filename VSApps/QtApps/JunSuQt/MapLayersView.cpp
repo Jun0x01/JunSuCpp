@@ -19,26 +19,26 @@ void MapLayersView::addDefaultTree()
 {
 	// 初始化
 	pTreeDynamicLayers = new QTreeWidgetItem(this);
-	pTreeDatasetLayers = new QTreeWidgetItem(this);
+	pTreeNormalLayers = new QTreeWidgetItem(this);
 
 	// 设置标题
 	pTreeDynamicLayers->setText(0, tr("Dynamic Layers"));
-	pTreeDatasetLayers->setText(0, tr("Normal Layers"));
+	pTreeNormalLayers->setText(0, tr("Normal Layers"));
 
 	// 设置图标
 	pTreeDynamicLayers->setIcon(0, Icons::getInstance().iconLayerGroup);
-	pTreeDatasetLayers->setIcon(0, Icons::getInstance().iconMaps);
+	pTreeNormalLayers->setIcon(0, Icons::getInstance().iconMaps);
 
 
 	// 设置类型
 	pTreeDynamicLayers->setData(0, ItemDataType, QVariant::fromValue((int)TypeDynamicLayers));
-	pTreeDatasetLayers->setData(0, ItemDataType, QVariant::fromValue((int)TypeDatasetLayers));
+	pTreeNormalLayers->setData(0, ItemDataType, QVariant::fromValue((int)TypeDatasetLayers));
 
 }
 void MapLayersView::clear()
 {
 	clearItems(pTreeDynamicLayers);
-	clearItems(pTreeDatasetLayers);
+	clearItems(pTreeNormalLayers);
 }
 
 void MapLayersView::clearItems(QTreeWidgetItem* pItem)
@@ -58,7 +58,7 @@ void MapLayersView::clearItems(QTreeWidgetItem* pItem)
 void MapLayersView::updateLayers(MapControl* mapControl)
 {
 	clearItems(pTreeDynamicLayers);
-	clearItems(pTreeDatasetLayers);
+	clearItems(pTreeNormalLayers);
 
 	if (NULL == mapControl)
 	{
@@ -74,7 +74,7 @@ void MapLayersView::updateLayers(MapControl* mapControl)
 	for (int i = 0; i < count; i++) 
 	{
 		UGLayer* pLayer = pLayers->GetLayerAt(i);
-		updateLayer(pLayer, pTreeDatasetLayers);
+		updateLayer(pLayer, pTreeNormalLayers);
 	}
 }
 
@@ -122,7 +122,7 @@ void MapLayersView::updateLayer(UGLayer* pLayer, QTreeWidgetItem* parent, bool i
 			parent->addChild(pItem);
 		}
 		pItem->setText(typeIconCol, QString().fromStdString(layerName));
-		pItem->setIcon(typeIconCol, Icons::getInstance().iconDataset);
+		pItem->setIcon(typeIconCol, Icons::getInstance().iconDataTypeUnknown);
 
 		UGDataset::DatasetType datasetType = pDataset->GetType();
 		ItemType layerItemType = TypeLayer;
@@ -174,7 +174,7 @@ void MapLayersView::updateLayer(UGLayer* pLayer, QTreeWidgetItem* parent, bool i
 				pItem->setIcon(typeIconCol, Icons::getInstance().iconDatasetRegion3D);
 				break;
 			default:
-				pItem->setIcon(typeIconCol, Icons::getInstance().iconDataset);
+				pItem->setIcon(typeIconCol, Icons::getInstance().iconDataTypeUnknown);
 				break;
 			}
 		}
@@ -201,6 +201,6 @@ void MapLayersView::addLayer(UGLayer* pLayer, bool isTop /*= true*/)
 	}
 	else
 	{
-		updateLayer(pLayer, pTreeDatasetLayers, true);
+		updateLayer(pLayer, pTreeNormalLayers, true);
 	}
 }

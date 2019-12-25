@@ -25,7 +25,7 @@ Icons::Icons():
     iconDsRest(":/Images/Resources/Datasource/Image_Rest.png"),
     iconDsOGC(":/Images/Resources/Datasource/Image_OGC.png"),
     iconDsWeb(":/Images/Resources/Datasource/Image_DatasourceWeb.png"),
-    iconDataset(":/Images/Resources/Datasets/Image_Unknown.png"),
+    iconDataTypeUnknown(":/Images/Resources/Datasets/Image_Unknown.png"),
     iconDatasetPoint(":/Images/Resources/Datasets/Image_Point.png"),
     iconDatasetLine(":/Images/Resources/Datasets/Image_Line.png"),
     iconDatasetRegion(":/Images/Resources/Datasets/Image_Region.png"),
@@ -41,7 +41,10 @@ Icons::Icons():
     iconDatasetRegion3D(":/Images/Resources/Datasets/Image_Regin3D.png"),
     iconDatasetModel(":/Images/Resources/Datasets/Image_Model.png"),
     iconDatasetNetwork3D(":/Images/Resources/Datasets/Image_Network3D.png"),
-	iconLayerGroup(":/Images/Resources/Layers/LayerGroup.png")
+	iconLayerGroup(":/Images/Resources/Layers/LayerGroup.png"),
+	iconLayer3DImageCache(":/Images/Resources/Layers/Layer3D_ImageCache3D.png"),
+	iconLayer3DOSGBCache(":/Images/Resources/Layers/Layer3D_OSGBCache.png"),
+	iconLayer3DTerrian(":/Images/Resources/Layers/Layer3D_Terrain.png")
 {
 
 }

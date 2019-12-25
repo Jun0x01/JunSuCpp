@@ -47,7 +47,7 @@ public:
 
 private:
 	QTreeWidgetItem* pTreeDynamicLayers; // 动态层组，动态层是临时图层，只用于显示
-	QTreeWidgetItem* pTreeDatasetLayers; // 地图数据图层组，关联数据集显示，可保存到工作空间
+	QTreeWidgetItem* pTreeNormalLayers;  // 地图数据图层组，关联数据集显示，可保存到工作空间
 
 	const int typeIconCol = 0;
 

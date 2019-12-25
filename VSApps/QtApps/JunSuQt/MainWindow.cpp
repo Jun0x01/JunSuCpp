@@ -328,6 +328,8 @@ void MainWindow::onOpenScene()
 		{
 			//TODO: ouput log
 		}
+
+		sceneView->getSceneLayersView()->updateLayers(sceneView->GetSceneControl());
 	}
 }
 void MainWindow::onAddToNewMap()
@@ -402,6 +404,9 @@ void MainWindow::onAddToNewScene()
 		sceneView->GetSceneControl()->SetWorkspace(pWorkspace);
 		// 添加图层
 		sceneView->GetSceneControl()->AddLayerFromDataset(datasourceName.toStdString(), datasetName.toStdString());
+
+		sceneView->getSceneLayersView()->updateLayers(sceneView->GetSceneControl());
+		
 	}
 }
 void MainWindow::onAddToCurScene()
@@ -417,8 +422,10 @@ void MainWindow::onAddToCurScene()
 			QString datasourceName = pDatasourceItem->text(0);
 
 			// 添加图层
-			sceneView->GetSceneControl()->AddLayerFromDataset(datasourceName.toStdString(), datasetName.toStdString());
+			UGLayer3D* pLayer = sceneView->GetSceneControl()->AddLayerFromDataset(datasourceName.toStdString(), datasetName.toStdString());
 			sceneView->GetSceneControl()->Refresh();
+
+			sceneView->getSceneLayersView()->addLayer(pLayer);
 		}
 		else
 		{
@@ -438,9 +445,13 @@ void MainWindow::MDI_OnSubWindowActivated()
 		{
 			this->ui->dockWidget_layerlist->setWidget(((MapView*)pCurMapOrSceneWidget)->getMapLayersView());
 		}
+		else if (typeid(*pCurMapOrSceneWidget) == typeid(SceneView))
+		{
+			this->ui->dockWidget_layerlist->setWidget(((SceneView*)pCurMapOrSceneWidget)->getSceneLayersView());
+		}
 	}
 	else {
-		//this->ui->dockWidget_layerlist->setWidget(NULL);
+	     this->ui->dockWidget_layerlist->setWidget(NULL);
 	}
 }
 

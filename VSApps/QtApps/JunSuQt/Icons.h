@@ -29,7 +29,7 @@ public:
 	QIcon iconDsWeb;
 
 	// 不同数据集类型图标
-	QIcon iconDataset;
+	QIcon iconDataTypeUnknown;
 	QIcon iconDatasetPoint;
 	QIcon iconDatasetLine;
 	QIcon iconDatasetRegion;
@@ -49,6 +49,10 @@ public:
 	QIcon iconDatasetNetwork3D;
 
 	QIcon iconLayerGroup;
+
+	QIcon iconLayer3DImageCache;
+	QIcon iconLayer3DOSGBCache;
+	QIcon iconLayer3DTerrian;
 };
 
 #endif // ICONS_H

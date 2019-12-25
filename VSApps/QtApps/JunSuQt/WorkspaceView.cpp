@@ -270,7 +270,7 @@ void WorkspaceView::updateNewDatasource(UGDataSource& ugDatasource)
 			pDatasetItem->setIcon(0, Icons::getInstance().iconDatasetNetwork3D);
 			break;
 		default:
-			pDatasetItem->setIcon(0, Icons::getInstance().iconDataset);
+			pDatasetItem->setIcon(0, Icons::getInstance().iconDataTypeUnknown);
 			break;
 		}
 		pDatasetItem->setData(0, ItemDataType, QVariant::fromValue((int)datasetItemType)); // 设置数据集类型
