@@ -63,24 +63,28 @@
     <Import Project="..\..\..\PropertySheets\PropertySheet_win32d.props" />
     <Import Project="..\..\..\PropertySheets\PropertySheets_Link_SuObjectsCpp.props" />
     <Import Project="..\..\..\PropertySheets\PropertySheet_General.props" />
+    <Import Project="..\..\..\PropertySheets\OutDirPropertySheet.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\PropertySheets\PropertySheet_x64d.props" />
-    <Import Project="..\..\..\PropertySheets\PropertySheets_Link_SuObjectsCpp.props" />
     <Import Project="..\..\..\PropertySheets\PropertySheet_General.props" />
+    <Import Project="..\..\..\PropertySheets\PropertySheets_Link_SuObjectsCpp.props" />
+    <Import Project="..\..\..\PropertySheets\OutDirPropertySheet.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\PropertySheets\PropertySheet_win32.props" />
     <Import Project="..\..\..\PropertySheets\PropertySheets_Link_SuObjectsCpp.props" />
     <Import Project="..\..\..\PropertySheets\PropertySheet_General.props" />
+    <Import Project="..\..\..\PropertySheets\OutDirPropertySheet.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\PropertySheets\PropertySheet_x64.props" />
     <Import Project="..\..\..\PropertySheets\PropertySheets_Link_SuObjectsCpp.props" />
     <Import Project="..\..\..\PropertySheets\PropertySheet_General.props" />
+    <Import Project="..\..\..\PropertySheets\OutDirPropertySheet.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
