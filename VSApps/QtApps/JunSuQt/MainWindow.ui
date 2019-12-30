@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>JunSuCpp</string>
+   <string>JunSuQt</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="styleSheet">
@@ -60,7 +60,49 @@
     <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
+   <widget class="QMenu" name="menuWorkspace">
+    <property name="title">
+     <string>Workspace</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuDatasource">
+    <property name="title">
+     <string>Datasource</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuMap">
+    <property name="title">
+     <string>Map</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuAnalyst">
+    <property name="title">
+     <string>Analyst</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuDraw">
+    <property name="title">
+     <string>Draw</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuMeasure">
+    <property name="title">
+     <string>Measure</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuPlot">
+    <property name="title">
+     <string>Plot</string>
+    </property>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuWorkspace"/>
+   <addaction name="menuDatasource"/>
+   <addaction name="menuMap"/>
+   <addaction name="menuAnalyst"/>
+   <addaction name="menuDraw"/>
+   <addaction name="menuMeasure"/>
+   <addaction name="menuPlot"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="dockWidget_workspace">

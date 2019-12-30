@@ -37,6 +37,7 @@ public:
 		TypeLayerPoint3D,
 		TypeLayerLine3D,
 		TypeLayerRegion3D,
+		TypeLayerModel,
 
 		TypeTheme,
 	};

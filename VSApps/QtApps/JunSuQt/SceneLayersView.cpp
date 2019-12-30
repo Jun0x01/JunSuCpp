@@ -319,6 +319,10 @@ SceneLayersView::ItemType SceneLayersView::updateItemByDataset(UGDataset* pDatas
 		layerItemType = TypeLayerNetwork;
 		pItem->setIcon(typeIconCol, Icons::getInstance().iconDatasetRegion3D);
 		break;
+	case UGDataset::Model:
+		layerItemType = TypeLayerModel;
+		pItem->setIcon(typeIconCol, Icons::getInstance().iconDatasetModel);
+		break;
 	default:
 		pItem->setIcon(typeIconCol, Icons::getInstance().iconDataTypeUnknown);
 		break;

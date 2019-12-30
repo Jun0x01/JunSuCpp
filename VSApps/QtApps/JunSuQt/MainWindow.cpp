@@ -1,6 +1,9 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 
+
+#include "GeometryPlot/UGGOLibraryManager.h"
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -50,6 +53,24 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	pCurWorkspaceViewItem = NULL;
 	pCurMapOrSceneWidget = NULL;
+   /****************************************************/
+
+   /****************** 加载标绘符号库 ***************************/
+	UGString strJYLibPath = _U("../../../TestData/Plot/JY.plot");
+	UGString strTYLibPath = _U("../../../TestData/Plot/TY.plot");
+
+	UGGOLibraryManager* pLibManager = UGGOLibraryManager::GetInstance();
+	if (NULL == pLibManager)
+	{
+		return;
+	}
+	//添加标号库
+	//UGint nJYLibId = -1;
+	UGint nJYLibId = pLibManager->AddGOLibrary(strJYLibPath);
+	UGint nTYLibId = pLibManager->AddGOLibrary(strTYLibPath);
+
+	qDebug() << "JYLibId: " << UGFile::IsExist(strJYLibPath) << ", id: " << nJYLibId << endl;
+	qDebug() << "TYLibId: " << UGFile::IsExist(strTYLibPath) << ", id: " << nTYLibId << endl;
    /****************************************************/
 }
 

@@ -173,6 +173,10 @@ void MapLayersView::updateLayer(UGLayer* pLayer, QTreeWidgetItem* parent, bool i
 				layerItemType = TypeLayerRegion3D;
 				pItem->setIcon(typeIconCol, Icons::getInstance().iconDatasetRegion3D);
 				break;
+			case UGDataset::Model:
+				layerItemType = TypeLayerModel;
+				pItem->setIcon(typeIconCol, Icons::getInstance().iconDatasetModel);
+				break;
 			default:
 				pItem->setIcon(typeIconCol, Icons::getInstance().iconDataTypeUnknown);
 				break;

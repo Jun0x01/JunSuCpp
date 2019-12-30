@@ -38,7 +38,7 @@ Icons::Icons():
     iconDatasetImage(":/Images/Resources/Datasets/Image_DatasetImage.png"),
     iconDatasetPoint3D(":/Images/Resources/Datasets/Image_Point3D.png"),
     iconDatasetLine3D(":/Images/Resources/Datasets/Image_Line3D.png"),
-    iconDatasetRegion3D(":/Images/Resources/Datasets/Image_Regin3D.png"),
+    iconDatasetRegion3D(":/Images/Resources/Datasets/Image_Region3D.png"),
     iconDatasetModel(":/Images/Resources/Datasets/Image_Model.png"),
     iconDatasetNetwork3D(":/Images/Resources/Datasets/Image_Network3D.png"),
 	iconLayerGroup(":/Images/Resources/Layers/LayerGroup.png"),
