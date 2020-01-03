@@ -475,3 +475,112 @@ UGTerrainAccessor* SceneControl::AddTerrainLayerFromFile(string filePath)
 	return pTerrain;
 }
 
+UGArray<UGSelection3D*>* SceneControl::GetGeoSelections()
+{
+	UGLayer3Ds* pLayers = GetUGLayers();
+	int count = pLayers->GetInnerCount();
+	UGArray<UGSelection3D*>* pSelectionArr = NULL;
+	for (int i = 0; i < count; i++)
+	{
+		UGLayer3D* pLayer = pLayers->GetLayerInnerAt(i);
+		UGSelection3D* pSelection = pLayer->GetSelection3D();
+		if (NULL != pSelection && pSelection->GetSize() > 0)
+		{
+			if (NULL == pSelectionArr)
+			{
+				pSelectionArr = new UGArray<UGSelection3D*>();
+			}
+			pSelectionArr->Add(pSelection);
+		}
+	}
+
+	return pSelectionArr;
+}
+
+UGRecordset* SceneControl::ToRecordset(UGSelection3D* pSelection, bool isEditable /*= false*/)
+{
+	UGRecordset* pRecordset = NULL;
+	if (NULL != pSelection && pSelection->GetSize() > 0)
+	{
+	    UGLayer3D* pLayer = pSelection->GetLayer3D();
+		UGDatasetVector* pDataset = NULL;
+		UGLayer::UGLayerType type = (UGLayer::UGLayerType)pLayer->GetType();
+		switch (type)
+		{
+		case UGC::/*UGLayer3DType::*/l3dDatasetVector:
+		{
+			UGLayer3DDatasetVector* pLayer3DDatasetVector = (UGLayer3DDatasetVector*)(pLayer);
+			pDataset = (UGDatasetVector*)pLayer3DDatasetVector->GetDataset();
+			break;
+		}
+		case UGC::/*UGLayer3DType::*/l3dDatasetModelPro:
+		{
+			UGLayer3DDatasetModelPro* pLayer3DDatasetModel = (UGLayer3DDatasetModelPro*)(pLayer);
+			pDataset = (UGDatasetVector*)pLayer3DDatasetModel->GetDataset();
+			break;
+		}
+		case UGC::/*UGLayer3DType::*/l3dDatasetVectorPoint:
+		{
+			UGLayer3DDatasetVectorPoint* pLayer3DDatasetPoint = (UGLayer3DDatasetVectorPoint*)(pLayer);
+			pDataset = (UGDatasetVector*)pLayer3DDatasetPoint->GetDataset();
+			break;
+		}
+		case UGC::/*UGLayer3DType::*/l3dDatasetVectorLR:
+		{
+			UGLayer3DDatasetVectorLR* pLayer3DDatasetRegion = (UGLayer3DDatasetVectorLR*)(pLayer);
+			pDataset = (UGDatasetVector*)pLayer3DDatasetRegion->GetDataset();
+			break;
+		}
+		
+		}
+
+		if (NULL != pDataset)
+		{
+			pDataset->Open();
+
+			UGQueryDef queryDef;
+
+			// 获取所有选中对象的SmID, 作为查询条件
+			UGint count = pSelection->GetSize();
+
+			UGString filter = _U("(SmID in(");
+			for (int i = 0; i < count ; i++)
+			{//queryDef.m_IDs.Add((UGint)1);  // 使用后，m_IDs释放有问题, 因此使用下面的方式构造查询条件
+				UGString temp;
+				if (i < count - 1)
+				{
+					temp.Format(_U("%d,"), pSelection->GetAt(i));
+				}
+				else
+				{
+					temp.Format(_U("%d))"), pSelection->GetAt(i));
+				}
+			
+				filter += temp;
+			}
+			// 设置查询类型
+
+			queryDef.m_strFilter = filter;
+			queryDef.m_nType = UGQueryDef::/*QueryType::*/General; // IDs为使用SmID查询，queryDef.m_IDs
+
+			if (pDataset->GetType() == UGDataset::Tabular)
+			{
+				queryDef.m_nOptions = UGQueryDef::Attribute;
+			}
+			else
+			{
+				queryDef.m_nOptions = UGQueryDef::Both;
+			}
+			queryDef.m_nMode = UGQueryDef::GeneralQuery;
+			queryDef.m_nCursorType = UGQueryDef::OpenDynamic;  // OpenStatic, 用于读取数据；OpenDynamic, 用于数据增删改
+
+			UGFieldInfos fieldInfos;
+			pDataset->GetFieldInfos(fieldInfos); // 获取字段信息，可用来添加或删除非系统字段，只是用于查找字段值，也可通过UGRecordset获取
+			int countOld = pDataset->GetRecordsetCount();
+
+			pRecordset = pDataset->Query(queryDef);
+		}
+	}
+
+	return pRecordset;
+}

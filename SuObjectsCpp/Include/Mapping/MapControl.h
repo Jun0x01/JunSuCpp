@@ -16,6 +16,7 @@
 
 #include "Geometry/UGGeoPoint.h"
 #include "Geometry/UGGeoLine.h"
+#include "Map/UGLayerGroup.h"
 
 
 using namespace UGC;
@@ -79,6 +80,9 @@ namespace SuperMap
 		   void MouseScale(double ratio, int x, int y, bool delayRefresh = false);
 
 		   bool isExecuteRButton();
+
+		   void GetSelectionOfLayer(UGLayer* pLayer, UGArray<UGSelection*>* pSelectionArr);
+
 		   // pointers of callback function
 	   private:
 		   // the pointer of invalidateCallback function
@@ -306,6 +310,21 @@ namespace SuperMap
 			 * 关闭当前地图
 			 */
 			void CloseMap();
+
+			// 获取所有选中对象的选择集。通常情况下，使用点击选择对象，只有个图层有选中对象，因此只有一个选择集
+			// 若没有选中对象，返回NULL; 不需要使用时，请先RemoveAll(), 再delete
+			UGArray<UGSelection*>* GetGeoSelections();
+
+			/*
+			 * 将指定的选择集转为记录集。默认获得的记录集不能修改记录，只能用于获取字段值。
+			 * 不需要使用得到的UGRecordset时，请通过如下代码释放内存：
+			 *     pRecordset->GetDataset()->ReleaseRecordset(pRecordset)
+			 *     pRecordset = NULL
+			 *
+			 * @pSelection  用于获得记录集的UGSelection*
+			 * @isEditable  返回的记录集是否可修改，默认false, 不可修改记录。
+			 */
+			UGRecordset* ToRecordset(UGSelection* pSelection, bool isEditable = false);
 	   };
 	//}
 }

@@ -983,3 +983,105 @@ void MapControl::CloseMap()
 	m_pUGMapWnd->m_mapWnd.m_Map.SetModifiedFlag(false);
 	m_pUGMapWnd->Refresh();
 }
+
+
+UGArray<UGSelection*>* MapControl::GetGeoSelections()
+{
+	UGLayers* pLayers = GetUGLayers();
+
+	int count = pLayers->GetTopLevelCount();
+	UGArray<UGSelection*>* pSelectionArr = new UGArray<UGSelection*>();
+	for (int i = 0; i < count; i++)
+	{
+		UGLayer* pLayer = pLayers->GetLayerAt(i);
+		GetSelectionOfLayer(pLayer, pSelectionArr);
+	}
+
+	return pSelectionArr;
+}
+
+void MapControl::GetSelectionOfLayer(UGLayer* pLayer, UGArray<UGSelection*>* pSelectionArr)
+{
+	if (typeid(*pLayer) == typeid(UGLayerGroup))
+	{
+		int count = ((UGLayerGroup*)pLayer)->GetCount();
+		for (int i = 0; i < count; i++)
+		{
+			GetSelectionOfLayer(((UGLayerGroup*)pLayer)->GetAt(i), pSelectionArr);
+		}
+	}
+	else
+	{
+		UGSelection* pSelection = pLayer->GetSelection();
+		if (NULL != pSelection && pSelection->GetSize() > 0)
+		{
+			pSelectionArr->Add(pSelection);
+		}
+	}
+
+	
+}
+
+
+UGRecordset* MapControl::ToRecordset(UGSelection* pSelection, bool isEditable /*= false*/)
+{
+	UGRecordset* pRecordset = NULL;
+	if (NULL != pSelection && pSelection->GetSize() > 0)
+	{
+		UGLayer* pLayer = pSelection->Getlayer();
+		UGDataset* pDset = pLayer->GetDataset();
+		UGDatasetVector* pDataset = NULL;
+
+		if(pDset != NULL && pDset->IsVector())
+			pDataset = (UGDatasetVector*)pDset;
+
+		if (NULL != pDataset)
+		{
+			pDataset->Open();
+
+			UGQueryDef queryDef;
+
+			// 获取所有选中对象的SmID, 作为查询条件
+			UGint count = pSelection->GetSize();
+
+			UGString filter = _U("(SmID in(");
+			for (int i = 0; i < count; i++)
+			{//queryDef.m_IDs.Add((UGint)1);  // 使用后，m_IDs释放有问题, 因此使用下面的方式构造查询条件
+				UGString temp;
+				if (i < count - 1)
+				{
+					temp.Format(_U("%d,"), pSelection->GetAt(i));
+				}
+				else
+				{
+					temp.Format(_U("%d))"), pSelection->GetAt(i));
+				}
+
+				filter += temp;
+			}
+			// 设置查询类型
+
+			queryDef.m_strFilter = filter;
+			queryDef.m_nType = UGQueryDef::/*QueryType::*/General; // IDs为使用SmID查询，queryDef.m_IDs
+
+			if (pDataset->GetType() == UGDataset::Tabular)
+			{
+				queryDef.m_nOptions = UGQueryDef::Attribute;
+			}
+			else
+			{
+				queryDef.m_nOptions = UGQueryDef::Both;
+			}
+			queryDef.m_nMode = UGQueryDef::GeneralQuery;
+			queryDef.m_nCursorType = UGQueryDef::OpenDynamic;  // OpenStatic, 用于读取数据；OpenDynamic, 用于数据增删改
+
+			UGFieldInfos fieldInfos;
+			pDataset->GetFieldInfos(fieldInfos); // 获取字段信息，可用来添加或删除非系统字段，只是用于查找字段值，也可通过UGRecordset获取
+			int countOld = pDataset->GetRecordsetCount();
+
+			pRecordset = pDataset->Query(queryDef);
+		}
+	}
+
+	return pRecordset;
+}
