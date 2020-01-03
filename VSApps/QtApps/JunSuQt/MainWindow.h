@@ -66,6 +66,11 @@ private slots:
 	void onAddToCurMap();
 	void onAddToNewScene();
 	void onAddToCurScene();
+
+    void Tool_Pan();
+    void Tool_Select();
+
+    void Menu_Scene_GetSelections();
 };
 
 #endif // MAINWINDOW_H

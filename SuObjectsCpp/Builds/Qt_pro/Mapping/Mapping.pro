@@ -78,6 +78,8 @@ win32{
              -lSuStreamd       \
              -lSuToolkitd      \
              -lSuWorkspaced    \
+             -lSuLayer3DDatasetd \
+             -lSuGeometry3Dd   \
 
     }else:CONFIG(release, debug|release){
 
@@ -105,6 +107,7 @@ win32{
              -lSuStream       \
              -lSuToolkit      \
              -lSuWorkspace    \
+             -lSuLayer3DDataset \
     }
 }
 

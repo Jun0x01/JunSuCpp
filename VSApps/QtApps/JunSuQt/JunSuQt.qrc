@@ -40,5 +40,7 @@
         <file>Resources/Layers/Layer3D_ImageCache3D.png</file>
         <file>Resources/Layers/Layer3D_OSGBCache.png</file>
         <file>Resources/Layers/Layer3D_Terrain.png</file>
+        <file>Resources/File/Pan.png</file>
+        <file>Resources/File/Select.png</file>
     </qresource>
 </RCC>

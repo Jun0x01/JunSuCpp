@@ -38,6 +38,9 @@
    <addaction name="toolActionOpen"/>
    <addaction name="toolActionSave"/>
    <addaction name="toolActionSaveAs"/>
+   <addaction name="separator"/>
+   <addaction name="toolActionPan"/>
+   <addaction name="toolActionSelect"/>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -95,6 +98,12 @@
      <string>Plot</string>
     </property>
    </widget>
+   <widget class="QMenu" name="menuSelection">
+    <property name="title">
+     <string>Selection</string>
+    </property>
+    <addaction name="actionGet_Selections"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuWorkspace"/>
    <addaction name="menuDatasource"/>
@@ -103,6 +112,7 @@
    <addaction name="menuDraw"/>
    <addaction name="menuMeasure"/>
    <addaction name="menuPlot"/>
+   <addaction name="menuSelection"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="dockWidget_workspace">
@@ -264,6 +274,35 @@
    </property>
    <property name="text">
     <string>SaveAs</string>
+   </property>
+  </action>
+  <action name="toolActionPan">
+   <property name="icon">
+    <iconset resource="JunSuQt.qrc">
+     <normaloff>:/Images/Resources/File/Pan.png</normaloff>:/Images/Resources/File/Pan.png</iconset>
+   </property>
+   <property name="text">
+    <string>Pan</string>
+   </property>
+   <property name="toolTip">
+    <string>Pan on map or scene</string>
+   </property>
+  </action>
+  <action name="toolActionSelect">
+   <property name="icon">
+    <iconset resource="JunSuQt.qrc">
+     <normaloff>:/Images/Resources/File/Select.png</normaloff>:/Images/Resources/File/Select.png</iconset>
+   </property>
+   <property name="text">
+    <string>Select</string>
+   </property>
+   <property name="toolTip">
+    <string>select an object </string>
+   </property>
+  </action>
+  <action name="actionGet_Selections">
+   <property name="text">
+    <string>Get Selections</string>
    </property>
   </action>
  </widget>

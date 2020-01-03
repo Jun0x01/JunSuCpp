@@ -52,7 +52,7 @@ win32{
 
     # x64
     CONFIG(debug, debug|release){
-    message("Debug x64")
+
     LIBPATH = $${SUOBJECTSDIR}/lib/libd_x64
     LIBS += -lSuBased         \
             -lSuBase3Dd       \
@@ -66,7 +66,7 @@ win32{
             -lSuWorkspaced    \
 
     }else:CONFIG(release, debug|release){
-    message("Release x64")
+
     LIBPATH = $${SUOBJECTSDIR}/lib/lib_x64
     LIBS += -lSuBase         \
             -lSuBase3D       \

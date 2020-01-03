@@ -37,6 +37,11 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(ui->toolActionSave, SIGNAL(triggered()), SLOT(Menu_File_Save()));
 	connect(ui->toolActionSaveAs, SIGNAL(triggered()), SLOT(Menu_File_SaveAs()));
 
+    connect(ui->toolActionPan, SIGNAL(triggered()), SLOT(Tool_Pan()));
+    connect(ui->toolActionSelect, SIGNAL(triggered()), SLOT(Tool_Select()));
+
+    // MenuBar -> Scene
+    connect(ui->actionGet_Selections,   SIGNAL(triggered()), SLOT(Menu_Scene_GetSelections()));
 	/***************** 结束设置信号 ***********************/
 
     pWorkspace = new Workspace();
@@ -488,4 +493,103 @@ void MainWindow::onDoubleClickedWorkspaceViewItem(QTreeWidgetItem* pItem)
 	{
 		onOpenScene();
 	}
+}
+
+
+void MainWindow::Tool_Pan()
+{
+    if (pCurMapOrSceneWidget != NULL)
+    {
+        if (typeid(*pCurMapOrSceneWidget) == typeid(MapView))
+        {
+            MapView* pMapView = (MapView*)pCurMapOrSceneWidget;
+
+            pMapView->getMapControl()->GetMapEditWnd()->SetUserAction(UGC::UGDrawParamaters::uaPan);
+        }
+        else if (typeid(*pCurMapOrSceneWidget) == typeid(SceneView))
+        {
+            SceneView* sceneView = (SceneView*)pCurMapOrSceneWidget;
+            sceneView->GetSceneControl()->GetSceneEditWnd()->SetUserAction(UGC::/*UGSceneUserAction::*/suaPan);
+        }
+    }
+}
+
+void MainWindow::Tool_Select()
+{
+    if (pCurMapOrSceneWidget != NULL)
+    {
+        if (typeid(*pCurMapOrSceneWidget) == typeid(MapView))
+        {
+            MapView* pMapView = (MapView*)pCurMapOrSceneWidget;
+            pMapView->getMapControl()->GetMapEditWnd()->SetUserAction(UGC::UGDrawParamaters::uaPointModeSelect);
+        }
+        else if (typeid(*pCurMapOrSceneWidget) == typeid(SceneView))
+        {
+            SceneView* sceneView = (SceneView*)pCurMapOrSceneWidget;
+            sceneView->GetSceneControl()->GetSceneEditWnd()->SetUserAction(UGC::/*UGSceneUserAction::*/suaPointSelect);
+        }
+    }
+}
+
+void MainWindow::Menu_Scene_GetSelections()
+{
+	
+	/*	UGQueryDef queryDef;
+		UGint size = queryDef.m_IDs.GetSize();
+		queryDef.m_IDs.Add(1);
+		size = queryDef.m_IDs.GetSize();
+		if (size == 1) {
+			cout << size << endl;
+		}*/
+
+    if (pCurMapOrSceneWidget != NULL)
+    {
+		if (typeid(*pCurMapOrSceneWidget) == typeid(MapView))
+		{
+			MapView* pMapView = (MapView*)pCurMapOrSceneWidget;
+			UGArray<UGSelection*>* pSelectionArr = pMapView->getMapControl()->GetGeoSelections();
+			if (pSelectionArr != NULL)
+			{
+				int count = pSelectionArr->GetSize();
+				for (int i = 0; i < count; i++)
+				{
+					UGRecordset *pRecordset = pMapView->getMapControl()->ToRecordset(pSelectionArr->GetAt(i));
+					if (pRecordset != NULL)
+					{
+						int rsize = pRecordset->GetRecordCount();
+						qDebug() << "Record count: " << rsize << endl;
+						pRecordset->GetDataset()->ReleaseRecordset(pRecordset);
+						pRecordset = NULL;
+					}
+				}
+
+				pSelectionArr->RemoveAll();
+				delete pSelectionArr;
+			}
+		}
+        else if (typeid(*pCurMapOrSceneWidget) == typeid(SceneView))
+        {
+            SceneView* sceneView = (SceneView*)pCurMapOrSceneWidget;
+			UGArray<UGSelection3D*>* pSelectionArr = sceneView->GetSceneControl()->GetGeoSelections();
+			if (pSelectionArr != NULL)
+			{
+				int count = pSelectionArr->GetSize();
+				for (int i = 0; i < count; i++)
+				{
+					UGRecordset *pRecordset = sceneView->GetSceneControl()->ToRecordset(pSelectionArr->GetAt(i));
+					if (pRecordset != NULL)
+					{
+						int rsize = pRecordset->GetRecordCount();
+						qDebug() << "Record count: " << rsize << endl;
+						pRecordset->GetDataset()->ReleaseRecordset(pRecordset);
+						pRecordset = NULL;
+					}
+				}
+
+				pSelectionArr->RemoveAll();
+				delete pSelectionArr;
+			}
+        }
+    }
+
 }
