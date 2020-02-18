@@ -225,10 +225,20 @@ UGPoint SceneControl::SceneGlobalToPixel(UGPoint3D pnt)
 
 void SceneControl::Refresh()
 {
-	m_pUGSceneWnd->Refresh();  
+	////m_pUGSceneWnd->Refresh();  
 	/*if (m_pUGSceneWnd != NULL) {
 		m_pUGSceneWnd->GetScene3D()->GetCamera(_U("Camera"))->Refresh();
 	}*/
+
+	UGLayer3Ds* pLayers = GetUGLayers();
+	for (int i = 0; i < pLayers->GetInnerCount(); i++)
+	{
+		UGLayer3D* pLayer = pLayers->GetLayerInnerAt(i);
+
+		pLayer->SetInitialized(false);
+		pLayers->RefreshRasterLayer(pLayer);
+	}
+	
 }
 
 void SceneControl::RenderInTimer() {
