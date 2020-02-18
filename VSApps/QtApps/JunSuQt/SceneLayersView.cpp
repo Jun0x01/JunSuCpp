@@ -69,12 +69,15 @@ void SceneLayersView::updateLayers(SceneControl* sceneControl)
 	UGLayer3Ds* pLayers = sceneControl->GetUGLayers();
 
 	UGLayer3DCollection* pLayersCollection = pLayers->GetLayer3DsTree();
-	UGLayer3DPos pos = pLayersCollection->GetHeadPosition();
-	while (!pLayersCollection->IsEOF(pos))
-	{
-		UGLayer3D* pLayer3D = pLayersCollection->GetNext(pos);
+	if (pLayersCollection != NULL) { // 当场景中没有普通图层, pLayersCollection 为 NULL
 
-		updateLayer(pLayer3D, pTreeNormalLayers);
+		UGLayer3DPos pos = pLayersCollection->GetHeadPosition();
+		while (!pLayersCollection->IsEOF(pos))
+		{
+			UGLayer3D* pLayer3D = pLayersCollection->GetNext(pos);
+
+			updateLayer(pLayer3D, pTreeNormalLayers);
+		}
 	}
 	//int count = pLayers->GetInnerCount();
 	//for (int i = 0; i < count; i++)
