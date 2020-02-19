@@ -209,7 +209,13 @@ namespace SuperMap
 			 * @return         Return a pointer of UGLayer3D if the dataset was added, or return NULL.
 			 */
 			UGLayer3D* AddLayerFromDataset(string datasourceSName, string datasetName);
+			// 作用同上
+			UGLayer3D* AddLayerFromDataset(UGString datasourceSName, UGString datasetName);
 
+			/*
+			 * 打开本地文件，并添加到场景的中
+			 * @filePath  本地配置文件路径(.sci, .scm, .scp, .sct, .kml, .sit, .SCVO等等)
+			 */
 			UGLayer3D* AddLayerFromFile(string filePath);
 
 			UGTerrainAccessor* AddTerrainLayerFromFile(string filePath);

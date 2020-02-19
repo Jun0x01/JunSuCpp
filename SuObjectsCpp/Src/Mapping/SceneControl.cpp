@@ -310,49 +310,31 @@ UGLayer3D* SceneControl::AddLayerFromDataset(string datasourceName, string datas
 		UGDataset* pDataset = pDatasource->GetDataset(ugDatasetName);
 		if (pDataset != NULL)
 		{
-            UGLayer3DType layerType = UGC::/*UGLayer3DType::*/l3dNone;
 			UGDataset::DatasetType datasetType = pDataset->GetType();
 
-            if (datasetType == UGDataset::/*DatasetType::*/Image || datasetType == UGDataset::/*DatasetType::*/ImageCollection ||
-                datasetType == UGDataset::/*DatasetType::*/Grid  || datasetType == UGDataset::/*DatasetType::*/GridCollection)
-			{
-                layerType = UGC::/*UGLayer3DType::*/l3dDatasetImage;
-			}
-            else if(datasetType == UGDataset::/*DatasetType::*/Model)
-			{
-                layerType = UGC::/*UGLayer3DType::*/l3dDatasetModelPro;
-			}
-            else if (datasetType == UGDataset::/*DatasetType::*/MBGrid) // Volume
-			{
-                layerType = UGC::/*UGLayer3DType::*/l3dDatasetVolume;
-			}
-            else if (datasetType == UGDataset::/*DatasetType::*/Point || datasetType == UGDataset::/*DatasetType::*/PointZ) // PointZ -> Point3D
-			{
-				if (((UGDatasetVector*)pDataset)->GetParentDataset() == NULL)
-				{
-                    layerType = UGC::/*UGLayer3DType::*/l3dDatasetVectorPoint;
-				}
-				else
-				{
-                    layerType = UGC::/*UGLayer3DType::*/l3dDatasetVector;
-				}
-				
-			}
-            else if (datasetType == UGDataset::/*DatasetType::*/Line || datasetType == UGDataset::/*DatasetType::*/LineZ ||
-                     datasetType == UGDataset::/*DatasetType::*/Region || datasetType == UGDataset::/*DatasetType::*/RegionZ ||
-                     datasetType == UGDataset::/*DatasetType::*/Network3D)
-			{
-                layerType = UGC::/*UGLayer3DType::*/l3dDatasetVectorLR;
-			}
-            else if (datasetType == UGDataset::/*DatasetType::*/Text || datasetType == UGDataset::/*DatasetType::*/Network ||
-                     datasetType == UGDataset::/*DatasetType::*/LineM || datasetType == UGDataset::/*DatasetType::*/CAD )
-			{
-                layerType = UGC::/*UGLayer3DType::*/l3dDatasetVector;
-			}
-
-			UGString ugLayerName = ugDatasetName + _U("@") + ugDatasourceName;
+			UGString ugLayerName = ugDatasetName + _U("@") + ugDatasourceName; // 数据集名@数据源名，图层默认命名格式，也是通过该格式的名称获得关联数据
 			
-			pLayer = m_pUGSceneWnd->GetScene3D()->m_Layers.AddLayer(layerType, ugLayerName, ugLayerName);
+		    // AddLayer()支持多种数据格式：
+			//   1. 数据集：datsetName@dataSourceName(当前工作空间中已经打开的数据)
+			//   2. 本地配置文件的路径( .sci, .scp, .kml等等，具体可参考后面的 AddLayerFromFile() 函数) 
+			pLayer = m_pUGSceneWnd->GetScene3D()->m_Layers.AddLayer(ugLayerName); // 若同名图层已经存在，会自动修改图层名, 通常追加"#1"
+			// 或使用下面的方法，可自定义图层名称和图层别名
+			//pLayer = m_pUGSceneWnd->GetScene3D()->m_Layers.AddLayer(ugLayerName, ugLayerName, ugLayerName);
+			
+			if (pLayer != NULL) 
+			{
+				// 添加模型数据集图层后，设置一下该图层的三维风格，否则不能显示贴图
+				// 若有其他数据类型出现同类问题，可考虑添加到此处，设置三维风格
+				if (datasetType == UGDataset::/*DatasetType::*/Model || datasetType == UGDataset::/*DatasetType::*/CAD)
+				{
+					// 此处仅设置一个三维风格，以达到启用目的
+					// 其他风格可根据需要设置
+					UGStyle3D style3D;
+					style3D.SetFill3DMode(UGC::/*UGFill3DMode::*/FILL_FACE);
+					pLayer->SetStyle3D(style3D);
+				}
+			}
+			
 		}
 		else
 		{
@@ -368,6 +350,53 @@ UGLayer3D* SceneControl::AddLayerFromDataset(string datasourceName, string datas
 	
 }
 
+UGLayer3D* SceneControl::AddLayerFromDataset(UGString ugDatasetName, UGString ugDatasourceName)
+{
+	UGDataSource* pDatasource = m_pWorkspace->GetUGWorkspace()->GetDataSource(ugDatasourceName);
+	UGLayer3D* pLayer = NULL;
+	if (pDatasource != NULL)
+	{
+		UGDataset* pDataset = pDatasource->GetDataset(ugDatasetName);
+		if (pDataset != NULL)
+		{
+			UGDataset::DatasetType datasetType = pDataset->GetType();
+
+			UGString ugLayerName = ugDatasetName + _U("@") + ugDatasourceName; // 数据集名@数据源名，图层默认命名格式，也是通过该格式的名称获得关联数据
+
+			// AddLayer()支持多种数据格式：
+			//   1. 数据集：datsetName@dataSourceName(当前工作空间中已经打开的数据)
+			//   2. 本地配置文件的路径( .sci, .scp, .kml等等，具体可参考后面的 AddLayerFromFile() 函数) 
+			pLayer = m_pUGSceneWnd->GetScene3D()->m_Layers.AddLayer(ugLayerName); // 若同名图层已经存在，会自动修改图层名, 通常追加"#1"
+			// 或使用下面的方法，可自定义图层名称和图层别名
+			//pLayer = m_pUGSceneWnd->GetScene3D()->m_Layers.AddLayer(ugLayerName, ugLayerName, ugLayerName);
+
+			if (pLayer != NULL)
+			{
+				// 添加模型数据集图层后，设置一下该图层的三维风格，否则不能显示贴图
+				// 若有其他数据类型出现同类问题，可考虑添加到此处，设置三维风格
+				if (datasetType == UGDataset::/*DatasetType::*/Model || datasetType == UGDataset::/*DatasetType::*/CAD)
+				{
+					// 此处仅设置一个三维风格，以达到启用目的
+					// 其他风格可根据需要设置
+					UGStyle3D style3D;
+					style3D.SetFill3DMode(UGC::/*UGFill3DMode::*/FILL_FACE);
+					pLayer->SetStyle3D(style3D);
+				}
+			}
+
+		}
+		else
+		{
+			Log::Error("Failed to add a dataset on scene. Not found dataset " + UGStrConvertor::Tostring(ugDatasetName) + " in the datasource named " + UGStrConvertor::Tostring(ugDatasourceName));
+		}
+
+	}
+	else
+	{
+		Log::Error("Failed to add a dataset on scene. Not found datasource " + UGStrConvertor::Tostring(ugDatasourceName));
+	}
+	return pLayer;
+}
 bool SceneControl::Save()
 {	
 	UGString sceneName = m_pUGSceneWnd->GetScene3D()->GetName();
@@ -434,30 +463,23 @@ UGLayer3D* SceneControl::AddLayerFromFile(string filePath)
 {
 	UGString ugFilePath;
 	ugFilePath.FromStd(filePath);
-	UGString suffix = UGFile::GetExt(ugFilePath);
-	UGString fileName = UGFile::GetName(ugFilePath);
-
-	UGString layerName = fileName.Left(fileName.GetLength() - suffix.GetLength());
-
-	while (m_pUGSceneWnd->GetScene3D()->m_Layers.FindNameInner(layerName) >= 0)
-	{
-		layerName = layerName + _U("_1");
-	}
-
+	bool exist = UGFile::IsExist(ugFilePath);
 	UGLayer3D* pLayer = NULL;
-
-	// Normal Layer
-	if (0 == suffix.CompareNoCase(_U(".sci")) || 0 == suffix.CompareNoCase(_U(".sci3d")) ||
-		0 == suffix.CompareNoCase(_U(".sit")) || 0 == suffix.CompareNoCase(_U(".tiff"))  || 
-	    0 == suffix.CompareNoCase(_U(".tif")) || 0 == suffix.CompareNoCase(_U(".scv"))   ||
-		0 == suffix.CompareNoCase(_U(".scp")) || 0 == suffix.CompareNoCase(_U(".scvo")))
+	if (exist) 
 	{
-		pLayer = m_pUGSceneWnd->GetScene3D()->m_Layers.AddLayer(ugFilePath, layerName, layerName);
+		// 本地配置文件的路径(.sci, .scm, .scp, .sct, .kml, .sit, .SCVO等等)
+		pLayer = m_pUGSceneWnd->GetScene3D()->m_Layers.AddLayer(ugFilePath);
+
+		if (pLayer == NULL)
+		{
+			Log::Error("Unsupported file: " + filePath);
+		}
 	}
 	else
 	{
-		 Log::Error("Unsupported file ! " + filePath);
+		Log::Error("Not found the file: " + filePath);
 	}
+   
 
 	 return pLayer;
 }
