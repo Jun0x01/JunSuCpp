@@ -616,3 +616,11 @@ UGRecordset* SceneControl::ToRecordset(UGSelection3D* pSelection, bool isEditabl
 
 	return pRecordset;
 }
+
+void SceneControl::ViewToLayer(UGLayer3D* pLayer)
+{
+	if (pLayer != NULL) 
+	{
+		m_pUGSceneWnd->GetScene3D()->GetCamera(_U("Camera"))->FlyToBounds(pLayer->GetBounds(), 1);
+	}
+}

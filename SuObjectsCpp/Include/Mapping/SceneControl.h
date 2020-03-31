@@ -237,6 +237,8 @@ namespace SuperMap
 			 */
 			UGRecordset* ToRecordset(UGSelection3D* pSelection, bool isEditable=false);
 
+			// 全幅显示指定图层
+			void ViewToLayer(UGLayer3D* pLayer);
 	   };
 	//}
 }
