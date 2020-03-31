@@ -89,6 +89,7 @@ win32{
              -lSuPathAnalystd  \
              -lSuGeometryPlotd \
              -lSuLayer3DDatasetd \
+             -lSuTheme3DBased
 
     }else:CONFIG(release, debug|release){
 
@@ -122,6 +123,7 @@ win32{
              -lSuPathAnalyst  \
              -lSuGeometryPlot \
              -lSuLayer3DDataset \
+             -lSuTheme3DBase
     }
 
 }
@@ -169,6 +171,7 @@ unix:{
              -lSuPathAnalyst  \
              -lSuGeometryPlot \
              -lSuLayer3DDataset \
+             -lSuTheme3DBase
 }
 
 
