@@ -100,9 +100,10 @@
    </widget>
    <widget class="QMenu" name="menuSelection">
     <property name="title">
-     <string>Selection</string>
+     <string>Scene</string>
     </property>
     <addaction name="actionGet_Selections"/>
+    <addaction name="actionAdd_Unique_Theme3D"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuWorkspace"/>
@@ -303,6 +304,11 @@
   <action name="actionGet_Selections">
    <property name="text">
     <string>Get Selections</string>
+   </property>
+  </action>
+  <action name="actionAdd_Unique_Theme3D">
+   <property name="text">
+    <string>Add Unique Theme3D</string>
    </property>
   </action>
  </widget>

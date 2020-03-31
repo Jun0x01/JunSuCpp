@@ -3,27 +3,28 @@
 
 
 #include "GeometryPlot/UGGOLibraryManager.h"
+#include "Theme3DBase/UGTheme3DUnique.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    statusBar()->hide(); // éšè—çŠ¶æ€æ 
-	// è®¾ç½®é¼ æ ‡è·Ÿéšï¼Œä½¿ç¼–è¾‘å¯¹è±¡æ—¶æ•ˆæžœæ›´å¥½
+    statusBar()->hide(); // Òþ²Ø×´Ì¬À¸
+	// ÉèÖÃÊó±ê¸úËæ£¬Ê¹±à¼­¶ÔÏóÊ±Ð§¹û¸üºÃ
 	this->setMouseTracking(true);
 	this->centralWidget()->setMouseTracking(true);
 
-    // æ·»åŠ WorkspaceViewåˆ°å·¥ä½œç©ºé—´çš„dockçª—å£ä¸­
+    // Ìí¼ÓWorkspaceViewµ½¹¤×÷¿Õ¼äµÄdock´°¿ÚÖÐ
     pWorkspaceView = new WorkspaceView();
     ui->dockWidget_workspace->setWidget(pWorkspaceView);
 
-	// è®¾ç½®å·¥ä½œç©ºé—´åˆ—è¡¨çš„å³é”®èœå•ä¿¡å·
+	// ÉèÖÃ¹¤×÷¿Õ¼äÁÐ±íµÄÓÒ¼ü²Ëµ¥ÐÅºÅ
 	connect(pWorkspaceView, SIGNAL(customContextMenuRequested(const QPoint&)), SLOT(onCustomContextMenu(const QPoint&)));
-	// åŒå‡»ä¿¡å·
+	// Ë«»÷ÐÅºÅ
 	connect(pWorkspaceView, SIGNAL(doubleClickedItem(QTreeWidgetItem*)), this, SLOT(onDoubleClickedWorkspaceViewItem(QTreeWidgetItem*)));
 
-    /***************** è®¾ç½®ä¿¡å· ***********************/
+    /***************** ÉèÖÃÐÅºÅ ***********************/
 	// MenuBar -> File
     connect(ui->actionNew,    SIGNAL(triggered()), SLOT(Menu_File_New()));
     connect(ui->actionOpen,   SIGNAL(triggered()), SLOT(Menu_File_Open()));
@@ -42,16 +43,18 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // MenuBar -> Scene
     connect(ui->actionGet_Selections,   SIGNAL(triggered()), SLOT(Menu_Scene_GetSelections()));
-	/***************** ç»“æŸè®¾ç½®ä¿¡å· ***********************/
+    connect(ui->actionAdd_Unique_Theme3D,   SIGNAL(triggered()), SLOT(Menu_Scene_Add_UniqueTheme3D()));
+
+	/***************** ½áÊøÉèÖÃÐÅºÅ ***********************/
 
     pWorkspace = new Workspace();
 
-	/****************** å¢žåŠ MDI ***************************/
+	/****************** Ôö¼ÓMDI ***************************/
 	// MDI
 	pMdiArea = new QMdiArea();
 	pMdiArea->setViewMode(QMdiArea::TabbedView);
 	pMdiArea->setTabsClosable(true);
-    pMdiArea->setMouseTracking(true);   // è®¾ç½®é¼ æ ‡è·Ÿéšï¼Œä½¿ç¼–è¾‘å¯¹è±¡æ—¶æ•ˆæžœæ›´å¥½
+    pMdiArea->setMouseTracking(true);   // ÉèÖÃÊó±ê¸úËæ£¬Ê¹±à¼­¶ÔÏóÊ±Ð§¹û¸üºÃ
 	pMdiArea->setMinimumSize(300, 200);
 	setCentralWidget(pMdiArea);
 	connect(pMdiArea, &QMdiArea::subWindowActivated, this, &MainWindow::MDI_OnSubWindowActivated);
@@ -60,7 +63,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	pCurMapOrSceneWidget = NULL;
    /****************************************************/
 
-   /****************** åŠ è½½æ ‡ç»˜ç¬¦å·åº“ ***************************/
+   /****************** ¼ÓÔØ±ê»æ·ûºÅ¿â ***************************/
 	UGString strJYLibPath = _U("../../../TestData/Plot/JY.plot");
 	UGString strTYLibPath = _U("../../../TestData/Plot/TY.plot");
 
@@ -69,7 +72,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	{
 		return;
 	}
-	//æ·»åŠ æ ‡å·åº“
+	//Ìí¼Ó±êºÅ¿â
 	//UGint nJYLibId = -1;
 	UGint nJYLibId = pLibManager->AddGOLibrary(strJYLibPath);
 	UGint nTYLibId = pLibManager->AddGOLibrary(strTYLibPath);
@@ -77,6 +80,8 @@ MainWindow::MainWindow(QWidget *parent) :
 	qDebug() << "JYLibId: " << UGFile::IsExist(strJYLibPath) << ", id: " << nJYLibId << endl;
 	qDebug() << "TYLibId: " << UGFile::IsExist(strTYLibPath) << ", id: " << nTYLibId << endl;
    /****************************************************/
+
+	colorIndex = 0;
 }
 
 MainWindow::~MainWindow()
@@ -112,7 +117,7 @@ void MainWindow::CloseWorkspace()
 void MainWindow::Menu_File_New()
 {
 	MapView* pMapView = new MapView();
-	pMapView->setAttribute(Qt::WA_DeleteOnClose); // å…³é—­åŽå°±é‡Šæ”¾
+	pMapView->setAttribute(Qt::WA_DeleteOnClose); // ¹Ø±Õºó¾ÍÊÍ·Å
 	pMapView->getMapControl()->SetWorkspace(pWorkspace);
 	QString title("New Map");
 
@@ -135,7 +140,7 @@ void MainWindow::Menu_File_Open()
 	
         string strPath = qStrPath.toStdString();
 
-		// å·¥ä½œç©ºé—´
+		// ¹¤×÷¿Õ¼ä
 		if (0 == suffix.compare("smwu", Qt::CaseInsensitive) ||
 			0 == suffix.compare("smw", Qt::CaseInsensitive)  ||
 			0 == suffix.compare("sxwu", Qt::CaseInsensitive) ||
@@ -147,13 +152,13 @@ void MainWindow::Menu_File_Open()
 
 			if (pWorkspace->OpenWorkspaceFile(strPath))
 			{
-				// æ›´æ–°å·¥ä½œç©ºé—´åˆ—è¡¨
+				// ¸üÐÂ¹¤×÷¿Õ¼äÁÐ±í
 				pWorkspaceView->updateWorkspaceList(*pWorkspace);
 
 			}
 			else
 			{
-				// æ›´æ–°å·¥ä½œç©ºé—´åˆ—è¡¨
+				// ¸üÐÂ¹¤×÷¿Õ¼äÁÐ±í
 				pWorkspaceView->updateWorkspaceList(*pWorkspace);
 				qDebug("Failed to open the workspace");
 			}
@@ -182,7 +187,7 @@ void MainWindow::Menu_File_Open()
 			UGDataSource* pDatasource = pWorkspace->OpenDatasourceFile(engineType, fileName.toStdString(), strPath);
 			if (NULL != pDatasource)
 			{
-				// æ›´æ–°å·¥ä½œç©ºé—´åˆ—è¡¨ï¼Œå¢žåŠ ä¸€ä¸ªæ•°æ®æº
+				// ¸üÐÂ¹¤×÷¿Õ¼äÁÐ±í£¬Ôö¼ÓÒ»¸öÊý¾ÝÔ´
 				pWorkspaceView->updateNewDatasource(*pDatasource);
 			}
 			else
@@ -199,6 +204,13 @@ void MainWindow::Menu_File_Open()
 
 void MainWindow::Menu_File_Save()
 {
+	SceneView* sceneView = NULL;
+	if (typeid(*pCurMapOrSceneWidget) == typeid(SceneView))
+	{
+		sceneView = (SceneView*)pCurMapOrSceneWidget;
+		sceneView->GetSceneControl()->Save();
+		sceneView = NULL;
+	}
 	bool isSaved = pWorkspace->Save();
 	if (isSaved)
 	{
@@ -285,22 +297,22 @@ void MainWindow::onCustomContextMenu(const QPoint& pos)
 		{
 			QMenu menu;
 
-			// åœ°å›¾ä½¿ç”¨
+			// µØÍ¼Ê¹ÓÃ
 			QAction* action11 = new QAction(tr("Add to new map"));
 			connect(action11, SIGNAL(triggered()), this, SLOT(onAddToNewMap()));
 			menu.addAction(action11);
-			// å¦‚æžœæ²¡æœ‰åœ°å›¾çª—å£ï¼Œåˆ™ä¸æ·»åŠ æ­¤é¡¹
+			// Èç¹ûÃ»ÓÐµØÍ¼´°¿Ú£¬Ôò²»Ìí¼Ó´ËÏî
 			QAction* action12 = new QAction(tr("Add to current map"));
 			connect(action12, SIGNAL(triggered()), this, SLOT(onAddToCurMap()));
 			menu.addAction(action12);
 
 			menu.addSeparator();
 
-			// åœºæ™¯ä½¿ç”¨
+			// ³¡¾°Ê¹ÓÃ
 			QAction* action21 = new QAction(tr("Add to new scene"));
 			connect(action21, SIGNAL(triggered()), this, SLOT(onAddToNewScene()));
 			menu.addAction(action21);
-			// å¦‚æžœæ²¡æœ‰åœºæ™¯çª—å£ï¼Œåˆ™ä¸æ·»åŠ æ­¤é¡¹
+			// Èç¹ûÃ»ÓÐ³¡¾°´°¿Ú£¬Ôò²»Ìí¼Ó´ËÏî
 			QAction* action22 = new QAction(tr("Add to current scene"));
 			connect(action22, SIGNAL(triggered()), this, SLOT(onAddToCurScene()));
 			menu.addAction(action22);
@@ -311,7 +323,7 @@ void MainWindow::onCustomContextMenu(const QPoint& pos)
 }
 
 
-// æ•°æ®é›†èœå•äº‹ä»¶
+// Êý¾Ý¼¯²Ëµ¥ÊÂ¼þ
 void MainWindow::onOpenMap()
 {
 	if (pCurWorkspaceViewItem != NULL)
@@ -319,7 +331,7 @@ void MainWindow::onOpenMap()
 		QString name = pCurWorkspaceViewItem->text(0);
 
 		MapView* pMapView = new MapView();
-		pMapView->setAttribute(Qt::WA_DeleteOnClose); // å…³é—­åŽå°±é‡Šæ”¾
+		pMapView->setAttribute(Qt::WA_DeleteOnClose); // ¹Ø±Õºó¾ÍÊÍ·Å
 		pMapView->getMapControl()->SetWorkspace(pWorkspace);
 		QString title(name);
 
@@ -339,7 +351,7 @@ void MainWindow::onOpenScene()
 		QString name = pCurWorkspaceViewItem->text(0);
 
 		SceneView* sceneView = new SceneView();
-		sceneView->setAttribute(Qt::WA_DeleteOnClose); // å…³é—­åŽå°±é‡Šæ”¾
+		sceneView->setAttribute(Qt::WA_DeleteOnClose); // ¹Ø±Õºó¾ÍÊÍ·Å
 
 		QString title(name);
 		sceneView->setWindowTitle(title);
@@ -368,9 +380,9 @@ void MainWindow::onAddToNewMap()
 
 
 		MapView* pMapView = new MapView();
-		pMapView->setAttribute(Qt::WA_DeleteOnClose); // å…³é—­åŽå°±é‡Šæ”¾
+		pMapView->setAttribute(Qt::WA_DeleteOnClose); // ¹Ø±Õºó¾ÍÊÍ·Å
 		pMapView->getMapControl()->SetWorkspace(pWorkspace);
-		// æ·»åŠ å›¾å±‚
+		// Ìí¼ÓÍ¼²ã
 		pMapView->getMapControl()->AddDataset(datasourceName.toStdString(), datasetName.toStdString());
 
 		QString title(datasetName + "@" + datasourceName);
@@ -394,7 +406,7 @@ void MainWindow::onAddToCurMap()
 			QTreeWidgetItem* pDatasourceItem = pCurWorkspaceViewItem->parent();
 			QString datasourceName = pDatasourceItem->text(0);
 
-			// æ·»åŠ å›¾å±‚
+			// Ìí¼ÓÍ¼²ã
 			UGLayer* pLayer = pMapView->getMapControl()->AddDataset(datasourceName.toStdString(), datasetName.toStdString());
 			if (NULL != pLayer) 
 			{
@@ -419,7 +431,7 @@ void MainWindow::onAddToNewScene()
 
 
 		SceneView* sceneView = new SceneView();
-		sceneView->setAttribute(Qt::WA_DeleteOnClose); // å…³é—­åŽå°±é‡Šæ”¾
+		sceneView->setAttribute(Qt::WA_DeleteOnClose); // ¹Ø±Õºó¾ÍÊÍ·Å
 
 		QString title(datasetName + "@" + datasourceName);
 		sceneView->setWindowTitle(title);
@@ -428,11 +440,12 @@ void MainWindow::onAddToNewScene()
 		sceneView->show();
 
 		sceneView->GetSceneControl()->SetWorkspace(pWorkspace);
-		// æ·»åŠ å›¾å±‚
-		sceneView->GetSceneControl()->AddLayerFromDataset(datasourceName.toStdString(), datasetName.toStdString());
+		// Ìí¼ÓÍ¼²ã
+		UGLayer3D* pLayer = sceneView->GetSceneControl()->AddLayerFromDataset(datasourceName.toStdString(), datasetName.toStdString());
 
 		sceneView->getSceneLayersView()->updateLayers(sceneView->GetSceneControl());
-		
+
+		sceneView->GetSceneControl()->ViewToLayer(pLayer);
 	}
 }
 void MainWindow::onAddToCurScene()
@@ -447,7 +460,7 @@ void MainWindow::onAddToCurScene()
 			QTreeWidgetItem* pDatasourceItem = pCurWorkspaceViewItem->parent();
 			QString datasourceName = pDatasourceItem->text(0);
 
-			// æ·»åŠ å›¾å±‚
+			// Ìí¼ÓÍ¼²ã
 			UGLayer3D* pLayer = sceneView->GetSceneControl()->AddLayerFromDataset(datasourceName.toStdString(), datasetName.toStdString());
 			sceneView->GetSceneControl()->Refresh();
 
@@ -592,4 +605,60 @@ void MainWindow::Menu_Scene_GetSelections()
         }
     }
 
+}
+
+
+void MainWindow::Menu_Scene_Add_UniqueTheme3D()
+{
+	// ÕâÀï½ö½öÊÇÒ»¸öÊ¾Àý£¬Ê¹ÓÃÇ°ÇëÈ·±£µ±Ç°³¡¾°µÄµÚÒ»¸öÍ¼²ãÊÇÄ£ÐÍÊý¾Ý¼¯Í¼²ã
+
+	SceneView* sceneView = NULL;
+	if (typeid(*pCurMapOrSceneWidget) == typeid(SceneView))
+	{
+		sceneView = (SceneView*)pCurMapOrSceneWidget;
+		if (sceneView->GetSceneControl()->GetUGLayers()->GetInnerCount() <= 0) {
+			return;
+		}
+		UGLayer3D* pLayer = sceneView->GetSceneControl()->GetUGLayers()->GetLayerInnerAt(0);
+		
+		// Ìí¼Ó×¨ÌâÍ¼
+		int color;
+		if(colorIndex == 0)
+		    color = 0xFFFF0000;
+		if(colorIndex == 1)
+			color = 0xFF00FF00;
+		if(colorIndex == 2)
+			color = 0xFF0000FF;
+		if (colorIndex == 3)
+			color = 0x00FF00FF;
+		if (colorIndex == 4)
+			color = 0x0000FFFF;
+
+		UGString field = _U("SmUserID");
+		
+		if (colorIndex == 0) {
+			// Ìí¼Ó×¨ÌâÍ¼
+			UGTheme3DItem item1;
+			item1.m_bVisible = true;
+			item1.m_strCaption = _U("item1");
+
+			item1.m_Style.SetFillForeColor(color);
+			
+
+			UGTheme3DUnique* pTheme3D = new UGTheme3DUnique;
+			pTheme3D->Add(_U("0"), item1);
+			pTheme3D->SetDefaultStyle(item1.m_Style);
+			pLayer->m_pTheme3D = pTheme3D;
+		}else{
+			((UGTheme3DUnique*)(pLayer->m_pTheme3D))->GetAt(0)->m_Style.SetFillForeColor(color);
+		}
+		
+		sceneView->GetSceneControl()->Refresh();
+
+		colorIndex++;
+	}
+	else
+	{ // ÐÂ½¨Ò»¸ö SceneView
+
+	}
 }

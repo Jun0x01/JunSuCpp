@@ -37,7 +37,7 @@ private:
 
 	QMdiArea* pMdiArea;             // MDI视图
 	QWidget* pCurMapOrSceneWidget;  // MDI中，当前激活的窗口，可能是地图，也可能是场景
-
+	int colorIndex;
 // functions
 private:
     void CloseWorkspace();
@@ -71,6 +71,7 @@ private slots:
     void Tool_Select();
 
     void Menu_Scene_GetSelections();
+	void Menu_Scene_Add_UniqueTheme3D();
 };
 
 #endif // MAINWINDOW_H
