@@ -129,8 +129,8 @@ void SceneLayersView::updateLayer(UGLayer3D* pLayer, QTreeWidgetItem* parent, bo
 		int count = ((UGLayer3DGroup*)pLayer)->GetCount();
 		for (int i = 0; i < count; i++)
 		{
-			UGLayer3D* pLayer = ((UGLayer3DGroup*)pLayer)->GetAt(i);
-			updateLayer(pLayer, pItem);
+			UGLayer3D* pLayer1 = ((UGLayer3DGroup*)pLayer)->GetAt(i);
+			updateLayer(pLayer1, pItem);
 		}
 
 	}

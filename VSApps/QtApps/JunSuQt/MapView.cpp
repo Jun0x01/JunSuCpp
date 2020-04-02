@@ -30,8 +30,8 @@ MapView::MapView(QWidget *parent) : QWidget(parent)
 }
 MapView::~MapView() 
 {
-	pMapLayersView->setParent(NULL);
-	delete pMapLayersView;
+    //pMapLayersView->setParent(NULL);
+	//elete pMapLayersView;
 
     delete m_pMapControl;
 }
@@ -135,6 +135,16 @@ void MapView::mouseReleaseEvent(QMouseEvent* event)
     {// MidButton
         m_pMapControl->OnMidMouseUp(flag, event->x(), event->y());
     }
+
+    UGPoint2D pt = m_pMapControl->PixelToMap(event->x(), event->y());
+	qDebug() << "x: " << pt.x << ", y: " << pt.y << endl;
+	UGPoints pts;
+	UGPoint pt1(event->x(), event->y());
+	pts.Add(pt1);
+	UGPoint2Ds outPts;
+	m_pMapControl->ToGeoCoords(pts, outPts);
+	qDebug() << "x1: " << outPts.GetAt(0).x << ", y1: " << outPts.GetAt(0).y << endl;
+    
 }
 
 void MapView::mouseDoubleClickEvent(QMouseEvent *event)

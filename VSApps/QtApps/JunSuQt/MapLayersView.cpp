@@ -99,8 +99,8 @@ void MapLayersView::updateLayer(UGLayer* pLayer, QTreeWidgetItem* parent, bool i
 		int count = ((UGLayerGroup*)pLayer)->GetCount();
 		for (int i = 0; i < count; i++)
 		{
-			UGLayer* pLayer = ((UGLayerGroup*)pLayer)->GetAt(i);
-			updateLayer(pLayer, pItem);
+			UGLayer* pLayer1 = ((UGLayerGroup*)pLayer)->GetAt(i);
+			updateLayer(pLayer1, pItem);
 		}
 	}
 	else // Layer
