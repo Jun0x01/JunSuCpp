@@ -621,44 +621,79 @@ void MainWindow::Menu_Scene_Add_UniqueTheme3D()
 		}
 		UGLayer3D* pLayer = sceneView->GetSceneControl()->GetUGLayers()->GetLayerInnerAt(0);
 		
-		// 添加专题图
-		int color;
-		if(colorIndex == 0)
-		    color = 0xFFFF0000;
-		if(colorIndex == 1)
-			color = 0xFF00FF00;
-		if(colorIndex == 2)
-			color = 0xFF0000FF;
-		if (colorIndex == 3)
-			color = 0x00FF00FF;
-		if (colorIndex == 4)
-			color = 0x0000FFFF;
-
-		UGString field = _U("SmUserID");
+		bool isTheme = pLayer != NULL && (UGLayer3DType::l3dDatasetModelPro == pLayer->GetType()) ? true : false;
 		
-		if (colorIndex == 0) {
+		if (isTheme)
+		{
 			// 添加专题图
+			UGTheme3DItem item0;
+			item0.m_bVisible = true;
+			item0.m_strCaption = _U("item0");
+
+			UGColorValue3D color3D(1.0f, 1.0f, 1.0f, 1.0f);
+			item0.m_Style.SetFillColor(color3D);
+			item0.m_Style.SetPointColor(color3D);
+			//item0.m_Style.SetFill3DMode(UGC::/*UGFill3DMode::*/FILL_FACE);
+
 			UGTheme3DItem item1;
 			item1.m_bVisible = true;
 			item1.m_strCaption = _U("item1");
 
-			item1.m_Style.SetFillForeColor(color);
-			
+			UGColorValue3D color3D1(1.0f, 0.0f, 0.0f, 1.0f);
+			item1.m_Style.SetFillColor(color3D1);
+			item1.m_Style.SetPointColor(color3D1);
+			//item1.m_Style.SetFill3DMode(UGC::/*UGFill3DMode::*/FILL_FACE);
+
+			UGTheme3DItem item2;
+			item2.m_bVisible = true;
+			item2.m_strCaption = _U("item2");
+
+			UGColorValue3D color3D2(0.0f, 1.0f, 0.0f, 1.0f);
+			item2.m_Style.SetFillColor(color3D2);
+			item2.m_Style.SetPointColor(color3D2);
+			//item2.m_Style.SetFill3DMode(UGC::/*UGFill3DMode::*/FILL_FACE);
+
+			UGTheme3DItem item3;
+			item3.m_bVisible = true;
+			item3.m_strCaption = _U("item3");
+
+			UGColorValue3D color3D3(0.0f, 0.0f, 1.0f, 1.0f);
+			item3.m_Style.SetFillColor(color3D3);
+			item3.m_Style.SetPointColor(color3D3);
+			//item3.m_Style.SetFill3DMode(UGC::/*UGFill3DMode::*/FILL_FACE);
+
 
 			UGTheme3DUnique* pTheme3D = new UGTheme3DUnique;
 			pTheme3D->Add(_U("0"), item1);
-			pTheme3D->SetDefaultStyle(item1.m_Style);
-			pLayer->m_pTheme3D = pTheme3D;
-		}else{
-			((UGTheme3DUnique*)(pLayer->m_pTheme3D))->GetAt(0)->m_Style.SetFillForeColor(color);
-		}
-		
-		sceneView->GetSceneControl()->Refresh();
+			pTheme3D->Add(_U("1"), item2);
+			pTheme3D->Add(_U("2"), item3);
 
-		colorIndex++;
+			pTheme3D->SetDefaultStyle(item0.m_Style);
+			pTheme3D->SetExpression(_U("SmUserID"));
+
+			UGLayer3Ds* pLayers = sceneView->GetSceneControl()->GetUGLayers();
+			UGLayer3D* pLayer1 = NULL;
+			pLayer1 = pLayer;   // 直接将获得的图层设置为专题图
+			//pLayer1 =  pLayers->AddLayer(pLayer->GetName()); // 先添加图层，再设置专题图；此处将获得的图层再次添加到地图，然后设置专题图
+
+			pLayer1->m_pTheme3D = pTheme3D;
+
+			// 设置三维风格，不设置模型数据集不显示贴图
+			UGStyle3D style3D;
+			style3D.SetFill3DMode(UGC::/*UGFill3DMode::*/FILL_FACE);
+
+			pLayer1->SetStyle3D(style3D);
+
+			sceneView->GetSceneControl()->Refresh();
+
+			if(pLayer1 != pLayer)
+			    sceneView->getSceneLayersView()->addLayer(pLayer);
+		}
+
+		
 	}
 	else
-	{ // 新建一个 SceneView
+	{
 
 	}
 }
