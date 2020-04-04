@@ -3,7 +3,7 @@
 ### 项目描述
  该项目展示了如何使用SuperMap iObjects for C++ 进行二次开发，并对一些不易使用的功能进行封装，如用于地图窗口MapControl，用于场景窗口的SceneControl等。封装的工程在SuObjectCpp目录，这些类都支持在VS和Qt项目中使用，以及Linux系统下Qt开发使用。
 
-### SuperMap iObjects for C++ 进行二次开发博客
+### SuperMap iObjects for C++ 二次开发博客
 1. [SuperMap iObjects for C++ 入门详解（VS + Qt）](https://blog.csdn.net/u012824671/article/details/104510776)
 2. [SuperMap iObjects for C++ 构建三维场景与加载模型数据](https://blog.csdn.net/u012824671/article/details/104913793)
 
