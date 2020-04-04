@@ -239,6 +239,9 @@ namespace SuperMap
 
 			// 全幅显示指定图层
 			void ViewToLayer(UGLayer3D* pLayer);
+
+		    // 关闭场景
+			void Close();
 	   };
 	//}
 }

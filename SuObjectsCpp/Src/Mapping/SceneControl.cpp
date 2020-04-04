@@ -624,3 +624,10 @@ void SceneControl::ViewToLayer(UGLayer3D* pLayer)
 		m_pUGSceneWnd->GetScene3D()->GetCamera(_U("Camera"))->FlyToBounds(pLayer->GetBounds(), 1);
 	}
 }
+
+void SceneControl::Close() 
+{
+	m_pUGSceneWnd->GetScene3D()->Reset();
+	m_pUGSceneWnd->GetScene3D()->SetDrawMode(REAL_TIME_RASTER);
+	m_pUGSceneWnd->GetScene3D()->Refresh();
+}
