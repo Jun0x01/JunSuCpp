@@ -104,14 +104,18 @@ void MainWindow::CloseWorkspace()
 		if (typeid(*pWidget) == typeid(MapView))
 		{
 			((MapView*)pWidget)->getMapControl()->CloseMap();
+			((MapView*)pWidget)->getMapLayersView()->clear();
+
 		}
 		else if (typeid(*pWidget) == typeid(SceneView))
 		{
-			
+			((SceneView*)pWidget)->GetSceneControl()->Close();
+			((SceneView*)pWidget)->getSceneLayersView()->clear();
 		}
 	}
     // Second, close workspace
     pWorkspace->Close();
+	
 }
 
 void MainWindow::Menu_File_New()
@@ -230,6 +234,7 @@ void MainWindow::Menu_File_SaveAs()
 void MainWindow::Menu_File_Close()
 {
 	CloseWorkspace();
+	pWorkspaceView->clear();
 }
 
 void MainWindow::Menu_File_Exit()

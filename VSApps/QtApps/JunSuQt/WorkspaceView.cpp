@@ -276,3 +276,9 @@ void WorkspaceView::updateNewDatasource(UGDataSource& ugDatasource)
 		pDatasetItem->setData(0, ItemDataType, QVariant::fromValue((int)datasetItemType)); // 设置数据集类型
 	}
 }
+
+void WorkspaceView::clear()
+{
+	QTreeWidget::clear();
+	addTreeWorkspaceItem();
+}

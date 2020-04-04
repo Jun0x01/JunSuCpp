@@ -90,6 +90,7 @@ private:
 public:
     void updateWorkspaceList(Workspace& workspace);
 	void updateNewDatasource(UGDataSource& ugDatasource);
+	void clear();
 
 signals:
 	void doubleClickedItem(QTreeWidgetItem* item);
