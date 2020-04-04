@@ -40,7 +40,8 @@ void SuCALLBACK InvalidateCallBack(void* pWnd)
 	//SendDlgItemMessageW(, this, 0x01, NULL,NULL);
 
 	JunSuMFCDialogDlg *pView = (JunSuMFCDialogDlg *)pWnd;
-	pView->Invalidate(false); // not redraw background
+	if (pView->m_hWnd != NULL && pView->IsWindowVisible()) // 此处，窗口可能还没有初始化好，会出现问题
+	   pView->Invalidate(false); // not redraw background
 }
 
 void UGSTDCALL OnSingleGeometrySelected(UGlong pWnd, UGLayer* pLayer, UGint nGeoID)
@@ -57,7 +58,9 @@ void UGSTDCALL GeometrySelectedCallBack(UGlong pWnd, UGint nSelectedGeometryCoun
 	if (pWnd != NULL)
 	{
 		JunSuMFCDialogDlg* pThis = (JunSuMFCDialogDlg *)pWnd;
-		pThis->GetSelectedGeo();
+		// GetSelectedGeo()中可以获得选择集，从而获得选中的对象。目前实现的是用于测试的代码，会影响鼠标选中显示效果，
+		// 因此注释掉，若有需要，参考其内容使用即可
+		//pThis->GetSelectedGeo();  
 	}
 
 }
