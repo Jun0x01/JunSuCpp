@@ -5,7 +5,7 @@
     <SuObjectsDir>E:\SuperMap\iObject_CPP\911\</SuObjectsDir>
   </PropertyGroup>
   <PropertyGroup>
-    <OutDir>$(SolutionDir)..\Bin\$(Configuration)\$(Platform)\</OutDir>
+    <OutDir>$(SolutionDir)\..\Bin\$(Configuration)\$(Platform)\</OutDir>
     <IntDir>$(SolutionDir)\..\IntDir\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup>
