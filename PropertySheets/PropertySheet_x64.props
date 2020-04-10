@@ -14,7 +14,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SuObjectsDir)\lib\lib_x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SuBase.lib;SuBase3D.lib;SuChartBase.lib;SuDrawing.lib;SuElement.lib;SuEngine.lib;SuFileParser.lib;SuFMELicense.lib;SuGeometry.lib;SuGeometry3D.lib;SuGraphics.lib;SuGraphics3D.lib;SuMap.lib;SuMapEditor.lib;SuNetToolkit.lib;SuOGDC.lib;SuProjection.lib;SuRender.lib;SuScene.lib;SuSceneEditor.lib;SuSpatialIndex.lib;SuStream.lib;SuToolkit.lib;SuWorkspace.lib;SuGridAnalyst.lib;SuNetworkEnvironment.lib;SuPathAnalyst.lib;SuGeometryPlot.lib;SuLayer3DDataset.lib;SuTheme3DBase.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SuBase.lib;SuBase3D.lib;SuChartBase.lib;SuDrawing.lib;SuElement.lib;SuEngine.lib;SuFileParser.lib;SuFMELicense.lib;SuGeometry.lib;SuGeometry3D.lib;SuGraphics.lib;SuGraphics3D.lib;SuMap.lib;SuMapEditor.lib;SuNetToolkit.lib;SuOGDC.lib;SuProjection.lib;SuRender.lib;SuScene.lib;SuSceneEditor.lib;SuSpatialIndex.lib;SuStream.lib;SuToolkit.lib;SuWorkspace.lib;SuGridAnalyst.lib;SuNetworkEnvironment.lib;SuPathAnalyst.lib;SuGeometryPlot.lib;SuLayer3DDataset.lib;SuTheme3DBase.lib;SuAnimation.lib;SuGeometricNetwork.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup />

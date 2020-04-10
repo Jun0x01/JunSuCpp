@@ -14,7 +14,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SuObjectsDir)\lib\libd_x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SuBased.lib;SuBase3Dd.lib;SuChartBased.lib;SuDrawingd.lib;SuElementd.lib;SuEngined.lib;SuFileParserd.lib;SuFMELicensed.lib;SuGeometryd.lib;SuGeometry3Dd.lib;SuGraphicsd.lib;SuGraphics3Dd.lib;SuMapd.lib;SuMapEditord.lib;SuNetToolkitd.lib;SuOGDCd.lib;SuProjectiond.lib;SuRenderd.lib;SuScened.lib;SuSceneEditord.lib;SuSpatialIndexd.lib;SuStreamd.lib;SuToolkitd.lib;SuWorkspaced.lib;SuGridAnalystd.lib;SuNetworkEnvironmentd.lib;SuPathAnalystd.lib;SuGeometryPlotd.lib;SuLayer3DDatasetd.lib;SuTheme3DBased.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SuBased.lib;SuBase3Dd.lib;SuChartBased.lib;SuDrawingd.lib;SuElementd.lib;SuEngined.lib;SuFileParserd.lib;SuFMELicensed.lib;SuGeometryd.lib;SuGeometry3Dd.lib;SuGraphicsd.lib;SuGraphics3Dd.lib;SuMapd.lib;SuMapEditord.lib;SuNetToolkitd.lib;SuOGDCd.lib;SuProjectiond.lib;SuRenderd.lib;SuScened.lib;SuSceneEditord.lib;SuSpatialIndexd.lib;SuStreamd.lib;SuToolkitd.lib;SuWorkspaced.lib;SuGridAnalystd.lib;SuNetworkEnvironmentd.lib;SuPathAnalystd.lib;SuGeometryPlotd.lib;SuLayer3DDatasetd.lib;SuTheme3DBased.lib;SuAnimationd.lib;SuGeometricNetworkd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup />
