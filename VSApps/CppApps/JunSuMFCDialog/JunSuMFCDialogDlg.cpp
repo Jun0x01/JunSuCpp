@@ -10,8 +10,10 @@
 #include "JunSuMFCDialogDlg.h"
 #include "afxdialogex.h"
 #include "Map/UGLayerCollection.h"
+// 注意：911 版本没有 GeometricNetwork 目录的头文件，可以使用 910，或10i的
 #include "GeometricNetwork/UGConnectAnalyst.h"
 #include "GeometricNetwork/UGUtilityAnalyst.h"
+
 #include "GeometryPlot/UGGOLibraryManager.h"
 #include "Map/UGDynamicLayers.h"
 #include "Map/UGDynamicLayer.h"
