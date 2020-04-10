@@ -41,7 +41,7 @@ JunSuQt::JunSuQt(QWidget *parent)
         m_pMapControl = new MapControl(InvalidateCallback, this);
 //    }else {
 
-//        cout << "许可无效，请更新许可";
+//        cout << "????,?????";
 //    }
         QString appDir = QCoreApplication::applicationDirPath();
         QString curDir = QDir::currentPath();
@@ -60,7 +60,7 @@ JunSuQt::JunSuQt(QWidget *parent)
         {
             return;
         }
-        //添加标号库
+        //?????
         //UGint nJYLibId = -1;
 		UGint nJYLibId = pLibManager->AddGOLibrary(strJYLibPath);
         UGint nTYLibId = pLibManager->AddGOLibrary(strTYLibPath);
@@ -579,7 +579,7 @@ void JunSuQt::Menu_Analyst_NetworkFindPath()
 
         if(pNetworDataset == nullptr){
 
-            qWarning("请先打开工作空间networkdatset.swmu");
+            qWarning("????????networkdatset.swmu");
             return;
         }
         UGNetworkAnalyst* pNetworkAnalyst = new UGNetworkAnalyst();
@@ -594,14 +594,14 @@ void JunSuQt::Menu_Analyst_NetworkFindPath()
 
 
         UGAnalyseParams params;
-        //! brief网络分析路径点,设施点,配送点节点ID数组,
+        //! brief???????,???,?????ID??,
         UGArray<UGuint> arrViaNodeIDs;
         arrViaNodeIDs.Add(1);
         arrViaNodeIDs.Add(3);
         //params.arrViaNodeIDs.Add(1);
         //params.arrViaNodeIDs.Add(3);
         params.nOptions = UGNetworkAnalystEnv::UGRIRoutes;
-        //! brief网络分析路径点,设施点,配送点坐标点数组
+        //! brief???????,???,????????
         UGPoint2Ds      arrViaPoints;
 
         UGPoint2D pt1;
@@ -679,7 +679,7 @@ void JunSuQt::Menu_Analyst_GridBestPath()
         UGDataSource* pDS = pWorkspace->GetDataSource(_U("dem"));
         if(pDS == nullptr){
 
-            qWarning("请先打开工作空间dem.swmu");
+            qWarning("????????dem.swmu");
             return;
         }
 
@@ -690,8 +690,8 @@ void JunSuQt::Menu_Analyst_GridBestPath()
         double totalCost = 0;
         UGDistanceAnalysis distanceAnalysis;
 
-        //dMaxUpsolpeDegree 和dMaxDownslopeDegree 大于等于90时不考虑坡度，
-        // nSmoothMethod: -1: 不光滑处理; 0: B样条法; 1: 磨角法
+        //dMaxUpsolpeDegree ?dMaxDownslopeDegree ????90??????,
+        // nSmoothMethod: -1: ?????; 0: B???; 1: ???
         UGGeoLine* pGeoLine = distanceAnalysis.BestPathLine(startP, destP,totalCost, nullptr, pDatasetRaster, 90, 90, -1);
 
         UGDatasetVector* p2 = (UGDatasetVector *)pDS->GetDatasets()->GetAt(1);
