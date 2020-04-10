@@ -10,16 +10,16 @@ WorkspaceView::WorkspaceView(QWidget *parent) : QTreeWidget(parent), pMainWindow
 
     pListWorkspaceItems = new QList<QTreeWidgetItem>();
 
-    // æ·»åŠ é»˜è®¤çš„å·¥ä½œç©ºé—´åˆ—è¡¨
+    // Ìí¼ÓÄ¬ÈÏµÄ¹¤×÷¿Õ¼äÁĞ±í
     addTreeWorkspaceItem();
 
-    this->setHeaderHidden(true); // éšè—Header
-    this->expandAll();           // å±•å¼€å…¨éƒ¨
-//    this->expandItem();        // å±•å¼€æŒ‡å®šitem
+    this->setHeaderHidden(true); // Òş²ØHeader
+    this->expandAll();           // Õ¹¿ªÈ«²¿
+//    this->expandItem();        // Õ¹¿ªÖ¸¶¨item
 
 	ItemDataType = Qt::UserRole + 1;
 
-	// å…è®¸å³é”®èœå•
+	// ÔÊĞíÓÒ¼ü²Ëµ¥
 	setContextMenuPolicy(Qt::CustomContextMenu);
 
 }
@@ -38,25 +38,25 @@ void WorkspaceView::mouseDoubleClickEvent(QMouseEvent *event)
 }
 
 void WorkspaceView::addTreeWorkspaceItem(){
-    // åˆå§‹åŒ–
+    // ³õÊ¼»¯
     pItemWorkspace = new QTreeWidgetItem(this);
     pTreeDatasources = new QTreeWidgetItem(pItemWorkspace);
     pTreeMaps = new QTreeWidgetItem(pItemWorkspace);
     pTreeScenes = new QTreeWidgetItem(pItemWorkspace);
 
-    // è®¾ç½®æ ‡é¢˜
+    // ÉèÖÃ±êÌâ
     pItemWorkspace->setText(0, "Empty Workspace");
     pTreeDatasources->setText(0, tr("DataSources"));
     pTreeMaps->setText(0, tr("Maps"));
     pTreeScenes->setText(0, tr("Scense"));
 
-    // è®¾ç½®å›¾æ ‡
+    // ÉèÖÃÍ¼±ê
     pItemWorkspace->setIcon(0, Icons::getInstance().iconWk);
     pTreeDatasources->setIcon(0, Icons::getInstance().iconDSes);
     pTreeMaps->setIcon(0, Icons::getInstance().iconMaps);
     pTreeScenes->setIcon(0, Icons::getInstance().iconScenes);
 
-	// è®¾ç½®ç±»å‹
+	// ÉèÖÃÀàĞÍ
 	pItemWorkspace->setData(0, ItemDataType, QVariant::fromValue((int)TypeWorkspace));
 	pTreeDatasources->setData(0, ItemDataType, QVariant::fromValue((int)TypeDataosources));
 	pTreeMaps->setData(0, ItemDataType, QVariant::fromValue((int)TypeMaps));
@@ -87,19 +87,19 @@ void WorkspaceView::updateWorkspaceList(Workspace& workspace)
     pTreeMaps = new QTreeWidgetItem(pItemWorkspace);
     pTreeScenes = new QTreeWidgetItem(pItemWorkspace);
 
-    // è®¾ç½®æ ‡é¢˜
+    // ÉèÖÃ±êÌâ
     pItemWorkspace->setText(0, "Empty Workspace");
     pTreeDatasources->setText(0, tr("DataSources"));
     pTreeMaps->setText(0, tr("Maps"));
     pTreeScenes->setText(0, tr("Scense"));
 
-    // è®¾ç½®å›¾æ ‡
+    // ÉèÖÃÍ¼±ê
     pItemWorkspace->setIcon(0, Icons::getInstance().iconWk);
     pTreeDatasources->setIcon(0, Icons::getInstance().iconDSes);
     pTreeMaps->setIcon(0, Icons::getInstance().iconMaps);
     pTreeScenes->setIcon(0, Icons::getInstance().iconScenes);
 
-	// è®¾ç½®ç±»å‹
+	// ÉèÖÃÀàĞÍ
 	pItemWorkspace->setData(0, ItemDataType, QVariant::fromValue((int)TypeWorkspace));
 	pTreeDatasources->setData(0, ItemDataType, QVariant::fromValue((int)TypeDataosources));
 	pTreeMaps->setData(0, ItemDataType, QVariant::fromValue((int)TypeMaps));
@@ -110,8 +110,8 @@ void WorkspaceView::updateWorkspaceList(Workspace& workspace)
 
     pItemWorkspace->setText(0, QString().fromStdString(wkName));
 
-    // 1. æ•°æ®æº
-    UGDataSources& datasources = pUGWorkspace->m_DataSources; // æ³¨æ„ä½¿ç”¨å¼•ç”¨ï¼Œå¦åˆ™ä¼šå‡ºé”™
+    // 1. Êı¾İÔ´
+    UGDataSources& datasources = pUGWorkspace->m_DataSources; // ×¢ÒâÊ¹ÓÃÒıÓÃ£¬·ñÔò»á³ö´í
 
     for(int i=0; i<datasources.GetCount(); i++)
     {
@@ -124,7 +124,7 @@ void WorkspaceView::updateWorkspaceList(Workspace& workspace)
 		
     }
 
-    // 2. åœ°å›¾
+    // 2. µØÍ¼
     int mapCount = pUGWorkspace->m_MapStorages.GetCount();
     for(int i=0; i < mapCount; i++)
     {
@@ -135,10 +135,10 @@ void WorkspaceView::updateWorkspaceList(Workspace& workspace)
         QTreeWidgetItem* pItem = new QTreeWidgetItem(pTreeMaps);
         pItem->setText(0, QString().fromStdString(mapName));
         pItem->setIcon(0, Icons::getInstance().iconMap);
-		pItem->setData(0, ItemDataType, QVariant::fromValue((int)TypeMap)); // è®¾ç½®æ•°æ®é›†ç±»å‹
+		pItem->setData(0, ItemDataType, QVariant::fromValue((int)TypeMap)); // ÉèÖÃÊı¾İ¼¯ÀàĞÍ
     }
 
-    // 3. åœºæ™¯
+    // 3. ³¡¾°
     int sceneCount = pUGWorkspace->m_SceneStorages.GetCount();
     for(int i = 0; i< sceneCount; i++)
     {
@@ -149,7 +149,7 @@ void WorkspaceView::updateWorkspaceList(Workspace& workspace)
         QTreeWidgetItem* pItem = new QTreeWidgetItem(pTreeScenes);
         pItem->setText(0, QString().fromStdString(sceneName));
         pItem->setIcon(0, Icons::getInstance().iconScene);
-		pItem->setData(0, ItemDataType, QVariant::fromValue((int)TypeScene)); // è®¾ç½®æ•°æ®é›†ç±»å‹
+		pItem->setData(0, ItemDataType, QVariant::fromValue((int)TypeScene)); // ÉèÖÃÊı¾İ¼¯ÀàĞÍ
     }
 }
 
@@ -191,9 +191,9 @@ void WorkspaceView::updateNewDatasource(UGDataSource& ugDatasource)
 		pDsItem->setIcon(0, Icons::getInstance().iconDsWeb);
 		break;
 	}
-	pDsItem->setData(0, ItemDataType, QVariant::fromValue((int)dsItemType)); // è®¾ç½®æ•°æ®æºç±»å‹
+	pDsItem->setData(0, ItemDataType, QVariant::fromValue((int)dsItemType)); // ÉèÖÃÊı¾İÔ´ÀàĞÍ
 
-	// æ•°æ®é›†
+	// Êı¾İ¼¯
 	UGDatasets* pDatasets = ugDatasource.GetDatasets();
 	int datasetCount = pDatasets->GetSize();
 	for (int j = 0; j < datasetCount; j++)
@@ -273,7 +273,7 @@ void WorkspaceView::updateNewDatasource(UGDataSource& ugDatasource)
 			pDatasetItem->setIcon(0, Icons::getInstance().iconDataTypeUnknown);
 			break;
 		}
-		pDatasetItem->setData(0, ItemDataType, QVariant::fromValue((int)datasetItemType)); // è®¾ç½®æ•°æ®é›†ç±»å‹
+		pDatasetItem->setData(0, ItemDataType, QVariant::fromValue((int)datasetItemType)); // ÉèÖÃÊı¾İ¼¯ÀàĞÍ
 	}
 }
 
